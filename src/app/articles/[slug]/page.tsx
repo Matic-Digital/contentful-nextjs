@@ -45,8 +45,13 @@ export async function generateStaticParams() {
  * @param params - Contains the article slug
  * @returns Metadata object for the page
  */
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const article = await getArticle(params.slug);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<Props["params"]>;
+}): Promise<Metadata> {
+  const resolvedParams = await params;
+  const article = await getArticle(resolvedParams.slug);
 
   if (!article) {
     return {
@@ -71,8 +76,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  *
  * @param params - Contains the article slug from the URL
  */
-export default async function ArticlePage({ params }: Props) {
-  const article = await getArticle(params.slug);
+export default async function ArticlePage({
+  params,
+}: {
+  params: Promise<Props["params"]>;
+}) {
+  const resolvedParams = await params;
+  const article = await getArticle(resolvedParams.slug);
 
   // Redirect to 404 page if article not found
   if (!article) {
