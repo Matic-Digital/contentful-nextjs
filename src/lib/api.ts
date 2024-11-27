@@ -1,21 +1,65 @@
+/**
+ * Contentful API Integration Module
+ * Provides functions for fetching and managing blog articles from Contentful CMS
+ */
+
+// Types
 import {
   Article,
+  TeamMember,
   ArticlesResponse,
   ContentfulError,
   ContentfulResponse,
 } from "./types";
 
-// Set a variable that contains all the fields needed for articles when a fetch for
-// content is performed
+/**
+ * GraphQL fragment defining the structure of article data to fetch
+ * Includes system metadata, content, and media assets
+ */
 const ARTICLE_GRAPHQL_FIELDS = `
   sys {
     id
   }
   title
   slug
+  description {
+    json
+    links {
+      assets {
+        block {
+          sys {
+            id
+          }
+          url
+          description
+        }
+      }
+    }
+  }
+  featuredImage {
+    url
+  }
+  video
 `;
 
-// Cache the fetch requests
+const TEAM_MEMBER_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  name
+  title
+  image {
+    url
+  }
+`;
+
+/**
+ * Executes GraphQL queries against Contentful's API with caching
+ * @param query - GraphQL query string
+ * @param preview - Whether to use preview or production content
+ * @returns Promise resolving to typed API response
+ * @throws ContentfulError on network or GraphQL errors
+ */
 async function fetchGraphQL<T>(
   query: string,
   preview = false,
@@ -53,11 +97,21 @@ async function fetchGraphQL<T>(
   return json;
 }
 
+/**
+ * Fetches a paginated list of articles
+ * @param limit - Maximum number of articles to fetch (default: 3)
+ * @param isDraftMode - Whether to fetch draft content (default: false)
+ * @param skip - Number of articles to skip for pagination (default: 0)
+ * @returns Promise resolving to articles response with pagination info
+ * @throws ContentfulError if articles cannot be extracted from response
+ */
 export async function getAllArticles(
   limit = 3,
   isDraftMode = false,
   skip = 0,
 ): Promise<ArticlesResponse> {
+  console.log("Fetching articles with:", { limit, skip });
+
   const response = await fetchGraphQL<Article>(
     `query GetArticles {
       blogArticleCollection(
@@ -81,11 +135,23 @@ export async function getAllArticles(
   }
 
   const { items, total } = collection;
-  const hasMore = skip + items.length >= limit && skip + items.length < total;
+  console.log("Contentful Response:", {
+    itemsCount: items.length,
+    total,
+    skip,
+    limit,
+    raw: response.data?.blogArticleCollection,
+  });
 
-  return { items, total, hasMore };
+  return { items, total, hasMore: skip + items.length < total };
 }
 
+/**
+ * Fetches a single article by its slug
+ * @param slug - URL-friendly identifier for the article
+ * @param isDraftMode - Whether to fetch draft content (default: false)
+ * @returns Promise resolving to the article or null if not found
+ */
 export async function getArticle(
   slug: string,
   isDraftMode = false,
@@ -106,4 +172,22 @@ export async function getArticle(
 
   const article = response.data?.blogArticleCollection?.items[0];
   return article ?? null;
+}
+
+export async function getTeamMembers(
+  isDraftMode = false,
+): Promise<TeamMember[]> {
+  const response = await fetchGraphQL<TeamMember>(
+    `query GetTeamMembers {
+      teamMemberCollection {
+        items {
+          ${TEAM_MEMBER_GRAPHQL_FIELDS}
+        }
+      }
+    }`,
+    isDraftMode,
+  );
+
+  // Add null check and return empty array if no team members found
+  return response.data?.teamMemberCollection?.items || [];
 }

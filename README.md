@@ -27,3 +27,20 @@ You can check out the [create-t3-app GitHub repository](https://github.com/t3-os
 ## How do I deploy this?
 
 Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+
+## React Query
+
+Only use if any of these client side features are needed:
+
+1. Interactive Features:
+   - Real-time comments
+   - Like/bookmark functionality
+   - User-generated content
+2. Dynamic Content:
+   - Client-side search
+   - Filtering
+   - Infinite scroll or pagination
+3. User Features:
+   - Authentication state
+   - User preferences
+   - Saved articles
