@@ -43,11 +43,13 @@ export interface Article {
  * @property items - Array of articles
  * @property total - Total number of articles available
  * @property hasMore - Indicates if there are more articles to load
+ * @property totalPages - Total number of pages available
  */
 export interface ArticlesResponse {
   items: Article[];
   total: number;
   hasMore: boolean;
+  totalPages: number;
 }
 
 /**
@@ -73,7 +75,7 @@ export interface TeamMember {
 export interface ContentfulResponse<T> {
   data?: {
     blogArticleCollection?: {
-      items: T[];
+      items: Article[];
       total: number;
     };
     teamMemberCollection?: {

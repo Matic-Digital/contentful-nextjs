@@ -61,13 +61,26 @@ function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
 
 /** Zod schema for form validation with custom error messages */
 const contactSchema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  firstName: z
+    .string()
+    .min(2, "First name must be at least 2 characters")
+    .max(50, "First name cannot exceed 50 characters"),
+  lastName: z
+    .string()
+    .min(2, "Last name must be at least 2 characters")
+    .max(50, "Last name cannot exceed 50 characters"),
   email: z
     .string()
     .email("Please enter a valid email address")
-    .min(1, "Email is required"),
-  message: z.string().min(10, "Message must be at least 10 characters long"),
+    .min(1, "Email is required")
+    .max(100, "Email cannot exceed 100 characters"),
+  message: z
+    .string()
+    .min(10, "Message must be at least 10 characters long")
+    .max(1000, "Message cannot exceed 1000 characters")
+    .refine((val) => !val.includes("<script>"), {
+      message: "Message contains invalid characters",
+    }),
 });
 
 /** Type definition for form data based on Zod schema */
@@ -92,6 +105,7 @@ export function ContactForm() {
     onSubmit: async ({ value }) => {
       if (isSubmitting) return;
       setIsSubmitting(true);
+
       try {
         // Simulate API call - replace with actual API endpoint
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -101,13 +115,13 @@ export function ContactForm() {
           description: "We'll get back to you as soon as possible.",
         });
 
+        // Reset form after successful submission
         form.reset();
-      } catch {
+      } catch (error) {
         toast({
-          variant: "destructive",
           title: "Error",
-          description:
-            "There was a problem sending your message. Please try again.",
+          description: "Failed to send message. Please try again.",
+          variant: "destructive",
         });
       } finally {
         setIsSubmitting(false);
@@ -175,15 +189,17 @@ export function ContactForm() {
         e.stopPropagation();
         form.handleSubmit();
       }}
+      className="space-y-6"
     >
       <Card>
         <CardHeader>
-          <CardTitle>Send us a message</CardTitle>
+          <CardTitle>Contact Us</CardTitle>
           <CardDescription>
-            Fill out the form below and we&apos;ll get back to you as soon as
+            Fill out the form below and we'll get back to you as soon as
             possible.
           </CardDescription>
         </CardHeader>
+
         <CardContent className="space-y-4">
           {/* First Name */}
           <FormField
@@ -211,6 +227,7 @@ export function ContactForm() {
             component="textarea"
           />
         </CardContent>
+
         <CardFooter>
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? (
