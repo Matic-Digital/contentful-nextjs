@@ -6,6 +6,9 @@ import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
+  // Enable static optimization
+  reactStrictMode: true,
+  // Configure image domains
   images: {
     remotePatterns: [
       {
@@ -27,6 +30,24 @@ const config = {
         pathname: "/**",
       },
     ],
+  },
+  // Docker-specific configuration
+  experimental: {
+    // Enable Docker-friendly features
+    outputFileTracingRoot: "/app",
+  },
+  // Configure webpack for better performance
+  webpack: (config, { dev, isServer }) => {
+    // Optimize production builds
+    if (!dev && !isServer) {
+      Object.assign(config.resolve.alias, {
+        "react/jsx-runtime.js": "preact/compat/jsx-runtime",
+        react: "preact/compat",
+        "react-dom/test-utils": "preact/test-utils",
+        "react-dom": "preact/compat",
+      });
+    }
+    return config;
   },
 };
 
