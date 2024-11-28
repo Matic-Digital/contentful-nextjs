@@ -1,46 +1,95 @@
-# Create T3 App
+# Contentful Next.js Starter
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+This is a starter template for building a blog with Next.js and Contentful. It includes a modern Docker-based development workflow for a consistent development experience across teams.
 
-## What's next? How do I make an app with this?
+## Prerequisites
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- Docker Desktop installed and running
+- Git
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+No other local dependencies are required!
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## Quick Start
 
-## Learn More
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd contentful-nextjs-starter
+   ```
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+2. Run the setup script:
+   ```bash
+   ./dev setup
+   ```
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+3. Update `.env.development` with your Contentful credentials:
+   ```
+   CONTENTFUL_SPACE_ID="your Space ID"
+   CONTENTFUL_ACCESS_TOKEN="Content Delivery API token"
+   CONTENTFUL_PREVIEW_ACCESS_TOKEN="Content Preview API token"
+   CONTENTFUL_PREVIEW_SECRET="any URL friendly value of your choice"
+   ```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+4. The application will be running at [http://localhost:3000](http://localhost:3000)
 
-## How do I deploy this?
+## Development Workflow
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+### Available Commands
 
-## React Query
+```bash
+./dev setup     # First-time setup (creates .env.development, builds containers)
+./dev start     # Start the development environment
+./dev stop      # Stop the development environment
+./dev restart   # Restart the development environment
+./dev logs      # Show logs (with optional container name)
+./dev status    # Show status of containers
+./dev shell     # Open a shell in the web container
+./dev clean     # Remove all containers, volumes, and images
+./dev help      # Show help message
+```
 
-Only use if any of these client side features are needed:
+### Development Features
 
-1. Interactive Features:
-   - Real-time comments
-   - Like/bookmark functionality
-   - User-generated content
-2. Dynamic Content:
-   - Client-side search
-   - Filtering
-   - Infinite scroll or pagination
-3. User Features:
-   - Authentication state
-   - User preferences
-   - Saved articles
+- 🔥 Hot-reloading enabled for rapid development
+- 🐳 Containerized environment with Node.js 20
+- 📦 Volume mounts for persistent development
+- 🛠️ Streamlined commands for common tasks
+- 🔍 Built-in logging and debugging tools
+
+### Best Practices
+
+1. **Environment Variables**:
+   - Never commit `.env.development` to version control
+   - Keep `.env.example` updated with all required variables
+   - Use `NEXT_PUBLIC_` prefix for client-side variables
+
+2. **Docker Workflow**:
+   - Use `./dev shell` to run commands inside the container
+   - Check logs with `./dev logs` when troubleshooting
+   - Use `./dev clean` to reset your environment if needed
+
+### Troubleshooting
+
+1. **Container won't start**:
+   - Check if Docker Desktop is running
+   - Run `./dev clean` followed by `./dev setup`
+   - Verify your Contentful credentials in `.env.development`
+
+2. **Changes not reflecting**:
+   - Ensure you're editing files in your local directory
+   - Check logs with `./dev logs` for errors
+   - Try `./dev restart` to restart the development server
+
+3. **Port conflicts**:
+   - Ensure no other service is using port 3000
+   - Stop other Docker containers that might use the same port
+
+## Contributing
+
+1. Create a feature branch
+2. Make your changes
+3. Submit a pull request
+
+## License
+
+[MIT License](LICENSE)

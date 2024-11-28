@@ -1,0 +1,137 @@
+#!/bin/bash
+
+# =================================================================
+# Development Environment Management Script
+# 
+# This script provides a unified interface for managing the Docker-based
+# development environment for the Contentful Next.js application.
+# =================================================================
+
+# Color definitions for output formatting
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# =================================================================
+# Function: Display usage information
+# Description: Shows available commands and their descriptions
+# =================================================================
+show_usage() {
+    echo -e "${YELLOW}Usage:${NC} ./dev [command]"
+    echo
+    echo -e "${YELLOW}Commands:${NC}"
+    echo "  setup     - First-time setup (creates .env.development, builds containers)"
+    echo "  start     - Start the development environment"
+    echo "  stop      - Stop the development environment"
+    echo "  restart   - Restart the development environment"
+    echo "  logs      - Show logs (with optional container name)"
+    echo "  status    - Show status of containers"
+    echo "  shell     - Open a shell in the web container"
+    echo "  clean     - Remove all containers, volumes, and images"
+    echo "  help      - Show this help message"
+}
+
+# =================================================================
+# Function: Check Docker availability
+# Description: Verifies that Docker daemon is running
+# Returns: Exits with status 1 if Docker is not running
+# =================================================================
+check_docker() {
+    if ! docker info > /dev/null 2>&1; then
+        echo -e "${RED}Error: Docker is not running${NC}"
+        exit 1
+    fi
+}
+
+# =================================================================
+# Function: Setup development environment
+# Description: Performs first-time setup including env file creation
+#             and container initialization
+# =================================================================
+setup() {
+    # Create environment file if it doesn't exist
+    if [ ! -f .env.development ]; then
+        if [ -f .env.example ]; then
+            echo -e "${YELLOW}Creating .env.development from example...${NC}"
+            cp .env.example .env.development
+            echo -e "${GREEN}✓ Created .env.development${NC}"
+            echo -e "${YELLOW}Please update .env.development with your Contentful credentials${NC}"
+        else
+            echo -e "${RED}Error: .env.example not found${NC}"
+            exit 1
+        fi
+    fi
+
+    # Build and start containers
+    echo -e "${YELLOW}Building containers...${NC}"
+    docker compose build --no-cache
+    
+    echo -e "${YELLOW}Starting development environment...${NC}"
+    docker compose up -d
+
+    echo -e "${GREEN}✓ Setup complete! Application is running at http://localhost:3000${NC}"
+}
+
+# =================================================================
+# Main command handler
+# Description: Routes commands to appropriate functions
+# =================================================================
+case "$1" in
+    setup)
+        check_docker
+        setup
+        ;;
+    start)
+        check_docker
+        echo -e "${YELLOW}Starting development environment...${NC}"
+        docker compose up -d
+        echo -e "${GREEN}✓ Development environment is running at http://localhost:3000${NC}"
+        ;;
+    stop)
+        check_docker
+        echo -e "${YELLOW}Stopping development environment...${NC}"
+        docker compose down
+        echo -e "${GREEN}✓ Development environment stopped${NC}"
+        ;;
+    restart)
+        check_docker
+        echo -e "${YELLOW}Restarting development environment...${NC}"
+        docker compose down
+        docker compose up -d
+        echo -e "${GREEN}✓ Development environment restarted${NC}"
+        ;;
+    logs)
+        check_docker
+        if [ -z "$2" ]; then
+            docker compose logs -f
+        else
+            docker compose logs -f "$2"
+        fi
+        ;;
+    status)
+        check_docker
+        echo -e "${YELLOW}Container status:${NC}"
+        docker compose ps
+        ;;
+    shell)
+        check_docker
+        echo -e "${YELLOW}Opening shell in web container...${NC}"
+        docker compose exec web sh
+        ;;
+    clean)
+        check_docker
+        echo -e "${YELLOW}Cleaning up Docker resources...${NC}"
+        docker compose down -v
+        docker system prune -af --volumes
+        echo -e "${GREEN}✓ Cleanup complete${NC}"
+        ;;
+    help|--help|-h)
+        show_usage
+        ;;
+    *)
+        echo -e "${RED}Error: Unknown command '$1'${NC}"
+        show_usage
+        exit 1
+        ;;
+esac
