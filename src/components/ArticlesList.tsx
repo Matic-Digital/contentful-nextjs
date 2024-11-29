@@ -64,6 +64,13 @@ export function ArticlesList({
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
 
+  // Determine grid columns based on pageSize
+  const gridCols =
+    {
+      3: "lg:grid-cols-3",
+      4: "lg:grid-cols-4",
+    }[pageSize] ?? "lg:grid-cols-3";
+
   // Only fetch data if pagination is enabled
   const { data, isLoading } = useGetArticlesPagination({
     page,
@@ -107,12 +114,7 @@ export function ArticlesList({
 
   return (
     <div className="stack gap-8">
-      <div
-        className={cn(
-          "grid grid-cols-1 gap-6 sm:grid-cols-2",
-          `lg:grid-cols-${pageSize}`,
-        )}
-      >
+      <div className={cn("grid grid-cols-1 gap-6 sm:grid-cols-2", gridCols)}>
         {isLoading
           ? Array.from({ length: pageSize }).map((_, i) => (
               <ArticleSkeleton key={i} />

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
  */
 export default async function HomePage() {
   // Fetch initial articles for server-side rendering (3 latest articles)
-  const initialArticles = await getAllArticles(3);
+  const initialArticles = await getAllArticles();
   console.log("Home page data:", initialArticles);
 
   return (

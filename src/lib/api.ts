@@ -99,7 +99,7 @@ async function fetchGraphQL<T>(
   return json;
 }
 
-export const ARTICLES_PER_PAGE = 6;
+export const ARTICLES_PER_PAGE = 3;
 
 /**
  * Fetches a paginated list of articles
