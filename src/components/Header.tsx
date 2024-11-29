@@ -48,6 +48,9 @@ export function Header() {
         <div className="mr-4 hidden md:flex">
           {/* Logo */}
           <Link href="/" className="mr-6 flex items-center space-x-2">
+            <span className="text-gradient-pink text-lg font-extrabold">
+              |||
+            </span>
             <span className="text-xl font-bold">Matic</span>
           </Link>
           {/* Desktop Menu Items */}
