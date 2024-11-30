@@ -214,58 +214,38 @@ contentful-mux-nextjs-starter/
 
 No other local dependencies are required! Everything runs inside Docker containers.
 
-## Quick Start
+## Technologies Used
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd contentful-mux-nextjs-starter
-   ```
+- [Next.js](https://nextjs.org) - React framework for production
+- [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS framework
+- [Contentful](https://www.contentful.com) - Headless CMS
+- [Mux](https://mux.com) - Video streaming platform
 
-2. Copy the example environment file:
-   ```bash
-   cp .env.example .env.development
-   ```
+## Features
 
-3. Start the development environment:
-   ```bash
-   npm run dev:docker
-   ```
+1. Interactive Features:
+   - Real-time comments
+   - Like/bookmark functionality
+   - User-generated content
+2. Dynamic Content:
+   - Client-side search
+   - Filtering
+   - Infinite scroll or pagination
+3. User Features:
+   - Authentication state
+   - User preferences
+   - Saved articles
 
-   Or use the development script:
-   ```bash
-   ./scripts/dev start
-   ```
+## Types
 
-The application will be available at http://localhost:3000.
+Shared global types are defined in the `lib/types.ts` file. Component specific types are defined in their respective component files.
 
-## Available npm Scripts
+## Deployment
 
-- `npm run dev` - Start the Next.js development server locally
-- `npm run dev:docker` - Start the development environment in Docker
-- `npm run dev:docker-build` - Build and start the development environment in Docker
-- `npm run docker:down` - Stop the Docker containers
-- `npm run docker:clean` - Stop and remove Docker containers and volumes
-- `npm run build` - Build the application for production
-- `npm run start` - Start the production server
-- `npm run lint` - Run ESLint
-- `npm run format` - Format code with Prettier
-
-## Environment Variables
-
-The application uses environment variables for configuration. Copy `.env.example` to `.env.development` and update the values:
-
-- `CONTENTFUL_SPACE_ID` - Your Contentful space ID
-- `CONTENTFUL_ACCESS_TOKEN` - Your Contentful access token
-- `CONTENTFUL_PREVIEW_ACCESS_TOKEN` - Your Contentful preview access token
-- `MUX_TOKEN_ID` - Your Mux token ID
-- `MUX_TOKEN_SECRET` - Your Mux token secret
-
-## Learn More
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Contentful Documentation](https://www.contentful.com/developers/docs/)
-- [Mux Documentation](https://docs.mux.com/)
+Follow our deployment guides for:
+- [Vercel](https://create.t3.gg/en/deployment/vercel)
+- [Netlify](https://create.t3.gg/en/deployment/netlify)
+- [Docker](https://create.t3.gg/en/deployment/docker)
 
 ## Contributing
 
