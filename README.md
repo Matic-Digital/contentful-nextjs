@@ -33,7 +33,7 @@ Our Docker setup provides a consistent development environment with:
 - 🔍 Health checks for reliability
 - 👤 Secure non-root user setup
 
-#### Option A: Docker Development (Recommended)
+#### Docker Development
 
 1. Start the development server:
    ```bash
