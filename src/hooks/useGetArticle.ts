@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getArticle } from "@/lib/api";
 
 // Types
-import type { Article } from "@/lib/types";
+import { type Article } from "@/lib/types";
 
 /**
  * Query configuration for fetching a single article

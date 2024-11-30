@@ -9,7 +9,7 @@ import MuxVideo from "@mux/mux-video-react";
 import { getAllArticles, getArticle } from "@/lib/api";
 
 // Types
-import type { Article } from "@/lib/types";
+import { type Article } from "@/lib/types";
 
 /**
  * Default image to display when article has no featured image
