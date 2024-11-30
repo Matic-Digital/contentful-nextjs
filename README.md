@@ -1,31 +1,153 @@
 # Contentful Next.js Starter
 
-This is a starter template for building a blog with Next.js and Contentful. It includes a modern Docker-based development workflow for a consistent development experience across teams.
+This is a starter template for building a blog with Next.js and Contentful. It includes a Docker-based development workflow for a consistent development experience across teams.
+
+## Development Workflow
+
+### Initial Setup
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd contentful-mux-nextjs-starter
+   ```
+
+2. Copy the environment file:
+   ```bash
+   cp .env.example .env.development
+   ```
+
+3. Update `.env.development` with your credentials:
+   - `CONTENTFUL_SPACE_ID`
+   - `CONTENTFUL_ACCESS_TOKEN`
+   - `CONTENTFUL_PREVIEW_ACCESS_TOKEN`
+   - `MUX_TOKEN_ID`
+   - `MUX_TOKEN_SECRET`
+
+### Daily Development
+
+Our Docker setup provides a consistent development environment with:
+- 🔥 Hot-reloading for instant feedback
+- 📦 Cached node_modules for faster builds
+- 🛠️ Built-in debugging support
+- 🔍 Health checks for reliability
+- 👤 Secure non-root user setup
+
+#### Option A: Docker Development (Recommended)
+
+1. Start the development server:
+   ```bash
+   npm run dev:docker
+   ```
+   The app will be available at http://localhost:3000
+
+2. View logs in a separate terminal:
+   ```bash
+   ./scripts/dev logs
+   ```
+
+3. Run commands inside the container:
+   ```bash
+   ./scripts/dev shell
+   ```
+
+#### Option B: Local Development
+
+If you prefer developing without Docker:
+```bash
+npm install
+npm run dev
+```
+
+### Development Commands
+
+#### Docker Commands
+- `npm run dev:docker` - Start development environment
+- `npm run dev:fresh` - Clean start (useful after dependency changes)
+- `npm run docker:clean` - Remove containers and volumes
+- `./scripts/dev logs` - View container logs
+- `./scripts/dev shell` - Open shell in container
+- `./scripts/dev status` - Check container status
+
+#### Code Quality Commands
+- `npm run format:write` - Format code
+- `npm run check` - Run all checks (lint + types)
+- `npm run test:types` - Check types with detailed output
+- `npm run prepare` - Format and check code (run before committing)
+
+#### Cleanup Commands
+- `npm run clean:all` - Remove all build artifacts and dependencies
+- `npm run docker:clean` - Clean Docker resources
+
+### Debugging
+
+1. **Container Logs**
+   ```bash
+   # View all logs
+   ./scripts/dev logs
+   
+   # Follow logs in real-time
+   ./scripts/dev logs -f
+   ```
+
+2. **Node.js Debugging**
+   - Debug port 9229 is exposed by default
+   - Use Chrome DevTools or VS Code debugger
+   - Connect to `localhost:9229`
+
+3. **Container Shell**
+   ```bash
+   ./scripts/dev shell
+   ```
+
+4. **Health Checks**
+   ```bash
+   ./scripts/dev status
+   ```
+
+### Best Practices
+
+1. **Docker Development**
+   - Use `npm run dev:docker` for daily development
+   - Run `npm run dev:fresh` after dependency changes
+   - Keep the logs open in a separate terminal
+   - Use `./scripts/dev shell` for running commands
+
+2. **Code Quality**
+   - Run `npm run prepare` before committing
+   - Keep TypeScript types strict
+   - Format code consistently
+   - Fix type errors immediately
+
+3. **Performance**
+   - Let Docker cache do its job (avoid unnecessary rebuilds)
+   - Use volume mounts for development
+   - Keep node_modules in Docker volume
+
+4. **Troubleshooting**
+   - Check logs first (`./scripts/dev logs`)
+   - Verify container health (`./scripts/dev status`)
+   - Try a fresh start (`npm run dev:fresh`)
+   - Clean everything as last resort (`npm run clean:all`)
 
 ## Project Structure
 
 ```
 contentful-mux-nextjs-starter/
-├── config/                    # Configuration files
-│   ├── .env.development      # Development environment variables
-│   ├── .env.staging         # Staging environment variables
-│   ├── .env.production      # Production environment variables
-│   └── .env.example         # Template for environment variables
 ├── docker/                    # Docker-related files
 │   ├── Dockerfile           # Development Dockerfile
-│   ├── Dockerfile.prod      # Production-optimized Dockerfile
-│   ├── docker-compose.yml   # Development compose configuration
-│   ├── docker-compose.staging.yml  # Staging compose configuration
-│   └── docker-compose.prod.yml     # Production compose configuration
+│   └── docker-compose.yml   # Development compose configuration
 ├── scripts/                   # Management scripts
-│   ├── dev                  # Development environment management
-│   ├── staging             # Staging environment management
-│   └── prod                # Production environment management
+│   └── dev                  # Development environment management
 ├── src/                      # Application source code
-├── dev -> scripts/dev        # Convenience symlink
-├── staging -> scripts/staging # Convenience symlink
-├── prod -> scripts/prod      # Convenience symlink
-├── package.json             # Node.js dependencies and scripts
+│   ├── app/                 # Next.js app router files
+│   ├── components/          # Reusable React components
+│   ├── hooks/               # Custom React hooks
+│   ├── lib/                 # Utility functions and libraries
+│   └── styles/              # CSS and styling files
+├── .env.development         # Development environment variables
+├── .env.example            # Template for environment variables
+├── package.json            # Node.js dependencies and scripts
 └── README.md               # Project documentation
 ```
 
@@ -44,254 +166,50 @@ No other local dependencies are required! Everything runs inside Docker containe
    cd contentful-mux-nextjs-starter
    ```
 
-2. Run the setup script:
+2. Copy the example environment file:
    ```bash
-   ./dev setup
+   cp .env.example .env.development
    ```
 
-3. Update `config/.env.development` with your Contentful credentials:
-   ```
-   NEXT_PUBLIC_CONTENTFUL_SPACE_ID="your Space ID"
-   NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN="Content Delivery API token"
-   NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN="Content Preview API token"
+3. Start the development environment:
+   ```bash
+   npm run dev:docker
    ```
 
-4. The application will be running at [http://localhost:3000](http://localhost:3000)
+   Or use the development script:
+   ```bash
+   ./scripts/dev start
+   ```
 
-## Development Workflow
+The application will be available at http://localhost:3000.
 
-### Available Commands
+## Available npm Scripts
 
-All development commands run inside Docker containers for consistency:
+- `npm run dev` - Start the Next.js development server locally
+- `npm run dev:docker` - Start the development environment in Docker
+- `npm run dev:docker-build` - Build and start the development environment in Docker
+- `npm run docker:down` - Stop the Docker containers
+- `npm run docker:clean` - Stop and remove Docker containers and volumes
+- `npm run build` - Build the application for production
+- `npm run start` - Start the production server
+- `npm run lint` - Run ESLint
+- `npm run format` - Format code with Prettier
 
-```bash
-# Development Environment
-./dev setup     # First-time setup (creates .env.development, builds containers)
-./dev start     # Start the development environment
-./dev stop      # Stop the development environment
-./dev restart   # Restart the development environment
-./dev logs      # Show logs (with optional container name)
-./dev status    # Show status of containers
-./dev shell     # Open a shell in the app container
-./dev clean     # Remove all containers, volumes, and images
+## Environment Variables
 
-# NPM Scripts (all run inside Docker)
-npm run dev         # Start development server
-npm run dev:build   # Rebuild and start containers
-npm run dev:clean   # Full reset of environment
-npm run lint        # Run ESLint
-npm run lint:fix    # Fix ESLint issues
-npm run typecheck   # Run TypeScript checks
-npm run format:write # Format code with Prettier
-npm run format:check # Check code formatting
-npm run check       # Run all checks (lint + typecheck)
-npm run build       # Build for production
-npm run start       # Start production server
-```
+The application uses environment variables for configuration. Copy `.env.example` to `.env.development` and update the values:
 
-### Development Features
+- `CONTENTFUL_SPACE_ID` - Your Contentful space ID
+- `CONTENTFUL_ACCESS_TOKEN` - Your Contentful access token
+- `CONTENTFUL_PREVIEW_ACCESS_TOKEN` - Your Contentful preview access token
+- `MUX_TOKEN_ID` - Your Mux token ID
+- `MUX_TOKEN_SECRET` - Your Mux token secret
 
-- 🐳 Fully Dockerized - consistent environment across all machines
-- 🔥 Hot-reloading enabled for rapid development
-- 📦 Volume mounts for persistent development
-- 🛠️ All tools (ESLint, Prettier, TypeScript) run in containers
-- 🔍 Built-in logging and debugging tools
-- 🚀 Production-ready Docker configuration
+## Learn More
 
-### Best Practices
-
-1. **Environment Variables**:
-   - Never commit environment files from `config/` directory
-   - Keep `config/.env.example` updated with all required variables
-   - Use `NEXT_PUBLIC_` prefix for client-side variables
-
-2. **Docker Workflow**:
-   - Always use `./dev shell` to run commands inside the container
-   - Check logs with `./dev logs` when troubleshooting
-   - Use `./dev clean` to reset your environment if needed
-
-3. **Code Quality**:
-   - Run `npm run check` before committing to ensure code quality
-   - Use `npm run format:write` to maintain consistent code style
-   - Keep TypeScript types up to date with `npm run typecheck`
-
-### File Organization
-
-1. **Configuration Files** (`/config`):
-   - Environment-specific variables
-   - Separate files for development, staging, and production
-   - Example templates for setup
-
-2. **Docker Files** (`/docker`):
-   - Environment-specific Dockerfiles and compose configurations
-   - Optimized for different deployment scenarios
-   - Consistent build and runtime settings
-
-3. **Management Scripts** (`/scripts`):
-   - Environment management tools
-   - Consistent interface across environments
-   - Helper utilities for common tasks
-
-### Troubleshooting
-
-1. **Container won't start**:
-   - Check if Docker Desktop is running
-   - Run `./dev clean` followed by `./dev setup`
-   - Verify your Contentful credentials in `config/.env.development`
-
-2. **Changes not reflecting**:
-   - Ensure you're editing files in your local directory
-   - Check logs with `./dev logs` for errors
-   - Try `./dev restart` to restart the development server
-
-3. **Port conflicts**:
-   - Check if port 3000 is already in use
-   - Stop other Docker containers that might use the same port
-   - Use `docker ps` to check for running containers
-
-## Environments
-
-This project supports three environments: Development, Staging, and Production.
-
-### Development Environment
-
-Use the `./dev` script for local development:
-
-```bash
-./dev setup     # First-time setup
-./dev start     # Start development
-./dev logs      # View logs
-```
-
-### Staging Environment
-
-Use the `./staging` script for staging deployment:
-
-```bash
-./staging start    # Start staging environment
-./staging stop     # Stop staging environment
-./staging restart  # Restart staging environment
-./staging logs     # View staging logs
-```
-
-Configuration:
-- Uses `docker-compose.staging.yml`
-- Environment variables in `config/.env.staging`
-- Single container deployment
-- Includes health checks
-
-### Production Environment
-
-Use the `./prod` script for production deployment:
-
-```bash
-./prod start      # Start production environment
-./prod stop       # Stop production environment
-./prod restart    # Restart production environment
-./prod logs       # View production logs
-```
-
-Configuration:
-- Uses `docker-compose.prod.yml`
-- Environment variables in `config/.env.production`
-- Multi-container deployment (2 replicas)
-- Rolling updates for zero-downtime deployments
-- Advanced health checks and restart policies
-
-### Environment Configuration
-
-1. **Development** (`config/.env.development`):
-   - Used for local development
-   - Hot-reloading enabled
-   - Debug tools available
-
-2. **Staging** (`config/.env.staging`):
-   - Staging-specific variables
-   - Mimics production setup
-   - Used for testing before production
-
-3. **Production** (`config/.env.production`):
-   - Production-grade configuration
-   - Enhanced security settings
-   - Performance optimizations
-
-### Deployment Best Practices
-
-1. **Testing Flow**:
-   - Develop locally using `./dev`
-   - Test in staging using `./staging`
-   - Deploy to production using `./prod`
-
-2. **Environment Variables**:
-   - Never commit environment files
-   - Keep different credentials for each environment
-   - Validate all variables before deployment
-
-3. **Monitoring**:
-   - Use `logs` command to monitor each environment
-   - Check health status regularly
-   - Monitor resource usage in production
-
-### Security Considerations
-
-1. **Environment Files**:
-   - Keep `config/.env.staging` and `config/.env.production` secure
-   - Use different API keys for each environment
-   - Regularly rotate production credentials
-
-2. **Docker Security**:
-   - Production containers run as non-root
-   - Images are multi-stage built for minimal attack surface
-   - Regular security updates via Docker base images
-
-## Docker Tips and Advanced Usage
-
-#### Container Management
-```bash
-# View detailed container information
-./dev status -a    # Show all containers (including stopped)
-./dev ps           # Alternative to status, shows running containers
-
-# Resource Usage
-./dev stats        # Monitor container resource usage (CPU, memory, network)
-
-# Cleanup Commands
-./dev prune        # Remove unused Docker resources (containers, networks)
-./dev clean --volumes  # Clean including persistent volumes
-./dev clean --all     # Full cleanup including images
-
-# Debugging
-./dev exec app sh     # Execute shell in running app container
-./dev logs -f         # Follow logs in real-time
-./dev logs --tail=100 # Show last 100 log lines
-```
-
-#### Development Tips
-1. **Volume Management**:
-   - The `.next/cache` directory is persisted in a named volume
-   - Use `./dev clean --volumes` to clear cache if build issues occur
-   - Node modules are cached in a separate volume for faster builds
-
-2. **Performance Optimization**:
-   - Container restarts are faster with cached node_modules
-   - Hot reloading is enabled by default for rapid development
-   - TypeScript checking runs in a separate process
-
-3. **Common Issues**:
-   - If the container becomes unresponsive, use `./dev restart`
-   - For permission issues, the container runs as non-root user
-   - Cache issues can be resolved with `./dev clean --volumes`
-
-4. **Multi-container Development**:
-   - Each service is isolated in its own container
-   - Inter-service communication uses Docker network
-   - Environment variables control service discovery
-
-5. **Docker Best Practices**:
-   - Keep images small by using multi-stage builds
-   - Use `.dockerignore` to exclude unnecessary files
-   - Layer caching is optimized for faster builds
-   - Regular cleanup with `./dev prune` prevents disk space issues
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Contentful Documentation](https://www.contentful.com/developers/docs/)
+- [Mux Documentation](https://docs.mux.com/)
 
 ## Contributing
 

@@ -14,17 +14,18 @@ services:
     # Enable container restarts
     restart: unless-stopped
     
-    # Map container port 3000 to host
+    # Map container ports to host
     ports:
-      - "3000:3000"
+      - "3000:3000"     # Next.js application
+      - "9229:9229"     # Node.js debugger
     
     # Mount local directories for development
     volumes:
-      # Source code
+      # Source code (enables hot reloading)
       - ..:/app
-      # Node modules (cached)
+      # Node modules (cached in Docker volume)
       - node_modules:/app/node_modules
-      # Next.js build cache
+      # Next.js build cache (faster rebuilds)
       - next-cache:/app/.next/cache
     
     # Load environment variables
@@ -36,7 +37,7 @@ services:
       - NODE_ENV=development
       - HOSTNAME=0.0.0.0
       - PORT=3000
-      # Enable Next.js debugging
+      # Enable Next.js debugging (accessible on port 9229)
       - NODE_OPTIONS=--inspect
     
     # Health check to ensure container is running properly
@@ -54,9 +55,9 @@ services:
     stdin_open: true  # Keep STDIN open for debugging
     tty: true        # Allocate a pseudo-TTY
 
-# Define named volumes for persistence
+# Named volumes for caching
 volumes:
-  # Store node_modules to avoid reinstalling on every build
+  # Persist node_modules to avoid reinstalling on every build
   node_modules:
-  # Store Next.js build cache for faster rebuilds
+  # Cache Next.js build files for faster rebuilds
   next-cache:

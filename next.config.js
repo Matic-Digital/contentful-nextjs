@@ -4,48 +4,47 @@
  */
 import "./src/env.js";
 
-/** @type {import("next").NextConfig} */
-const config = {
-  // Enable static optimization
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Enable React strict mode for development
   reactStrictMode: true,
-  // Configure image domains
+
+  // Configure image domains for Next.js Image component
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "images.ctfassets.net",
-        port: "",
-        pathname: "/**",
+        protocol: 'https',
+        hostname: 'images.ctfassets.net',
       },
       {
-        protocol: "https",
-        hostname: "source.unsplash.com",
-        port: "",
-        pathname: "/**",
+        protocol: 'https',
+        hostname: 'downloads.ctfassets.net',
       },
       {
-        protocol: "https",
-        hostname: "placehold.co",
-        port: "",
-        pathname: "/**",
+        protocol: 'https',
+        hostname: 'image.mux.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
       },
     ],
   },
-  // Docker-specific configuration
-  outputFileTracingRoot: "/app",
-  // Configure webpack for better performance
-  webpack: (config, { dev, isServer }) => {
-    // Optimize production builds
-    if (!dev && !isServer) {
-      Object.assign(config.resolve.alias, {
-        "react/jsx-runtime.js": "preact/compat/jsx-runtime",
-        react: "preact/compat",
-        "react-dom/test-utils": "preact/test-utils",
-        "react-dom": "preact/compat",
-      });
-    }
-    return config;
-  },
-};
 
-export default config;
+  // Enable experimental features
+  experimental: {
+    // Enable server actions
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+  },
+
+  // Environment variable configuration
+  env: {
+    NEXT_PUBLIC_CONTENTFUL_SPACE_ID: process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID,
+    NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN: process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN,
+    NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN: process.env.NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN,
+  },
+}
+
+export default nextConfig;
