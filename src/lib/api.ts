@@ -56,12 +56,14 @@ const TEAM_MEMBER_GRAPHQL_FIELDS = `
 /**
  * Executes GraphQL queries against Contentful's API with caching
  * @param query - GraphQL query string
+ * @param variables - GraphQL variables
  * @param preview - Whether to use preview or production content
  * @returns Promise resolving to typed API response
  * @throws ContentfulError on network or GraphQL errors
  */
 async function fetchGraphQL<T>(
   query: string,
+  variables?: any,
   preview = false,
 ): Promise<ContentfulResponse<T>> {
   const response = await fetch(
@@ -76,7 +78,7 @@ async function fetchGraphQL<T>(
             : process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN
         }`,
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, variables }),
       next: {
         revalidate: 3600, // Cache for 1 hour
         tags: ["contentful"],
@@ -97,53 +99,51 @@ async function fetchGraphQL<T>(
   return json;
 }
 
+export const ARTICLES_PER_PAGE = 3;
+
 /**
  * Fetches a paginated list of articles
- * @param limit - Maximum number of articles to fetch (default: 3)
+ * @param limit - Maximum number of articles to fetch (default: 6)
  * @param isDraftMode - Whether to fetch draft content (default: false)
  * @param skip - Number of articles to skip for pagination (default: 0)
  * @returns Promise resolving to articles response with pagination info
- * @throws ContentfulError if articles cannot be extracted from response
  */
 export async function getAllArticles(
-  limit = 3,
+  limit = ARTICLES_PER_PAGE,
   isDraftMode = false,
   skip = 0,
 ): Promise<ArticlesResponse> {
-  console.log("Fetching articles with:", { limit, skip });
+  console.log("Fetching articles:", { limit, skip, isDraftMode });
 
-  const response = await fetchGraphQL<Article>(
-    `query GetArticles {
-      blogArticleCollection(
-        limit: ${limit},
-        skip: ${skip},
-        order: sys_firstPublishedAt_DESC
-      ) {
+  const response = await fetchGraphQL(
+    `query GetArticles($limit: Int!, $skip: Int!) {
+      blogArticleCollection(limit: $limit, skip: $skip, order: sys_firstPublishedAt_DESC) {
+        total
         items {
           ${ARTICLE_GRAPHQL_FIELDS}
         }
-        total
       }
     }`,
+    { limit, skip },
     isDraftMode,
   );
 
-  const collection = response.data?.blogArticleCollection;
+  console.log("GraphQL Response:", response.data?.blogArticleCollection);
 
-  if (!collection?.items) {
-    throw new ContentfulError("Failed to extract articles from response");
+  const collection = response.data?.blogArticleCollection;
+  if (!collection) {
+    return { items: [], total: 0, hasMore: false, totalPages: 0 };
   }
 
-  const { items, total } = collection;
-  console.log("Contentful Response:", {
-    itemsCount: items.length,
-    total,
-    skip,
-    limit,
-    raw: response.data?.blogArticleCollection,
-  });
+  const result = {
+    items: collection.items,
+    total: collection.total,
+    hasMore: skip + limit < collection.total,
+    totalPages: Math.ceil(collection.total / limit),
+  };
 
-  return { items, total, hasMore: skip + items.length < total };
+  console.log("Returning articles:", result);
+  return result;
 }
 
 /**
@@ -167,6 +167,7 @@ export async function getArticle(
         }
       }
     }`,
+    {},
     isDraftMode,
   );
 
@@ -185,6 +186,7 @@ export async function getTeamMembers(
         }
       }
     }`,
+    {},
     isDraftMode,
   );
 

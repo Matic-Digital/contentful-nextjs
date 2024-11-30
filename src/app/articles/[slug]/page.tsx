@@ -97,7 +97,7 @@ export default async function ArticlePage({
     <div className="container mx-auto px-5">
       {/* Navigation */}
       <div className="mb-4">
-        <a href="/" className="text-blue-600 hover:underline">
+        <a href="/articles" className="text-blue-600 hover:underline">
           ← Back to Home
         </a>
       </div>
@@ -133,7 +133,7 @@ export default async function ArticlePage({
           />
         )}
 
-        <div className="prose">
+        <div className="prose prose-a:text-red-600">
           {documentToReactComponents(article.description.json)}
         </div>
       </article>

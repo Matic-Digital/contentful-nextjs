@@ -14,13 +14,14 @@ import type { Article } from "@/lib/types";
  * Extracted as a separate function to enable prefetching and reuse
  *
  * @param slug - URL-friendly identifier for the article
+ * @param isDraftMode - Whether to fetch draft article
  * @returns React Query options object with query key and fetch function
  * @throws Error if article is not found
  */
-export const articleQueryOptions = (slug: string) => ({
-  queryKey: ["article", slug] as const,
+export const articleQueryOptions = (slug: string, isDraftMode?: boolean) => ({
+  queryKey: ["article", slug, isDraftMode] as const,
   queryFn: async () => {
-    const article = await getArticle(slug);
+    const article = await getArticle(slug, isDraftMode);
     if (!article) throw new Error("Article not found");
     return article;
   },
