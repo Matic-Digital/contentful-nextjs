@@ -4,8 +4,10 @@
 # This script provides commands for managing the local development environment
 
 # Set base paths
-DOCKER_DIR="../docker"
-CONFIG_DIR="../config"
+SCRIPT_DIR="$( cd "$( dirname "$(readlink -f "${BASH_SOURCE[0]}")" )" && pwd )"
+PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
+DOCKER_DIR="$PROJECT_ROOT/docker"
+CONFIG_DIR="$PROJECT_ROOT"
 
 # Color definitions for output
 GREEN='\033[0;32m'

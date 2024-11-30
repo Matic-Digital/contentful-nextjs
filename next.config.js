@@ -32,10 +32,7 @@ const config = {
     ],
   },
   // Docker-specific configuration
-  experimental: {
-    // Enable Docker-friendly features
-    outputFileTracingRoot: "/app",
-  },
+  outputFileTracingRoot: "/app",
   // Configure webpack for better performance
   webpack: (config, { dev, isServer }) => {
     // Optimize production builds

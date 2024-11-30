@@ -16,9 +16,16 @@ RUN apk add --no-cache \
     # Required for health checks
     wget
 
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
 # Create non-root user for better security
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs && \
+    mkdir -p /app/.next/cache && \
     chown -R nextjs:nodejs /app
 
 # Switch to non-root user

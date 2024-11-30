@@ -10,8 +10,9 @@ services:
     image: contentful-mux-nextjs-starter:staging
     ports:
       - "3000:3000"
+    # Load environment variables
     env_file:
-      - ../config/.env.staging
+      - ../.env.staging
     environment:
       - NODE_ENV=staging
       - HOSTNAME=0.0.0.0

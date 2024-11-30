@@ -29,7 +29,7 @@ services:
     
     # Load environment variables
     env_file:
-      - ../config/.env.development
+      - ../.env.development
     
     # Set development environment variables
     environment:

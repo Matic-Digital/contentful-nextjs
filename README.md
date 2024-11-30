@@ -244,6 +244,55 @@ Configuration:
    - Images are multi-stage built for minimal attack surface
    - Regular security updates via Docker base images
 
+## Docker Tips and Advanced Usage
+
+#### Container Management
+```bash
+# View detailed container information
+./dev status -a    # Show all containers (including stopped)
+./dev ps           # Alternative to status, shows running containers
+
+# Resource Usage
+./dev stats        # Monitor container resource usage (CPU, memory, network)
+
+# Cleanup Commands
+./dev prune        # Remove unused Docker resources (containers, networks)
+./dev clean --volumes  # Clean including persistent volumes
+./dev clean --all     # Full cleanup including images
+
+# Debugging
+./dev exec app sh     # Execute shell in running app container
+./dev logs -f         # Follow logs in real-time
+./dev logs --tail=100 # Show last 100 log lines
+```
+
+#### Development Tips
+1. **Volume Management**:
+   - The `.next/cache` directory is persisted in a named volume
+   - Use `./dev clean --volumes` to clear cache if build issues occur
+   - Node modules are cached in a separate volume for faster builds
+
+2. **Performance Optimization**:
+   - Container restarts are faster with cached node_modules
+   - Hot reloading is enabled by default for rapid development
+   - TypeScript checking runs in a separate process
+
+3. **Common Issues**:
+   - If the container becomes unresponsive, use `./dev restart`
+   - For permission issues, the container runs as non-root user
+   - Cache issues can be resolved with `./dev clean --volumes`
+
+4. **Multi-container Development**:
+   - Each service is isolated in its own container
+   - Inter-service communication uses Docker network
+   - Environment variables control service discovery
+
+5. **Docker Best Practices**:
+   - Keep images small by using multi-stage builds
+   - Use `.dockerignore` to exclude unnecessary files
+   - Layer caching is optimized for faster builds
+   - Regular cleanup with `./dev prune` prevents disk space issues
+
 ## Contributing
 
 1. Create a feature branch

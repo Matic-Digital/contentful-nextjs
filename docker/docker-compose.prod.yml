@@ -10,8 +10,9 @@ services:
     image: contentful-mux-nextjs-starter:production
     ports:
       - "3000:3000"
+    # Load environment variables
     env_file:
-      - ../config/.env.production
+      - ../.env.production
     environment:
       - NODE_ENV=production
       - HOSTNAME=0.0.0.0
