@@ -51,14 +51,6 @@ Our Docker setup provides a consistent development environment with:
    ./scripts/dev shell
    ```
 
-#### Option B: Local Development
-
-If you prefer developing without Docker:
-```bash
-npm install
-npm run dev
-```
-
 ### Development Commands
 
 #### Docker Commands
@@ -68,16 +60,6 @@ npm run dev
 - `./scripts/dev logs` - View container logs
 - `./scripts/dev shell` - Open shell in container
 - `./scripts/dev status` - Check container status
-
-#### Code Quality Commands
-- `npm run format:write` - Format code
-- `npm run check` - Run all checks (lint + types)
-- `npm run test:types` - Check types with detailed output
-- `npm run prepare` - Format and check code (run before committing)
-
-#### Cleanup Commands
-- `npm run clean:all` - Remove all build artifacts and dependencies
-- `npm run docker:clean` - Clean Docker resources
 
 ### Debugging
 
@@ -90,17 +72,12 @@ npm run dev
    ./scripts/dev logs -f
    ```
 
-2. **Node.js Debugging**
-   - Debug port 9229 is exposed by default
-   - Use Chrome DevTools or VS Code debugger
-   - Connect to `localhost:9229`
-
-3. **Container Shell**
+2. **Container Shell**
    ```bash
    ./scripts/dev shell
    ```
 
-4. **Health Checks**
+3. **Health Checks**
    ```bash
    ./scripts/dev status
    ```
@@ -113,78 +90,16 @@ npm run dev
    - Keep the logs open in a separate terminal
    - Use `./scripts/dev shell` for running commands
 
-2. **Code Quality**
-   - Run `npm run prepare` before committing
-   - Keep TypeScript types strict
-   - Format code consistently
-   - Fix type errors immediately
-
-3. **Performance**
+2. **Performance**
    - Let Docker cache do its job (avoid unnecessary rebuilds)
    - Use volume mounts for development
    - Keep node_modules in Docker volume
 
-4. **Troubleshooting**
+3. **Troubleshooting**
    - Check logs first (`./scripts/dev logs`)
    - Verify container health (`./scripts/dev status`)
    - Try a fresh start (`npm run dev:fresh`)
    - Clean everything as last resort (`npm run clean:all`)
-
-### Code Quality Standards
-
-#### Formatting and Type Safety
-
-We maintain high code quality standards through automated formatting and strict type checking:
-
-1. **Code Formatting**
-   - We use Prettier for consistent code style
-   - Format your code before committing:
-     ```bash
-     npm run format:write
-     ```
-   - Formatting rules are defined in `prettier.config.js`
-
-2. **Type Safety**
-   - TypeScript is used for type safety
-   - Run type checks to catch issues:
-     ```bash
-     npm run test:types
-     ```
-   - All custom hooks and components must be properly typed
-   - Type definitions are in `src/lib/types.ts`
-
-3. **Pre-commit Checks**
-   - Run all checks before committing:
-     ```bash
-     npm run prepare
-     ```
-   - This ensures both formatting and type safety
-
-#### Documentation Standards
-
-- Each component and hook must include JSDoc comments with:
-  - Brief description of functionality
-  - Features and capabilities
-  - Implementation details if complex
-  - Parameter and return type documentation
-  - Example usage if applicable
-
-Example of well-documented code:
-```typescript
-/**
- * Custom hook for fetching and managing paginated articles
- * Uses React Query's infinite query capabilities for efficient data fetching and caching
- *
- * Features:
- * - Infinite scrolling support
- * - Automatic pagination
- * - Optional initial data hydration
- * - Built-in caching and request deduplication
- *
- * @param initialData - Optional array of articles for initial render
- * @returns React Query infinite query result with pagination controls
- */
-```
 
 ## Project Structure
 
