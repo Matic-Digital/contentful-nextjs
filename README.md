@@ -240,13 +240,6 @@ No other local dependencies are required! Everything runs inside Docker containe
 
 Shared global types are defined in the `lib/types.ts` file. Component specific types are defined in their respective component files.
 
-## Deployment
-
-Follow our deployment guides for:
-- [Vercel](https://create.t3.gg/en/deployment/vercel)
-- [Netlify](https://create.t3.gg/en/deployment/netlify)
-- [Docker](https://create.t3.gg/en/deployment/docker)
-
 ## Contributing
 
 1. Create a feature branch
