@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/pagination";
 
 // Types
-import type { Article } from "@/lib/types";
+import { type Article } from "@/lib/types";
 
 /** Props for the main ArticlesList component */
 interface ArticlesListProps {

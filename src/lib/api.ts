@@ -4,7 +4,7 @@
  */
 
 // Types
-import {
+import type {
   Article,
   TeamMember,
   ArticlesResponse,

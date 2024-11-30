@@ -1,7 +1,7 @@
 "use client";
 
 // Types
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 // State Management
 import { Provider as JotaiProvider } from "jotai";
