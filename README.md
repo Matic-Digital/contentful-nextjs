@@ -130,6 +130,62 @@ npm run dev
    - Try a fresh start (`npm run dev:fresh`)
    - Clean everything as last resort (`npm run clean:all`)
 
+### Code Quality Standards
+
+#### Formatting and Type Safety
+
+We maintain high code quality standards through automated formatting and strict type checking:
+
+1. **Code Formatting**
+   - We use Prettier for consistent code style
+   - Format your code before committing:
+     ```bash
+     npm run format:write
+     ```
+   - Formatting rules are defined in `prettier.config.js`
+
+2. **Type Safety**
+   - TypeScript is used for type safety
+   - Run type checks to catch issues:
+     ```bash
+     npm run test:types
+     ```
+   - All custom hooks and components must be properly typed
+   - Type definitions are in `src/lib/types.ts`
+
+3. **Pre-commit Checks**
+   - Run all checks before committing:
+     ```bash
+     npm run prepare
+     ```
+   - This ensures both formatting and type safety
+
+#### Documentation Standards
+
+- Each component and hook must include JSDoc comments with:
+  - Brief description of functionality
+  - Features and capabilities
+  - Implementation details if complex
+  - Parameter and return type documentation
+  - Example usage if applicable
+
+Example of well-documented code:
+```typescript
+/**
+ * Custom hook for fetching and managing paginated articles
+ * Uses React Query's infinite query capabilities for efficient data fetching and caching
+ *
+ * Features:
+ * - Infinite scrolling support
+ * - Automatic pagination
+ * - Optional initial data hydration
+ * - Built-in caching and request deduplication
+ *
+ * @param initialData - Optional array of articles for initial render
+ * @returns React Query infinite query result with pagination controls
+ */
+```
+
 ## Project Structure
 
 ```
