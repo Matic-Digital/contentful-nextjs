@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllArticles } from "@/lib/api";
-import type { ArticlesResponse } from "@/lib/types";
+import { type ArticlesResponse } from "@/lib/types";
 
 interface UseGetArticlesPaginationProps {
   page: number;
@@ -16,7 +16,11 @@ export function useGetArticlesPagination({
   return useQuery({
     queryKey: ["articles", page, pageSize],
     queryFn: async () => {
-      const response = await getAllArticles(pageSize, false, (page - 1) * pageSize);
+      const response = await getAllArticles(
+        pageSize,
+        false,
+        (page - 1) * pageSize,
+      );
       console.log("Pagination hook fetch:", { page, pageSize, response });
       return response;
     },
