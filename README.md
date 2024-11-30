@@ -214,32 +214,6 @@ contentful-mux-nextjs-starter/
 
 No other local dependencies are required! Everything runs inside Docker containers.
 
-## Technologies Used
-
-- [Next.js](https://nextjs.org) - React framework for production
-- [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS framework
-- [Contentful](https://www.contentful.com) - Headless CMS
-- [Mux](https://mux.com) - Video streaming platform
-
-## Features
-
-1. Interactive Features:
-   - Real-time comments
-   - Like/bookmark functionality
-   - User-generated content
-2. Dynamic Content:
-   - Client-side search
-   - Filtering
-   - Infinite scroll or pagination
-3. User Features:
-   - Authentication state
-   - User preferences
-   - Saved articles
-
-## Types
-
-Shared global types are defined in the `lib/types.ts` file. Component specific types are defined in their respective component files.
-
 ## Contributing
 
 1. Create a feature branch
