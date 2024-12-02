@@ -31,9 +31,10 @@ const ARTICLES_PER_PAGE = 3;
 export function useGetArticles(initialData?: Article[]) {
   return useInfiniteQuery<ArticlesResponse, Error>({
     queryKey: ["articles"],
-    // Fetch function that handles pagination
-    queryFn: async ({ pageParam = 1 }) => {
-      const skip = (pageParam - 1) * ARTICLES_PER_PAGE;
+    // Updated query function to match React Query's infinite query context
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    queryFn: async ({ pageParam, queryKey, signal }) => {
+      const skip = ((pageParam as number) - 1) * ARTICLES_PER_PAGE;
       return getAllArticles(ARTICLES_PER_PAGE, false, skip);
     },
     initialPageParam: 1,
@@ -42,10 +43,17 @@ export function useGetArticles(initialData?: Article[]) {
       if (!lastPage.hasMore) return undefined;
       return allPages.length + 1;
     },
-    // Initialize with server-side data if available
+    // Updated initial data to match ArticlesResponse type
     initialData: initialData
       ? {
-          pages: [{ items: initialData, total: 0, hasMore: true }],
+          pages: [
+            {
+              items: initialData,
+              total: initialData.length,
+              hasMore: true,
+              totalPages: Math.ceil(initialData.length / ARTICLES_PER_PAGE),
+            },
+          ],
           pageParams: [1],
         }
       : undefined,

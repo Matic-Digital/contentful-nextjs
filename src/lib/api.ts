@@ -8,7 +8,6 @@ import type {
   Article,
   TeamMember,
   ArticlesResponse,
-  ContentfulError,
   ContentfulResponse,
 } from "./types";
 
@@ -59,11 +58,11 @@ const TEAM_MEMBER_GRAPHQL_FIELDS = `
  * @param variables - GraphQL variables
  * @param preview - Whether to use preview or production content
  * @returns Promise resolving to typed API response
- * @throws ContentfulError on network or GraphQL errors
+ * @throws Error on network or GraphQL errors
  */
 async function fetchGraphQL<T>(
   query: string,
-  variables?: any,
+  variables?: Record<string, unknown>,
   preview = false,
 ): Promise<ContentfulResponse<T>> {
   const response = await fetch(
@@ -80,20 +79,21 @@ async function fetchGraphQL<T>(
       },
       body: JSON.stringify({ query, variables }),
       next: {
-        revalidate: 3600, // Cache for 1 hour
+        revalidate: 3 * 24 * 60 * 60, // Cache for 3 days
         tags: ["contentful"],
       },
     },
   );
 
   if (!response.ok) {
-    throw new ContentfulError(`Failed to fetch data: ${response.statusText}`);
+    throw new Error(`Failed to fetch data: ${response.statusText}`);
   }
 
-  const json = await response.json();
+  const json = (await response.json()) as ContentfulResponse<T>;
 
   if (json.errors) {
-    throw new ContentfulError("GraphQL Error", json.errors);
+    const errorMessage = json.errors.map((error) => error.message).join("; ");
+    throw new Error(`GraphQL Error: ${errorMessage}`);
   }
 
   return json;
@@ -127,7 +127,6 @@ export async function getAllArticles(
     { limit, skip },
     isDraftMode,
   );
-
   console.log("GraphQL Response:", response.data?.blogArticleCollection);
 
   const collection = response.data?.blogArticleCollection;
@@ -191,5 +190,5 @@ export async function getTeamMembers(
   );
 
   // Add null check and return empty array if no team members found
-  return response.data?.teamMemberCollection?.items || [];
+  return response.data?.teamMemberCollection?.items ?? [];
 }

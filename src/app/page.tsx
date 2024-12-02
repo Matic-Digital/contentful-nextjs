@@ -1,5 +1,5 @@
 // Next.js metadata types
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
 // API functions
 import { getAllArticles } from "@/lib/api";

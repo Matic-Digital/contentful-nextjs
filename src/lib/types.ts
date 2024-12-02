@@ -1,4 +1,4 @@
-import { Document } from "@contentful/rich-text-types";
+import { type Document } from "@contentful/rich-text-types";
 
 /**
  * Represents a blog article from Contentful CMS
@@ -84,18 +84,4 @@ export interface ContentfulResponse<T> {
     };
   };
   errors?: Array<{ message: string }>;
-}
-
-/**
- * Custom error class for Contentful-specific errors
- * Extends the base Error class with additional error details from Contentful
- */
-export class ContentfulError extends Error {
-  constructor(
-    message: string,
-    public errors?: Array<{ message: string }>,
-  ) {
-    super(message);
-    this.name = "ContentfulError";
-  }
 }

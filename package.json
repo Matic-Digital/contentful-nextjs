@@ -16,7 +16,6 @@
     "typecheck": "tsc --noEmit",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
-    "check": "npm run lint && npm run typecheck",
     "dev:fresh": "npm run docker:clean && npm run dev:docker-build",
     "prepare": "husky",
     "test:types": "tsc --noEmit --pretty",

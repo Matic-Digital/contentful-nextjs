@@ -1,7 +1,9 @@
 // Next.js components and utilities
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import { documentToPlainTextString } from "@contentful/rich-text-plain-text-renderer";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import MuxVideo from "@mux/mux-video-react";
 
@@ -62,6 +64,13 @@ export async function generateMetadata({
   return {
     title: article.title,
     description: `Read about ${article.title}`,
+    openGraph: {
+      title: article.title,
+      description:
+        documentToPlainTextString(article.description.json) ||
+        `Read about ${article.title}`,
+      images: article.featuredImage?.url,
+    },
   };
 }
 
@@ -97,9 +106,9 @@ export default async function ArticlePage({
     <div className="container mx-auto px-5">
       {/* Navigation */}
       <div className="mb-4">
-        <a href="/articles" className="text-blue-600 hover:underline">
+        <Link href="/articles" className="text-blue-600 hover:underline">
           ← Back to Home
-        </a>
+        </Link>
       </div>
 
       <article className="prose mx-auto max-w-3xl space-y-8">
