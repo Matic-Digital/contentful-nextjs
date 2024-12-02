@@ -50,12 +50,12 @@ Our Docker setup provides a consistent development environment with:
 
 2. View logs in a separate terminal:
    ```bash
-   docker compose -f docker/docker-compose.yml logs -f
+   ./scripts/dev logs
    ```
 
 3. Run commands inside the container:
    ```bash
-   docker compose -f docker/docker-compose.yml exec web sh
+   ./scripts/dev shell
    ```
 
 ### Development Commands
@@ -70,12 +70,12 @@ Our Docker setup provides a consistent development environment with:
 
 1. **Container Logs**
    ```bash
-   docker compose -f docker/docker-compose.yml logs -f
+   ./scripts/dev logs
    ```
 
 2. **Container Shell**
    ```bash
-   docker compose -f docker/docker-compose.yml exec web sh
+   ./scripts/dev shell
    ```
 
 3. **Health Checks**
@@ -96,7 +96,7 @@ Our Docker setup provides a consistent development environment with:
    - Keep node_modules in Docker volume
 
 3. **Troubleshooting**
-   - Check logs first (`docker compose -f docker/docker-compose.yml logs -f`)
+   - Check logs first (`./scripts/dev logs`)
    - Try a fresh start (`npm run dev:fresh`)
    - Clean everything as last resort (`npm run clean:all`)
 
