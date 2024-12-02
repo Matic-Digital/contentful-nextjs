@@ -79,7 +79,7 @@ async function fetchGraphQL<T>(
       },
       body: JSON.stringify({ query, variables }),
       next: {
-        revalidate: 3600, // Cache for 1 hour
+        revalidate: 3 * 24 * 60 * 60, // Cache for 3 days
         tags: ["contentful"],
       },
     },
@@ -127,7 +127,6 @@ export async function getAllArticles(
     { limit, skip },
     isDraftMode,
   );
-
   console.log("GraphQL Response:", response.data?.blogArticleCollection);
 
   const collection = response.data?.blogArticleCollection;

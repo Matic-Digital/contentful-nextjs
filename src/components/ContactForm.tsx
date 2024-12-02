@@ -84,7 +84,8 @@ const contactSchema = z.object({
     .string()
     .email("Please enter a valid email address")
     .min(1, "Email is required")
-    .max(100, "Email cannot exceed 100 characters"),
+    .max(100, "Email cannot exceed 100 characters")
+    .transform((email) => email.toLowerCase()),
   message: z
     .string()
     .min(10, "Message must be at least 10 characters long")
