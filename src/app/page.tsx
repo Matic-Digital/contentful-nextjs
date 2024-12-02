@@ -1,9 +1,6 @@
 // Next.js metadata types
 import type { Metadata } from "next";
 
-// Icons
-import { ArrowRight } from "lucide-react";
-
 /**
  * Metadata configuration for SEO
  */
