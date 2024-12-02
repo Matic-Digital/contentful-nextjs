@@ -1,14 +1,14 @@
 {
-  "name": "contentful-mux-nextjs-starter",
+  "name": "contentful-nextjs-starter",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "build": "next build",
+    "check": "next lint && tsc --noEmit",
+    "dev": "next dev --turbo",
     "dev:docker": "docker compose -f docker/docker-compose.yml up",
     "dev:docker-build": "docker compose -f docker/docker-compose.yml up --build",
-    "build": "next build",
-    "start": "next start",
     "docker:down": "docker compose -f docker/docker-compose.yml down",
     "docker:clean": "docker compose -f docker/docker-compose.yml down -v",
     "lint": "next lint",
@@ -20,7 +20,9 @@
     "dev:fresh": "npm run docker:clean && npm run dev:docker-build",
     "prepare": "husky",
     "test:types": "tsc --noEmit --pretty",
-    "clean:all": "rm -rf .next node_modules && npm run docker:clean"
+    "clean:all": "rm -rf .next node_modules && npm run docker:clean",
+    "start": "next start",
+    "preview": "next build && next start"
   },
   "dependencies": {
     "@contentful/rich-text-plain-text-renderer": "^17.0.0",
