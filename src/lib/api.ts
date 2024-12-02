@@ -64,6 +64,7 @@ async function fetchGraphQL<T>(
   query: string,
   variables?: Record<string, unknown>,
   preview = false,
+  cacheConfig?: { next: { revalidate: number } },
 ): Promise<ContentfulResponse<T>> {
   const response = await fetch(
     `https://graphql.contentful.com/content/v1/spaces/${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}`,
@@ -78,10 +79,7 @@ async function fetchGraphQL<T>(
         }`,
       },
       body: JSON.stringify({ query, variables }),
-      next: {
-        revalidate: 3 * 24 * 60 * 60, // Cache for 3 days
-        tags: ["contentful"],
-      },
+      next: cacheConfig?.next,
     },
   );
 
@@ -103,7 +101,7 @@ export const ARTICLES_PER_PAGE = 3;
 
 /**
  * Fetches a paginated list of articles
- * @param limit - Maximum number of articles to fetch (default: 6)
+ * @param limit - Maximum number of articles to fetch (default: 3)
  * @param isDraftMode - Whether to fetch draft content (default: false)
  * @param skip - Number of articles to skip for pagination (default: 0)
  * @returns Promise resolving to articles response with pagination info
@@ -177,18 +175,28 @@ export async function getArticle(
 export async function getTeamMembers(
   isDraftMode = false,
 ): Promise<TeamMember[]> {
-  const response = await fetchGraphQL<TeamMember>(
-    `query GetTeamMembers {
-      teamMemberCollection {
-        items {
-          ${TEAM_MEMBER_GRAPHQL_FIELDS}
+  try {
+    const response = await fetchGraphQL<TeamMember>(
+      `query GetTeamMembers {
+        teamMemberCollection {
+          items {
+            ${TEAM_MEMBER_GRAPHQL_FIELDS}
+          }
         }
-      }
-    }`,
-    {},
-    isDraftMode,
-  );
+      }`,
+      {},
+      isDraftMode,
+    );
 
-  // Add null check and return empty array if no team members found
-  return response.data?.teamMemberCollection?.items ?? [];
+    // Check for GraphQL errors
+    if (response.errors) {
+      throw new Error(response.errors.map((error) => error.message).join("; "));
+    }
+
+    // Add null check and return empty array if no team members found
+    return response.data?.teamMemberCollection?.items ?? [];
+  } catch (error) {
+    console.error("Failed to fetch team members:", error);
+    throw error;
+  }
 }

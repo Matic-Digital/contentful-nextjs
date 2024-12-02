@@ -67,6 +67,14 @@ export interface TeamMember {
 }
 
 /**
+ * Processed response for team member grid
+ * @property members - Array of team members
+ */
+export interface TeamSection {
+  members: TeamMember[];
+}
+
+/**
  * Raw response structure from Contentful GraphQL API
  * @template T - The type of items in the collection (usually Article)
  * @property data - Contains the blog article collection if request succeeds
