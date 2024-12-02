@@ -87,7 +87,7 @@ export function ArticlesList({
 
   // Prefetch article data on hover
   const handleArticleHover = (slug: string) => {
-    queryClient.prefetchQuery(articleQueryOptions(slug));
+    void queryClient.prefetchQuery(articleQueryOptions(slug));
   };
 
   console.log("ArticlesList render:", {

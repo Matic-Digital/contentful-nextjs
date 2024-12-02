@@ -9,9 +9,10 @@
  */
 
 import { useState } from "react";
-import { type FieldApi, useForm } from "@tanstack/react-form";
+import { useRouter } from "next/navigation";
+import { type FieldApi, type Validator, useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
-import { z } from "zod";
+import { z, type ZodType, type ZodTypeDef } from "zod";
 
 import { useToast } from "@/hooks/use-toast";
 
@@ -44,7 +45,17 @@ interface FormFieldProps {
 }
 
 /** Displays validation state and error messages for a form field */
-function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
+function FieldInfo({
+  field,
+}: {
+  field: FieldApi<
+    { email: string; firstName: string; lastName: string; message: string },
+    keyof ContactFormData,
+    undefined,
+    Validator<unknown, ZodType<unknown, ZodTypeDef, unknown>>,
+    string
+  >;
+}) {
   return (
     <>
       {field.state.meta.isTouched && field.state.meta.errors.length ? (
@@ -92,6 +103,7 @@ type ContactFormData = z.infer<typeof contactSchema>;
  */
 export function ContactForm() {
   const { toast } = useToast();
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   /** Initialize form with validation and submission handling */
@@ -103,21 +115,15 @@ export function ContactForm() {
       message: "",
     } as ContactFormData,
     onSubmit: async ({ value }) => {
+      console.log("Form submitted:", value);
       if (isSubmitting) return;
       setIsSubmitting(true);
-
       try {
         // Simulate API call - replace with actual API endpoint
         await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        toast({
-          title: "Message sent",
-          description: "We'll get back to you as soon as possible.",
-        });
-
-        // Reset form after successful submission
-        form.reset();
+        router.push("/contact/success");
       } catch (error) {
+        console.log("Error sending message:", error);
         toast({
           title: "Error",
           description: "Failed to send message. Please try again.",
@@ -146,9 +152,8 @@ export function ContactForm() {
     return (
       <div className="space-y-2">
         <Label htmlFor={name}>{label}</Label>
-        <form.Field
-          name={name}
-          children={(field) => (
+        <form.Field name={name}>
+          {(field) => (
             <>
               {component === "input" ? (
                 <Input
@@ -177,17 +182,17 @@ export function ContactForm() {
               <FieldInfo field={field} />
             </>
           )}
-        />
+        </form.Field>
       </div>
     );
   }
 
   return (
     <form
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        form.handleSubmit();
+        await form.handleSubmit();
       }}
       className="space-y-6"
     >
@@ -195,7 +200,7 @@ export function ContactForm() {
         <CardHeader>
           <CardTitle>Contact Us</CardTitle>
           <CardDescription>
-            Fill out the form below and we'll get back to you as soon as
+            Fill out the form below and we&apos;ll get back to you as soon as
             possible.
           </CardDescription>
         </CardHeader>

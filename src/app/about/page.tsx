@@ -1,5 +1,5 @@
 // Dependencies
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Image from "next/image";
 
 // API
@@ -34,8 +34,8 @@ export default async function AboutPage() {
           About Matic
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          We're building the future of digital experiences through innovative
-          solutions and cutting-edge technology.
+          We&apos;re building the future of digital experiences through
+          innovative solutions and cutting-edge technology.
         </p>
       </div>
 
@@ -61,8 +61,9 @@ export default async function AboutPage() {
             </div>
             <h3 className="text-xl font-semibold">Our Company</h3>
             <p className="mt-2 text-muted-foreground">
-              Founded in 2024, we've grown into a team of passionate individuals
-              dedicated to pushing the boundaries of what's possible.
+              Founded in 2024, we&apos;ve grown into a team of passionate
+              individuals dedicated to pushing the boundaries of what&apos;s
+              possible.
             </p>
           </CardContent>
         </Card>

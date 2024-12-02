@@ -1,5 +1,6 @@
 // Next.js components and utilities
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
@@ -97,9 +98,9 @@ export default async function ArticlePage({
     <div className="container mx-auto px-5">
       {/* Navigation */}
       <div className="mb-4">
-        <a href="/articles" className="text-blue-600 hover:underline">
+        <Link href="/articles" className="text-blue-600 hover:underline">
           ← Back to Home
-        </a>
+        </Link>
       </div>
 
       <article className="prose mx-auto max-w-3xl space-y-8">

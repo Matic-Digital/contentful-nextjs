@@ -1,5 +1,5 @@
 // Next.js metadata types
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
 // Components
 import { ContactForm } from "@/components/ContactForm";
