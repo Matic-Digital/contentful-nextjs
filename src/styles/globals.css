@@ -3,6 +3,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Use globals.css for:
+ * Base element styles
+ * Simple component classes
+ * CSS reset/normalization
+ * Global CSS variables */
+
+/* Use tailwind.config.ts for:
+ * Complex utilities that need variants
+ * Custom color schemes
+ * Theme extensions
+ * Reusable utility patterns */
+
 /* CSS Variables for theme customization */
 @layer base {
   :root {
