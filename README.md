@@ -2,6 +2,13 @@
 
 This is a starter template for building a blog with Next.js, Contentful, and Mux. It includes a Docker-based development workflow for a consistent development experience across teams.
 
+## Prerequisites
+
+- Docker Desktop installed and running
+- Git
+
+No other local dependencies are required! Everything runs inside Docker containers.
+
 ## Development Workflow
 
 ### Initial Setup
@@ -43,12 +50,12 @@ Our Docker setup provides a consistent development environment with:
 
 2. View logs in a separate terminal:
    ```bash
-   ./scripts/dev logs
+   docker compose -f docker/docker-compose.yml logs -f
    ```
 
 3. Run commands inside the container:
    ```bash
-   ./scripts/dev shell
+   docker compose -f docker/docker-compose.yml exec web sh
    ```
 
 ### Development Commands
@@ -57,29 +64,23 @@ Our Docker setup provides a consistent development environment with:
 - `npm run dev:docker` - Start development environment
 - `npm run dev:fresh` - Clean start (useful after dependency changes)
 - `npm run docker:clean` - Remove containers and volumes
-- `./scripts/dev logs` - View container logs
-- `./scripts/dev shell` - Open shell in container
-- `./scripts/dev status` - Check container status
+- `npm run clean:all` - Clean everything (node_modules, .next, containers)
 
 ### Debugging
 
 1. **Container Logs**
    ```bash
-   # View all logs
-   ./scripts/dev logs
-   
-   # Follow logs in real-time
-   ./scripts/dev logs -f
+   docker compose -f docker/docker-compose.yml logs -f
    ```
 
 2. **Container Shell**
    ```bash
-   ./scripts/dev shell
+   docker compose -f docker/docker-compose.yml exec web sh
    ```
 
 3. **Health Checks**
    ```bash
-   ./scripts/dev status
+   docker compose -f docker/docker-compose.yml ps
    ```
 
 ### Best Practices
@@ -88,7 +89,6 @@ Our Docker setup provides a consistent development environment with:
    - Use `npm run dev:docker` for daily development
    - Run `npm run dev:fresh` after dependency changes
    - Keep the logs open in a separate terminal
-   - Use `./scripts/dev shell` for running commands
 
 2. **Performance**
    - Let Docker cache do its job (avoid unnecessary rebuilds)
@@ -96,8 +96,7 @@ Our Docker setup provides a consistent development environment with:
    - Keep node_modules in Docker volume
 
 3. **Troubleshooting**
-   - Check logs first (`./scripts/dev logs`)
-   - Verify container health (`./scripts/dev status`)
+   - Check logs first (`docker compose -f docker/docker-compose.yml logs -f`)
    - Try a fresh start (`npm run dev:fresh`)
    - Clean everything as last resort (`npm run clean:all`)
 
@@ -108,8 +107,6 @@ contentful-mux-nextjs-starter/
 ├── docker/                    # Docker-related files
 │   ├── Dockerfile           # Development Dockerfile
 │   └── docker-compose.yml   # Development compose configuration
-├── scripts/                   # Management scripts
-│   └── dev                  # Development environment management
 ├── src/                      # Application source code
 │   ├── app/                 # Next.js app router files
 │   ├── components/          # Reusable React components
@@ -121,13 +118,6 @@ contentful-mux-nextjs-starter/
 ├── package.json            # Node.js dependencies and scripts
 └── README.md               # Project documentation
 ```
-
-## Prerequisites
-
-- Docker Desktop installed and running
-- Git
-
-No other local dependencies are required! Everything runs inside Docker containers.
 
 ## Contributing
 

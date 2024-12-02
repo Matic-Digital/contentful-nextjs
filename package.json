@@ -18,7 +18,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "check": "npm run lint && npm run typecheck",
     "dev:fresh": "npm run docker:clean && npm run dev:docker-build",
-    "prepare": "husky && npm run format:write && npm run check",
+    "prepare": "husky",
     "test:types": "tsc --noEmit --pretty",
     "clean:all": "rm -rf .next node_modules && npm run docker:clean"
   },
