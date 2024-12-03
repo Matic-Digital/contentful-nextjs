@@ -10,12 +10,12 @@
  * CSS reset/normalization
  * Global CSS variables */
 
+/** @type {import('tailwindcss').Config} */
 import { type Config } from "tailwindcss";
-import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
   darkMode: ["class"],
-  content: ["./src/**/*.tsx"],
+  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     container: {
       center: true,
@@ -31,9 +31,6 @@ export default {
       },
     },
     extend: {
-      fontFamily: {
-        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
-      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

@@ -18,7 +18,7 @@ import { Toaster } from "@/components/ui/toaster";
  */
 export const metadata: Metadata = {
   title: "Matic - Contentful Next.js Starter",
-  description: "Contentful Next.js Starter",
+  description: "Modern content management and digital experiences",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
@@ -35,7 +35,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html
+      lang="en"
+      className={`${GeistSans.variable}`}
+      suppressHydrationWarning
+    >
       <body className="flex min-h-screen flex-col">
         <Providers>
           <Header />
