@@ -13,11 +13,6 @@
 /** @type {import('tailwindcss').Config} */
 import { type Config } from "tailwindcss";
 
-const fontFamily = {
-  sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
-  mono: ["var(--font-geist-mono)", "monospace"],
-};
-
 export default {
   darkMode: ["class"],
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
@@ -36,9 +31,6 @@ export default {
       },
     },
     extend: {
-      fontFamily: {
-        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
-      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

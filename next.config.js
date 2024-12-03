@@ -9,6 +9,10 @@ const nextConfig = {
   // Enable React strict mode for development
   reactStrictMode: true,
 
+  // Learn more here - https://nextjs.org/docs/advanced-features/compiler#module-transpilation
+  // Required for UI css to be transpiled correctly 👇
+  transpilePackages: ["jotai-devtools"],
+
   // Configure image domains for Next.js Image component
   images: {
     remotePatterns: [

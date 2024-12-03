@@ -20,6 +20,8 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 
+import { Logo } from "@/components/Logo";
+
 // Theme toggle component
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -33,18 +35,6 @@ const menuItems = [
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
-
-{
-  /* Logo */
-}
-function Logo() {
-  return (
-    <Link href="/" className="mr-6 flex items-center space-x-2">
-      <span className="text-gradient-pink text-lg font-extrabold">|||</span>
-      <span className="text-xl font-bold">Matic</span>
-    </Link>
-  );
-}
 
 /**
  * Header component with responsive navigation

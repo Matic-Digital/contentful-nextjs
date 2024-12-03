@@ -4,7 +4,6 @@ import "@/styles/globals.css";
 // Dependencies
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
-import { ThemeProvider } from "@/components/ThemeProvider";
 
 // Components
 import { Providers } from "@/components/Providers";
@@ -43,12 +42,10 @@ export default function RootLayout({
     >
       <body className="flex min-h-screen flex-col">
         <Providers>
-          <ThemeProvider>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Toaster />
-            <Footer />
-          </ThemeProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Toaster />
+          <Footer />
         </Providers>
       </body>
     </html>

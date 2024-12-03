@@ -1,6 +1,8 @@
 // Next.js imports
 import Link from "next/link";
 
+import { Logo } from "@/components/Logo";
+
 /**
  * Footer navigation configuration
  * Organized into sections with titles and links
@@ -50,13 +52,7 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           {/* Company information */}
           <div>
-            {/* Logo */}
-            <Link href="/" className="mr-6 flex items-center space-x-2">
-              <span className="text-gradient-pink text-lg font-extrabold">
-                |||
-              </span>
-              <span className="text-xl font-bold">Matic</span>
-            </Link>
+            <Logo />
             <p className="mt-4 max-w-xs text-sm text-muted-foreground">
               Modern blog platform built with Next.js, Contentful and Mux
             </p>
