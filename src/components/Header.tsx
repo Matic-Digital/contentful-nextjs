@@ -21,6 +21,9 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 
+// Theme toggle component
+import { ThemeToggle } from "@/components/ThemeToggle";
+
 /**
  * Navigation menu items configuration
  * Each item has a URL and display label
@@ -69,6 +72,9 @@ export function Header() {
               ))}
             </NavigationMenuList>
           </NavigationMenu>
+        </div>
+        <div className="ml-auto flex items-center space-x-4">
+          <ThemeToggle />
         </div>
 
         {/* Mobile Navigation */}
