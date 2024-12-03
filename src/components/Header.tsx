@@ -30,6 +30,7 @@ const menuItems = [
   { href: "/articles", label: "Articles" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
+  { href: "/template", label: "Templates" },
 ];
 
 /**
