@@ -17,7 +17,7 @@ export default async function HomePage() {
     <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center bg-gradient-to-b from-background to-background/50 text-foreground">
       <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
         <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-          <div className="flex gap-4">
+          <div className="stack gap-4 text-center lg:flex lg:flex-row lg:text-left">
             <span className="text-gradient-pink">A</span>
             {/* <span className="text-gradient-pink">|||</span> */}
             <span className="text-foreground">Matic Digital</span>

@@ -1,7 +1,5 @@
 "use client";
 
-import { Moon, Sun, Laptop } from "lucide-react";
-
 import { useTheme } from "@/components/ThemeProvider";
 
 import {
@@ -12,8 +10,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
+import { Moon, Sun, LaptopMinimalCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <DropdownMenu>
@@ -25,7 +35,7 @@ export function ThemeToggle() {
         >
           <Sun className={`size-5 ${theme === "light" ? "block" : "hidden"}`} />
           <Moon className={`size-5 ${theme === "dark" ? "block" : "hidden"}`} />
-          <Laptop
+          <LaptopMinimalCheck
             className={`size-5 ${theme === "system" ? "block" : "hidden"}`}
           />
           <span className="sr-only">Toggle theme</span>
@@ -41,7 +51,7 @@ export function ThemeToggle() {
           <span>Dark</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
-          <Laptop className="mr-2 h-4 w-4" />
+          <LaptopMinimalCheck className="mr-2 h-4 w-4" />
           <span>System</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

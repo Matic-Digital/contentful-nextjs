@@ -12,7 +12,7 @@ export default function ContactSuccessPage() {
       <Card className="mx-auto max-w-2xl">
         <CardHeader className="text-center">
           <div className="mb-4 flex justify-center">
-            <CheckCircle2 className="h-12 w-12 text-primary" />
+            <CheckCircle2 className="size-12 text-primary" />
           </div>
           <h1 className="text-2xl font-bold">Message Sent Successfully!</h1>
         </CardHeader>
