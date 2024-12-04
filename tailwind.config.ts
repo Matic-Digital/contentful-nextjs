@@ -12,6 +12,8 @@
 
 /** @type {import('tailwindcss').Config} */
 import { type Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
+import typography from "@tailwindcss/typography";
 
 export default {
   darkMode: ["class"],
@@ -31,6 +33,132 @@ export default {
       },
     },
     extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+            color: 'hsl(var(--foreground))',
+            a: {
+              color: 'hsl(var(--primary))',
+              textDecoration: 'none',
+              fontWeight: '500',
+              borderBottom: '1px solid transparent',
+              transition: 'all 0.2s ease-in-out',
+              '&:hover': {
+                color: 'hsl(var(--primary))',
+                borderBottomColor: 'hsl(var(--primary))',
+              },
+              '&:active': {
+                color: 'hsl(var(--primary-foreground))',
+                backgroundColor: 'hsl(var(--primary))',
+                borderBottomColor: 'transparent',
+                borderRadius: '0.25rem',
+              },
+            },
+            blockquote: {
+              borderLeftColor: 'hsl(var(--primary))',
+              color: 'hsl(var(--muted-foreground))',
+            },
+            h1: {
+              color: 'hsl(var(--foreground))',
+            },
+            h2: {
+              color: 'hsl(var(--foreground))',
+            },
+            h3: {
+              color: 'hsl(var(--foreground))',
+            },
+            h4: {
+              color: 'hsl(var(--foreground))',
+            },
+            strong: {
+              color: 'hsl(var(--foreground))',
+            },
+            kbd: {
+              color: 'hsl(var(--foreground))',
+              backgroundColor: 'hsl(var(--muted))',
+            },
+            th: {
+              color: 'hsl(var(--foreground))',
+            },
+            'code::before': {
+              content: '""',
+            },
+            'code::after': {
+              content: '""',
+            },
+            code: {
+              color: 'hsl(var(--primary))',
+              backgroundColor: 'hsl(var(--muted))',
+              borderRadius: '0.25rem',
+              padding: '0.2rem 0.4rem',
+            },
+            'ol > li::marker': {
+              color: 'hsl(var(--primary))',
+              fontWeight: '600',
+            },
+          },
+        },
+        dark: {
+          css: {
+            color: 'hsl(var(--foreground))',
+            a: {
+              color: 'hsl(var(--primary))',
+              textDecoration: 'none',
+              fontWeight: '500',
+              borderBottom: '1px solid transparent',
+              transition: 'all 0.2s ease-in-out',
+              '&:hover': {
+                color: 'hsl(var(--primary))',
+                borderBottomColor: 'hsl(var(--primary))',
+              },
+              '&:active': {
+                color: 'hsl(var(--primary-foreground))',
+                backgroundColor: 'hsl(var(--primary))',
+                borderBottomColor: 'transparent',
+              },
+            },
+            blockquote: {
+              borderLeftColor: 'hsl(var(--primary))',
+              color: 'hsl(var(--muted-foreground))',
+            },
+            h1: {
+              color: 'hsl(var(--foreground))',
+            },
+            h2: {
+              color: 'hsl(var(--foreground))',
+            },
+            h3: {
+              color: 'hsl(var(--foreground))',
+            },
+            h4: {
+              color: 'hsl(var(--foreground))',
+            },
+            strong: {
+              color: 'hsl(var(--foreground))',
+            },
+            kbd: {
+              color: 'hsl(var(--foreground))',
+              backgroundColor: 'hsl(var(--muted))',
+            },
+            th: {
+              color: 'hsl(var(--foreground))',
+            },
+            'code::before': {
+              content: '""',
+            },
+            'code::after': {
+              content: '""',
+            },
+            code: {
+              color: 'hsl(var(--primary))',
+              backgroundColor: 'hsl(var(--muted))',
+            },
+            'ol > li::marker': {
+              color: 'hsl(var(--primary))',
+            },
+          },
+        },
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -81,6 +209,8 @@ export default {
     },
   },
   plugins: [
+    typography,
+    tailwindcssAnimate,
     function ({
       addUtilities,
     }: {
@@ -105,7 +235,5 @@ export default {
         },
       });
     },
-    require("tailwindcss-animate"),
-    require("@tailwindcss/typography"),
   ],
 } satisfies Config;
