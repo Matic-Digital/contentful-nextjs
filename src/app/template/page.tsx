@@ -1,6 +1,7 @@
 // Dependencies
 import type { Metadata } from "next";
 import Image from "next/image";
+import MuxVideo from "@mux/mux-video-react";
 
 /**
  * Metadata for the Template page
@@ -19,111 +20,115 @@ export default async function TemplatePage() {
   return (
     <main className="container mx-auto px-4 py-8">
       <article className="prose prose-slate mx-auto lg:prose-lg">
-        {/* Headings: prose-headings (targets h1, h2, h3, h4, th) */}
-        <h1 className="prose-headings">Main Heading</h1>
-        <h2 className="prose-headings">Secondary Heading</h2>
-        <h3 className="prose-headings">Tertiary Heading</h3>
-        <h4 className="prose-headings">Quaternary Heading</h4>
+        {/* Headings */}
+        <h1>Main Heading</h1>
+        <h2>Secondary Heading</h2>
+        <h3>Tertiary Heading</h3>
+        <h4>Quaternary Heading</h4>
 
-        {/* Paragraphs: prose-p (targets p) */}
-        <p className="prose-p">
+        {/* Paragraphs */}
+        <p>
           This is a paragraph demonstrating the prose-p utility class. It
           inherits styles from @tailwindcss/typography without requiring any
           overrides.
         </p>
 
-        {/* Links: prose-a (targets a) */}
-        <a href="#" className="prose-a">
+        {/* Links */}
+        <a href="#">
           This is a link using prose-a
         </a>
 
-        {/* Blockquotes: prose-blockquote (targets blockquote) */}
-        <blockquote className="prose-blockquote">
+        {/* Blockquotes */}
+        <blockquote>
           This is a blockquote using prose-blockquote
         </blockquote>
 
-        {/* Figures: prose-figure (targets figure) and prose-figcaption */}
-        <figure className="prose-figure">
+        {/* Figures */}
+        <figure>
           <Image
             src={PLACEHOLDER_IMAGE}
             alt="Figure example"
             width={600}
             height={400}
           />
-          <figcaption className="prose-figcaption">
+          <figcaption>
             This is a figure caption using prose-figcaption
           </figcaption>
         </figure>
 
         {/* Inline Text */}
-        <div className="space-y-4">
-          <strong className="prose-strong">Bold text using prose-strong</strong>
-          <em className="prose-em">Emphasized text using prose-em</em>
-          <kbd className="prose-kbd">Keyboard input using prose-kbd</kbd>
-          <code className="prose-code">Code using prose-code</code>
+        <div className="flex flex-col space-y-2">
+          <strong>Bold text using prose-strong</strong>
+          <em>Emphasized text using prose-em</em>
+          <kbd>Keyboard input using prose-kbd</kbd>
+          <code>Code using prose-code</code>
         </div>
 
-        {/* Preformatted Text: prose-pre (targets pre) */}
-        <pre className="prose-pre">
+        {/* Preformatted Text */}
+        <pre>
           {`function example() {
   return "Preformatted text using prose-pre";
 }`}
         </pre>
 
         {/* Lists */}
-        <div className="space-y-6">
+        <div>
           {/* Ordered List */}
-          <ol className="prose-ol">
-            <li className="prose-li">First ordered item</li>
-            <li className="prose-li">Second ordered item</li>
-            <li className="prose-li">Third ordered item</li>
+          <ol>
+            <li>First ordered item</li>
+            <li>Second ordered item</li>
+            <li>Third ordered item</li>
           </ol>
 
           {/* Unordered List */}
-          <ul className="prose-ul">
-            <li className="prose-li">First unordered item</li>
-            <li className="prose-li">Second unordered item</li>
-            <li className="prose-li">Third unordered item</li>
+          <ul>
+            <li>First unordered item</li>
+            <li>Second unordered item</li>
+            <li>Third unordered item</li>
           </ul>
         </div>
 
         {/* Tables */}
-        <table className="prose-table">
-          <thead className="prose-thead">
-            <tr className="prose-tr">
-              <th className="prose-th">Header 1</th>
-              <th className="prose-th">Header 2</th>
+        <table>
+          <thead>
+            <tr>
+              <th>Header 1</th>
+              <th>Header 2</th>
             </tr>
           </thead>
           <tbody>
-            <tr className="prose-tr">
-              <td className="prose-td">Cell 1</td>
-              <td className="prose-td">Cell 2</td>
+            <tr>
+              <td>Cell 1</td>
+              <td>Cell 2</td>
             </tr>
           </tbody>
         </table>
 
         {/* Media */}
-        <div className="space-y-4">
+        <div>
           {/* Image */}
           <Image
             src={PLACEHOLDER_IMAGE}
             alt="Image example"
-            className="prose-img w-full"
             width={500}
             height={300}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
 
           {/* Video */}
-          <video className="prose-video" controls>
-            <source src="/sample.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          <MuxVideo
+            src="https://stream.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe.m3u8"
+            type="hls"
+            metadata={{
+              video_id: "video-template",
+              video_title: "Template Video",
+            }}
+            controls
+          />
         </div>
 
         {/* Separator */}
-        <hr className="prose-hr" />
+        <hr />
       </article>
     </main>
   );
