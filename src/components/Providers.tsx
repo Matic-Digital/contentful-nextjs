@@ -7,6 +7,13 @@ import { type ReactNode } from "react";
 import { Provider as JotaiProvider } from "jotai";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+// Theme
+import { ThemeProvider } from "@/components/ThemeProvider";
+
+// Utils
+import { DevTools } from "jotai-devtools";
+import "jotai-devtools/styles.css";
+
 /**
  * Global providers wrapper component
  * Configures React Query for data fetching and Jotai for state management
@@ -19,7 +26,10 @@ export const Providers = ({ children }: { children: ReactNode }) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <JotaiProvider>{children}</JotaiProvider>
+      <JotaiProvider>
+        <DevTools theme="dark" />
+        <ThemeProvider>{children}</ThemeProvider>
+      </JotaiProvider>
     </QueryClientProvider>
   );
 };
