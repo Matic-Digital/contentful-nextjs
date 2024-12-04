@@ -1,6 +1,6 @@
 import { TeamMemberImage } from "./TeamMemberImage";
 
-import { type TeamSection } from "@/lib/types";
+import { type TeamSection } from "@/types";
 
 /**
  * A server component that renders a grid of team members

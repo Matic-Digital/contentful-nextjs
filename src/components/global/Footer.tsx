@@ -1,7 +1,7 @@
 // Next.js imports
 import Link from "next/link";
 
-import { Logo } from "@/components/Logo";
+import { Logo } from "@/components/global/Logo";
 
 /**
  * Footer navigation configuration

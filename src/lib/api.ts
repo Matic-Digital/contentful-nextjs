@@ -9,7 +9,14 @@ import type {
   TeamMember,
   ArticlesResponse,
   ContentfulResponse,
-} from "./types";
+} from "@/types";
+
+import {
+  ContentfulError,
+  NetworkError,
+  GraphQLError,
+  ResourceNotFoundError,
+} from './errors';
 
 /**
  * GraphQL fragment defining the structure of article data to fetch
@@ -66,35 +73,47 @@ async function fetchGraphQL<T>(
   preview = false,
   cacheConfig?: { next: { revalidate: number } },
 ): Promise<ContentfulResponse<T>> {
-  const response = await fetch(
-    `https://graphql.contentful.com/content/v1/spaces/${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${
-          preview
-            ? process.env.NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN
-            : process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN
-        }`,
+  try {
+    const response = await fetch(
+      `https://graphql.contentful.com/content/v1/spaces/${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            preview
+              ? process.env.NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN
+              : process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN
+          }`,
+        },
+        body: JSON.stringify({ query, variables }),
+        next: cacheConfig?.next,
       },
-      body: JSON.stringify({ query, variables }),
-      next: cacheConfig?.next,
-    },
-  );
+    );
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch data: ${response.statusText}`);
+    if (!response.ok) {
+      throw new NetworkError(
+        `Network error: ${response.statusText}`,
+        response
+      );
+    }
+
+    const json = (await response.json()) as ContentfulResponse<T>;
+
+    if (json.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        json.errors
+      );
+    }
+
+    return json;
+  } catch (error) {
+    if (error instanceof NetworkError || error instanceof GraphQLError) {
+      throw error;
+    }
+    throw new ContentfulError('Failed to fetch data from Contentful', error);
   }
-
-  const json = (await response.json()) as ContentfulResponse<T>;
-
-  if (json.errors) {
-    const errorMessage = json.errors.map((error) => error.message).join("; ");
-    throw new Error(`GraphQL Error: ${errorMessage}`);
-  }
-
-  return json;
 }
 
 export const ARTICLES_PER_PAGE = 3;
@@ -111,36 +130,52 @@ export async function getAllArticles(
   isDraftMode = false,
   skip = 0,
 ): Promise<ArticlesResponse> {
-  console.log("Fetching articles:", { limit, skip, isDraftMode });
+  try {
+    console.log("Fetching articles:", { limit, skip, isDraftMode });
 
-  const response = await fetchGraphQL(
-    `query GetArticles($limit: Int!, $skip: Int!) {
-      blogArticleCollection(limit: $limit, skip: $skip, order: sys_firstPublishedAt_DESC) {
-        total
-        items {
-          ${ARTICLE_GRAPHQL_FIELDS}
+    const response = await fetchGraphQL(
+      `query GetArticles($limit: Int!, $skip: Int!) {
+        blogArticleCollection(limit: $limit, skip: $skip, order: sys_firstPublishedAt_DESC) {
+          total
+          items {
+            ${ARTICLE_GRAPHQL_FIELDS}
+          }
         }
-      }
-    }`,
-    { limit, skip },
-    isDraftMode,
-  );
-  console.log("GraphQL Response:", response.data?.blogArticleCollection);
+      }`,
+      { limit, skip },
+      isDraftMode,
+    );
 
-  const collection = response.data?.blogArticleCollection;
-  if (!collection) {
-    return { items: [], total: 0, hasMore: false, totalPages: 0 };
+    // Check for GraphQL errors
+    if (response.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors
+      );
+    }
+
+    console.log("GraphQL Response:", response.data?.blogArticleCollection);
+
+    const collection = response.data?.blogArticleCollection;
+    if (!collection) {
+      return { items: [], total: 0, hasMore: false, totalPages: 0 };
+    }
+
+    const result = {
+      items: collection.items,
+      total: collection.total,
+      hasMore: skip + limit < collection.total,
+      totalPages: Math.ceil(collection.total / limit),
+    };
+
+    console.log("Returning articles:", result);
+    return result;
+  } catch (error) {
+    if (error instanceof GraphQLError) {
+      throw error;
+    }
+    throw new ContentfulError('Failed to fetch articles', error);
   }
-
-  const result = {
-    items: collection.items,
-    total: collection.total,
-    hasMore: skip + limit < collection.total,
-    totalPages: Math.ceil(collection.total / limit),
-  };
-
-  console.log("Returning articles:", result);
-  return result;
 }
 
 /**
@@ -153,23 +188,46 @@ export async function getArticle(
   slug: string,
   isDraftMode = false,
 ): Promise<Article | null> {
-  const response = await fetchGraphQL<Article>(
-    `query GetArticle {
-      blogArticleCollection(
-        where: { slug: "${slug}" },
-        limit: 1,
-      ) {
-        items {
-          ${ARTICLE_GRAPHQL_FIELDS}
+  try {
+    const response = await fetchGraphQL<Article>(
+      `query GetArticle {
+        blogArticleCollection(
+          where: { slug: "${slug}" },
+          limit: 1,
+        ) {
+          items {
+            ${ARTICLE_GRAPHQL_FIELDS}
+          }
         }
-      }
-    }`,
-    {},
-    isDraftMode,
-  );
+      }`,
+      {},
+      isDraftMode,
+    );
 
-  const article = response.data?.blogArticleCollection?.items[0];
-  return article ?? null;
+    // Check for GraphQL errors
+    if (response.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors
+      );
+    }
+
+    const article = response.data?.blogArticleCollection?.items[0];
+
+    if (!article) {
+      throw new ResourceNotFoundError(
+        `Article with slug '${slug}' not found`,
+        'article'
+      );
+    }
+
+    return article;
+  } catch (error) {
+    if (error instanceof ResourceNotFoundError) {
+      throw error;
+    }
+    throw new ContentfulError('Failed to fetch article', error);
+  }
 }
 
 export async function getTeamMembers(
@@ -190,13 +248,15 @@ export async function getTeamMembers(
 
     // Check for GraphQL errors
     if (response.errors) {
-      throw new Error(response.errors.map((error) => error.message).join("; "));
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors
+      );
     }
 
     // Add null check and return empty array if no team members found
     return response.data?.teamMemberCollection?.items ?? [];
   } catch (error) {
-    console.error("Failed to fetch team members:", error);
-    throw error;
+    throw new ContentfulError('Failed to fetch team members', error);
   }
 }

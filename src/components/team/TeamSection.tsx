@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 
 import { TeamGrid, TeamGridSkeleton } from "@/components/team/TeamGrid";
-import { TeamErrorBoundary } from "@/components/team/TeamErrorBoundary";
+import { ErrorBoundary } from "@/components/global/ErrorBoundary";
 
-import type { TeamSection } from "@/lib/types";
+import type { TeamSection } from "@/types";
 
 /**
  * A server component that displays the team section with loading states
@@ -22,11 +22,11 @@ export function TeamSection({ members }: TeamSection) {
           The talented individuals who make it all possible
         </p>
       </div>
-      <TeamErrorBoundary>
+      <ErrorBoundary>
         <Suspense fallback={<TeamGridSkeleton />}>
           <TeamGrid members={members} />
         </Suspense>
-      </TeamErrorBoundary>
+      </ErrorBoundary>
     </section>
   );
 }

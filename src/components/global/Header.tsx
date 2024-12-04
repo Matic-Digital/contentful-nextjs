@@ -1,6 +1,7 @@
 // Next.js and icon imports
 import Link from "next/link";
 import { Menu } from "lucide-react";
+import { ErrorBoundary } from "@/components/global/ErrorBoundary";
 
 // Navigation menu components from shadcn
 import {
@@ -20,10 +21,10 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 
-import { Logo } from "@/components/Logo";
+import { Logo } from "@/components/global/Logo";
 
 // Theme toggle component
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { ThemeToggle } from "@/components/global/ThemeToggle";
 
 /**
  * Navigation menu items configuration
@@ -53,21 +54,23 @@ export function Header() {
         <Logo />
         <div className="mr-4 hidden md:flex">
           {/* Desktop Menu Items */}
-          <NavigationMenu>
-            <NavigationMenuList>
-              {menuItems.map((item) => (
-                <NavigationMenuItem key={item.href}>
-                  <Link href={item.href} legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
-                    >
-                      {item.label}
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-              ))}
-            </NavigationMenuList>
-          </NavigationMenu>
+          <ErrorBoundary>
+            <NavigationMenu>
+              <NavigationMenuList>
+                {menuItems.map((item) => (
+                  <NavigationMenuItem key={item.href}>
+                    <Link href={item.href} legacyBehavior passHref>
+                      <NavigationMenuLink
+                        className={navigationMenuTriggerStyle()}
+                      >
+                        {item.label}
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
+          </ErrorBoundary>
         </div>
 
         <div className="ml-auto mr-4">
