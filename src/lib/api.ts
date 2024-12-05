@@ -44,6 +44,9 @@ const ARTICLE_GRAPHQL_FIELDS = `
   }
   featuredImage {
     url
+    description
+    width
+    height
   }
   video
 `;

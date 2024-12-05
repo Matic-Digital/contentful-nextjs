@@ -30,6 +30,9 @@ export interface Article {
   };
   featuredImage: {
     url: string;
+    description?: string;
+    width: number;
+    height: number;
   } | null;
   video: {
     assetId: string;

@@ -22,10 +22,7 @@ import {
 // Types
 import { type Article } from "@/types";
 
-/**
- * Default image to display when article has no featured image
- */
-const PLACEHOLDER_IMAGE = "https://placehold.co/600x400/png";
+import { PLACEHOLDER_IMAGE } from "@/constants/images";
 
 /**
  * Props interface for the article page
@@ -165,11 +162,12 @@ export default async function ArticlePage({
             ) : (
               // Fallback for when there's no video
               <Image
-                src={article.featuredImage?.url ?? PLACEHOLDER_IMAGE}
-                alt={`Cover image for ${article.title}`}
-                height={263}
-                width={350}
-                className="aspect-video w-full rounded-md object-cover"
+                src={article.featuredImage?.url ?? PLACEHOLDER_IMAGE.url}
+                alt={article.featuredImage?.description ?? "Article featured image"}
+                width={article.featuredImage?.width ?? PLACEHOLDER_IMAGE.width}
+                height={article.featuredImage?.height ?? PLACEHOLDER_IMAGE.height}
+                className="aspect-video rounded-lg object-cover"
+                priority
               />
             )}
 
