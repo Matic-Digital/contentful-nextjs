@@ -1,1 +1,19 @@
-npm run check
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Try local check first
+echo "\033[33mRunning local checks...\033[0m"
+if OUTPUT=$(npm run check 2>&1); then
+    echo "\033[32m✓ Local checks passed\033[0m"
+    exit 0
+else
+    # Check if the error is due to missing command/dependency
+    if echo "$OUTPUT" | grep -q "command not found"; then
+        echo "\033[33mDependencies not found locally, trying in Docker...\033[0m"
+        npm run docker:check
+    else
+        # If it's a linting/type error, show the output and exit with error
+        echo "$OUTPUT"
+        exit 1
+    fi
+fi

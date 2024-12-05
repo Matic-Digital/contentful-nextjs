@@ -33,7 +33,7 @@ No other local dependencies are required! Everything runs inside Docker containe
    - `MUX_TOKEN_ID`
    - `MUX_TOKEN_SECRET`
 
-### Daily Development
+### Docker Development
 
 Our Docker setup provides a consistent development environment with:
 
@@ -43,73 +43,78 @@ Our Docker setup provides a consistent development environment with:
 - 🔍 Health checks for reliability
 - 👤 Secure non-root user setup
 
-#### Docker Development
-
-1. Start the development server:
-
-   ```bash
-   npm run dev:docker
-   ```
-
-   The app will be available at http://localhost:3000
-
-2. View logs in a separate terminal:
-
-   ```bash
-   ./scripts/dev logs
-   ```
-
-3. Run commands inside the container:
-   ```bash
-   ./scripts/dev shell
-   ```
-
-### Development Commands
-
 #### Docker Commands
 
-- `npm run dev:docker` - Start development environment
-- `npm run dev:fresh` - Clean start (useful after dependency changes)
-- `npm run docker:clean` - Remove containers and volumes
-- `npm run clean:all` - Clean everything (node_modules, .next, containers)
+```bash
+# Start development server
+npm run docker:start
 
-### Debugging
+# Build the application
+npm run docker:build
 
-1. **Container Logs**
+# Run linting and type checking
+npm run docker:check
 
-   ```bash
-   ./scripts/dev logs
-   ```
+# Stop the development server
+npm run docker:down
 
-2. **Container Shell**
+# Clean up containers and volumes
+npm run docker:clean
 
-   ```bash
-   ./scripts/dev shell
-   ```
+# Remove all Matic Docker resources
+npm run docker:purge
+```
 
-3. **Health Checks**
-   ```bash
-   docker compose -f docker/docker-compose.yml ps
-   ```
+#### Development Features
 
-### Best Practices
+- **Hot Reloading**: Changes to your code will automatically trigger rebuilds
+- **Container Management**: 
+  - The container is named `Matic-Docker-App` for easy identification
+  - Volumes are prefixed with `matic-docker-` for organization
+- **Automatic Cleanup**: 
+  - Pressing Ctrl+C during development automatically cleans up resources
+  - `docker:check` automatically manages container lifecycle
+- **Development Tools**:
+  - Access container shell: `./scripts/dev shell`
+  - View logs: `./scripts/dev logs`
+  - Check status: `./scripts/dev status`
 
-1. **Docker Development**
+#### Best Practices
 
-   - Use `npm run dev:docker` for daily development
-   - Run `npm run dev:fresh` after dependency changes
-   - Keep the logs open in a separate terminal
+1. **Development Workflow**
+   - Use `npm run docker:start` for daily development
+   - Run `npm run docker:check` before committing changes
+   - Keep the logs visible for debugging
 
-2. **Performance**
-
-   - Let Docker cache do its job (avoid unnecessary rebuilds)
-   - Use volume mounts for development
-   - Keep node_modules in Docker volume
+2. **Resource Management**
+   - Use `npm run docker:clean` to clean up after development
+   - Use `npm run docker:purge` when switching branches or for deep cleaning
 
 3. **Troubleshooting**
-   - Check logs first (`./scripts/dev logs`)
-   - Try a fresh start (`npm run dev:fresh`)
-   - Clean everything as last resort (`npm run clean:all`)
+   - Check container status with `./scripts/dev status`
+   - View logs with `./scripts/dev logs`
+   - If in doubt, run `npm run docker:purge` and start fresh
+
+### Non-Docker Development
+
+If you prefer to develop without Docker, you'll need:
+- Node.js (version specified in package.json)
+- npm (version specified in package.json)
+
+Then you can use these commands:
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build the application
+npm run build
+
+# Run linting and type checking
+npm run check
+```
 
 ## Project Structure
 

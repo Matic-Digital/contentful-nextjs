@@ -6,10 +6,16 @@ version: '3.8'
 services:
   # Main application service
   app:
+    # Custom container name
+    container_name: Matic-Docker-App
+    # Custom image name
+    image: matic-docker-app:dev
     # Build from local Dockerfile optimized for development
     build:
       context: ..
       dockerfile: docker/Dockerfile
+      args:
+        - NODE_ENV=development
     
     # Enable container restarts
     restart: unless-stopped
@@ -22,7 +28,7 @@ services:
     # Mount local directories for development
     volumes:
       # Source code (enables hot reloading)
-      - ..:/app
+      - ..:/app:delegated
       # Node modules (cached in Docker volume)
       - node_modules:/app/node_modules
       # Next.js build cache (faster rebuilds)
@@ -37,12 +43,14 @@ services:
       - NODE_ENV=development
       - HOSTNAME=0.0.0.0
       - PORT=3000
+      # Disable Next.js telemetry
+      - NEXT_TELEMETRY_DISABLED=1
       # Enable Next.js debugging (accessible on port 9229)
       - NODE_OPTIONS=--inspect
     
     # Health check to ensure container is running properly
     healthcheck:
-      test: ["CMD", "wget", "--spider", "http://localhost:3000"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -59,5 +67,7 @@ services:
 volumes:
   # Persist node_modules to avoid reinstalling on every build
   node_modules:
+    name: matic-docker-node-modules
   # Cache Next.js build files for faster rebuilds
   next-cache:
+    name: matic-docker-next-cache
