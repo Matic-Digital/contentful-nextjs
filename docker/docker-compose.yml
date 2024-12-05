@@ -21,7 +21,7 @@ services:
     # Map container ports to host
     ports:
       - "3000:3000"     # Next.js application
-      - "9339:9339"     # Node.js debugger (changed from 9229 to avoid conflicts)
+      # Node.js debugger port is now optional and configured via environment
     
     # Mount local directories for development
     volumes:
@@ -43,8 +43,7 @@ services:
       - PORT=3000
       # Disable Next.js telemetry
       - NEXT_TELEMETRY_DISABLED=1
-      # Enable Next.js debugging (accessible on port 9339)
-      - NODE_OPTIONS=--inspect=0.0.0.0:9339
+      # Node.js debugging is now optional
     
     # Health check to ensure container is running properly
     healthcheck:
