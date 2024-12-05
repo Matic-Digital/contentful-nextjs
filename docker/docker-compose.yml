@@ -1,8 +1,6 @@
 # Development Docker Compose Configuration
 # This file is optimized for local development with hot-reloading and debugging
 
-version: '3.8'
-
 services:
   # Main application service
   app:
@@ -23,7 +21,7 @@ services:
     # Map container ports to host
     ports:
       - "3000:3000"     # Next.js application
-      - "9229:9229"     # Node.js debugger
+      - "9339:9339"     # Node.js debugger (changed from 9229 to avoid conflicts)
     
     # Mount local directories for development
     volumes:
@@ -45,8 +43,8 @@ services:
       - PORT=3000
       # Disable Next.js telemetry
       - NEXT_TELEMETRY_DISABLED=1
-      # Enable Next.js debugging (accessible on port 9229)
-      - NODE_OPTIONS=--inspect
+      # Enable Next.js debugging (accessible on port 9339)
+      - NODE_OPTIONS=--inspect=0.0.0.0:9339
     
     # Health check to ensure container is running properly
     healthcheck:
