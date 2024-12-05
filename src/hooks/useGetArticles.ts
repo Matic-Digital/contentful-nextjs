@@ -7,7 +7,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { getAllArticles } from "@/lib/api";
 
 // Types
-import type { Article, ArticlesResponse } from "@/lib/types";
+import type { Article, ArticlesResponse } from "@/types";
 
 /**
  * Number of articles to fetch per page
@@ -33,9 +33,22 @@ export function useGetArticles(initialData?: Article[]) {
     queryKey: ["articles"],
     // Updated query function to match React Query's infinite query context
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    queryFn: async ({ pageParam, queryKey, signal }) => {
-      const skip = ((pageParam as number) - 1) * ARTICLES_PER_PAGE;
-      return getAllArticles(ARTICLES_PER_PAGE, false, skip);
+    queryFn: async ({ pageParam, signal }) => {
+      try {
+        const skip = ((pageParam as number) - 1) * ARTICLES_PER_PAGE;
+        const response = await getAllArticles(ARTICLES_PER_PAGE, false, skip);
+
+        if (!response.items.length && pageParam === 1) {
+          throw new Error("No articles found");
+        }
+
+        return response;
+      } catch (error) {
+        // Convert any error to Error type
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to fetch articles");
+      }
     },
     initialPageParam: 1,
     // Determine if there's a next page based on the hasMore flag
@@ -50,12 +63,19 @@ export function useGetArticles(initialData?: Article[]) {
             {
               items: initialData,
               total: initialData.length,
-              hasMore: true,
-              totalPages: Math.ceil(initialData.length / ARTICLES_PER_PAGE),
+              hasMore: false,
+              totalPages: 1,
             },
           ],
           pageParams: [1],
         }
       : undefined,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: (failureCount, error) => {
+      // Don't retry if we got a "No articles found" error
+      if (error.message === "No articles found") return false;
+      // Only retry 3 times for other errors
+      return failureCount < 3;
+    },
   });
 }

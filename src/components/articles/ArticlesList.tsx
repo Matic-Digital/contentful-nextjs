@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+
 import { useQueryClient } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
@@ -17,7 +16,6 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -28,8 +26,10 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
+import { ArticleCard } from "@/components/articles/ArticleCard";
+
 // Types
-import { type Article } from "@/lib/types";
+import { type Article } from "@/types";
 
 /** Props for the main ArticlesList component */
 interface ArticlesListProps {
@@ -40,17 +40,30 @@ interface ArticlesListProps {
   /** Whether to show pagination controls */
   showPagination?: boolean;
   /** Number of articles per page (only needed when showPagination is true) */
-  pageSize?: number;
+  perPage?: number;
 }
 
-/** Props for individual article card components */
-interface ArticleCardProps {
-  article: Article;
-  onMouseEnter: (slug: string) => void;
+/**
+ * Loading skeleton component for articles
+ */
+function ArticleSkeleton() {
+  return (
+    <Card className="h-full overflow-hidden transition-colors">
+      <CardContent className="overflow-hidden p-0">
+        <Skeleton className="aspect-[4/3] w-full object-cover" />
+      </CardContent>
+      <CardHeader>
+        <Skeleton className="line-clamp-2 h-6 w-3/4" />
+        <CardFooter className="px-0 pt-2">
+          <div className="flex flex-col gap-1 text-xs">
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-3 w-32" />
+          </div>
+        </CardFooter>
+      </CardHeader>
+    </Card>
+  );
 }
-
-/** Fallback image for articles without a featured image */
-const PLACEHOLDER_IMAGE = "https://placehold.co/600x400/png";
 
 /**
  * Main component for displaying a paginated list of articles
@@ -59,29 +72,27 @@ export function ArticlesList({
   initialArticles,
   initialTotal,
   showPagination = true,
-  pageSize = 3,
+  perPage = 3,
 }: ArticlesListProps) {
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
 
-  // Determine grid columns based on pageSize
+  // Determine grid columns based on perPage
   const gridCols =
     {
       3: "lg:grid-cols-3",
       4: "lg:grid-cols-4",
-    }[pageSize] ?? "lg:grid-cols-3";
+    }[perPage] ?? "lg:grid-cols-3";
 
   // Only fetch data if pagination is enabled
   const { data, isLoading } = useGetArticlesPagination({
     page,
-    pageSize,
+    perPage,
     initialData: {
       items: initialArticles,
       total: initialTotal ?? initialArticles.length,
-      hasMore: (initialTotal ?? initialArticles.length) > pageSize,
-      totalPages: Math.ceil(
-        (initialTotal ?? initialArticles.length) / pageSize,
-      ),
+      hasMore: (initialTotal ?? initialArticles.length) > perPage,
+      totalPages: Math.ceil((initialTotal ?? initialArticles.length) / perPage),
     },
   });
 
@@ -92,7 +103,7 @@ export function ArticlesList({
 
   console.log("ArticlesList render:", {
     initialArticles,
-    pageSize,
+    perPage,
     showPagination,
     currentData: data,
     isLoading,
@@ -101,7 +112,7 @@ export function ArticlesList({
 
   // Only show pagination if we have more than one page and pagination is enabled
   const shouldShowPagination =
-    showPagination && (data?.total ?? initialTotal ?? 0) > pageSize;
+    showPagination && (data?.total ?? initialTotal ?? 0) > perPage;
 
   // Use initial articles when pagination is disabled
   const articles = showPagination
@@ -109,14 +120,14 @@ export function ArticlesList({
     : initialArticles;
   const totalPages = showPagination
     ? (data?.totalPages ??
-      Math.ceil((initialTotal ?? initialArticles.length) / pageSize))
+      Math.ceil((initialTotal ?? initialArticles.length) / perPage))
     : 1;
 
   return (
     <div className="stack gap-8">
       <div className={cn("grid grid-cols-1 gap-6 sm:grid-cols-2", gridCols)}>
         {isLoading
-          ? Array.from({ length: pageSize }).map((_, i) => (
+          ? Array.from({ length: perPage }).map((_, i) => (
               <ArticleSkeleton key={i} />
             ))
           : articles.map((article) => (
@@ -155,62 +166,5 @@ export function ArticlesList({
         </Pagination>
       )}
     </div>
-  );
-}
-
-/**
- * Renders a single article card with image and metadata
- */
-function ArticleCard({ article, onMouseEnter }: ArticleCardProps) {
-  return (
-    <Link
-      href={`/articles/${article.slug}`}
-      onMouseEnter={() => onMouseEnter(article.slug)}
-      className="group block h-full"
-    >
-      <Card className="h-full overflow-hidden transition-colors">
-        <CardContent className="overflow-hidden p-0">
-          <Image
-            src={article.featuredImage?.url ?? PLACEHOLDER_IMAGE}
-            alt={`Cover image for ${article.title}`}
-            height={263}
-            width={350}
-            className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            priority={false}
-          />
-        </CardContent>
-        <CardHeader>
-          <CardTitle className="line-clamp-2">{article.title}</CardTitle>
-          <CardFooter className="px-0 pt-2">
-            <div className="flex flex-col gap-1 text-xs text-muted-foreground">
-              <div>ID: {article.sys.id}</div>
-              <div>Slug: {article.slug}</div>
-            </div>
-          </CardFooter>
-        </CardHeader>
-      </Card>
-    </Link>
-  );
-}
-
-/**
- * Loading skeleton component for articles
- */
-function ArticleSkeleton() {
-  return (
-    <Card className="h-full overflow-hidden transition-colors">
-      <CardContent className="overflow-hidden p-0">
-        <Skeleton className="aspect-[4/3] w-full object-cover" />
-      </CardContent>
-      <CardHeader>
-        <Skeleton className="line-clamp-2 h-6 w-3/4" />
-        <CardFooter className="px-0 pt-2">
-          <div className="flex flex-col gap-1 text-xs">
-            <Skeleton className="h-3 w-24" />
-            <Skeleton className="h-3 w-32" />
-          </div>
-        </CardFooter>
-      </CardHeader>
-    </Card>
   );
 }

@@ -2,7 +2,8 @@
 import type { Metadata } from "next";
 
 // Components
-import { ContactForm } from "@/components/ContactForm";
+import { ContactForm } from "@/components/forms/ContactForm";
+import { ErrorBoundary } from "@/components/global/ErrorBoundary";
 
 /**
  * Metadata for the contact page
@@ -32,7 +33,9 @@ export default function ContactPage() {
 
       {/* Contact Form Section */}
       <div className="mx-auto mt-12 max-w-xl">
-        <ContactForm />
+        <ErrorBoundary>
+          <ContactForm />
+        </ErrorBoundary>
       </div>
     </div>
   );

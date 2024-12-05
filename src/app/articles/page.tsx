@@ -5,7 +5,8 @@ import type { Metadata } from "next";
 import { getAllArticles } from "@/lib/api";
 
 // Components
-import { ArticlesList } from "@/components/ArticlesList";
+import { ArticlesList } from "@/components/articles/ArticlesList";
+import { ErrorBoundary } from "@/components/global/ErrorBoundary";
 
 /**
  * Metadata configuration for SEO
@@ -29,12 +30,14 @@ export default async function ArticlesPage() {
       </header>
 
       <div className="mt-8 md:mt-12">
-        <ArticlesList
-          initialArticles={initialArticles.items}
-          initialTotal={initialArticles.total}
-          pageSize={4}
-          showPagination={true}
-        />
+        <ErrorBoundary>
+          <ArticlesList
+            initialArticles={initialArticles.items}
+            initialTotal={initialArticles.total}
+            perPage={4}
+            showPagination={true}
+          />
+        </ErrorBoundary>
       </div>
     </div>
   );

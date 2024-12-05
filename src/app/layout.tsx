@@ -6,9 +6,9 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
 // Components
-import { Providers } from "@/components/Providers";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { Providers } from "@/app/providers";
+import { Header } from "@/components/global/Header";
+import { Footer } from "@/components/global/Footer";
 import { Toaster } from "@/components/ui/toaster";
 
 /**
@@ -35,11 +35,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${GeistSans.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={`${GeistSans.variable}`}>
       <body className="flex min-h-screen flex-col">
         <Providers>
           <Header />
