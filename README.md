@@ -116,6 +116,228 @@ npm run build
 npm run check
 ```
 
+## Feature Development Workflow
+
+Our feature development workflow is designed to maintain high code quality and consistency across the team. Follow these guidelines for all feature development:
+
+### 1. Branch Management
+
+- **Branch Naming Convention**: 
+  ```
+  <type>/<ticket-number>-<brief-description>
+  ```
+  - Types: `feature`, `bugfix`, `hotfix`, `refactor`, `docs`
+  - Example: `feature/MATIC-123-add-video-player`
+
+- **Branch Lifecycle**:
+  1. Create from latest `main`
+  2. Regular commits during development
+  3. Rebase with `main` before PR
+  4. Delete after merge
+
+### 2. Development Process
+
+1. **Planning**:
+   - Review ticket requirements
+   - Break down into tasks
+   - Identify affected components
+   - Plan test coverage
+
+2. **Local Development**:
+   ```bash
+   # Start fresh with a new branch
+   git checkout main
+   git pull
+   git checkout -b feature/MATIC-XXX-description
+   
+   # Start development environment
+   npm run docker:start
+   ```
+
+3. **Development Loop**:
+   - Write code with hot-reloading
+   - Run checks frequently:
+     ```bash
+     npm run docker:check
+     ```
+   - Commit logical chunks of work
+   - Update tests and documentation
+
+### 3. Code Quality Standards
+
+- **Commit Messages**:
+  ```
+  <type>: <description>
+  
+  [optional body]
+  [optional ticket reference]
+  ```
+  - Types: `feat`, `fix`, `refactor`, `docs`, `style`, `test`, `chore`
+  - Example: `feat: add video player component`
+
+- **Pre-commit Checks**:
+  - Linting (ESLint)
+  - Type checking (TypeScript)
+  - Code formatting (Prettier)
+  - Unit tests (if applicable)
+
+- **Code Style**:
+  - Follow ESLint configuration
+  - Use TypeScript strictly
+  - Document complex logic
+  - Keep components focused
+  - Follow project structure
+
+### 4. Pull Request Process
+
+1. **Preparation**:
+   ```bash
+   # Ensure all changes are committed
+   git status
+   
+   # Rebase with main
+   git checkout main
+   git pull
+   git checkout your-branch
+   git rebase main
+   
+   # Verify everything works
+   npm run docker:purge  # Clean slate
+   npm run docker:start  # Verify app works
+   npm run docker:check  # Run all checks
+   ```
+
+2. **PR Creation**:
+   - Use PR template
+   - Link related tickets
+   - Add screenshots/videos if UI changes
+   - Tag relevant reviewers
+
+3. **PR Description**:
+   - Summarize changes
+   - List testing steps
+   - Note any breaking changes
+   - Include deployment considerations
+
+4. **Review Process**:
+   - Address review comments
+   - Keep PR updated with main
+   - Get required approvals
+   - Ensure all checks pass
+
+### 5. Testing Requirements
+
+- **Unit Tests**: Required for utilities and hooks
+- **Integration Tests**: Required for complex features
+- **UI Tests**: Required for critical user flows
+- **Manual Testing**:
+  - Test in development environment
+  - Cross-browser testing if needed
+  - Mobile responsiveness if applicable
+
+### 6. Documentation
+
+- Update README if needed
+- Add inline documentation
+- Update API documentation
+- Document breaking changes
+- Add usage examples
+
+### 7. Deployment
+
+1. **Staging**:
+   - Automatic deployment on PR
+   - Verify features in staging
+   - Run smoke tests
+
+2. **Production**:
+   - Merge to main
+   - Monitor deployment
+   - Verify in production
+   - Be ready to rollback
+
+### 8. Troubleshooting
+
+If you encounter issues:
+
+1. **Docker Issues**:
+   ```bash
+   # Clean slate approach
+   npm run docker:purge
+   docker system prune -af  # Be careful with this!
+   npm run docker:start
+   ```
+
+2. **Development Issues**:
+   - Check container logs: `./scripts/dev logs`
+   - Verify environment variables
+   - Clear node_modules: `npm run docker:clean`
+
+3. **Build Issues**:
+   - Verify dependencies
+   - Check TypeScript errors
+   - Review build logs
+
+### 9. Best Practices
+
+- Keep PRs focused and small
+- Write descriptive commit messages
+- Update tests with code changes
+- Document complex logic
+- Follow the single responsibility principle
+- Use feature flags for big changes
+- Keep dependencies updated
+- Monitor performance impacts
+
+## Pull Request Template
+
+When creating a pull request, copy and fill out the following template:
+
+```markdown
+# Description
+
+Please include a summary of the changes and the related issue. Please also include relevant motivation and context.
+
+Fixes # (issue)
+
+## Type of change
+
+Please delete options that are not relevant.
+
+- [ ] Bug fix (non-breaking change which fixes an issue)
+- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] This change requires a documentation update
+
+## How Has This Been Tested?
+
+Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce.
+
+- [ ] Test A
+- [ ] Test B
+
+## Checklist:
+
+- [ ] My code follows the style guidelines of this project
+- [ ] I have performed a self-review of my code
+- [ ] I have commented my code, particularly in hard-to-understand areas
+- [ ] I have made corresponding changes to the documentation
+- [ ] My changes generate no new warnings
+- [ ] I have added tests that prove my fix is effective or that my feature works
+- [ ] New and existing unit tests pass locally with my changes
+- [ ] Any dependent changes have been merged and published in downstream modules
+
+## Screenshots (if applicable):
+
+## Additional context:
+
+Add any other context about the pull request here.
+
+## Deployment Notes:
+
+Describe any deployment steps, configuration changes, or other considerations.
+```
+
 ## Project Structure
 
 ```
