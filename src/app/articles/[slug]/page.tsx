@@ -22,10 +22,7 @@ import {
 // Types
 import { type Article } from "@/types";
 
-/**
- * Default image to display when article has no featured image
- */
-const PLACEHOLDER_IMAGE = "https://placehold.co/600x400/png";
+import { PLACEHOLDER_IMAGE } from "@/constants/images";
 
 /**
  * Props interface for the article page

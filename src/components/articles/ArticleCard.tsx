@@ -10,9 +10,7 @@ import {
 } from "@/components/ui/card";
 
 import { type Article } from "@/types";
-
-/** Fallback image for articles without a featured image */
-const PLACEHOLDER_IMAGE = "https://placehold.co/600x400/png";
+import { PLACEHOLDER_IMAGE } from "@/constants/images";
 
 /** Props for individual article card components */
 interface ArticleCardProps {
