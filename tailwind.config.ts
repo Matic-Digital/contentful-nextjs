@@ -33,6 +33,35 @@ export default {
       },
     },
     extend: {
+      keyframes: {
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
+        },
+        "slide-right": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(10px)" }
+        },
+        "scale-up": {
+          "0%": { transform: "scale(1)" },
+          "100%": { transform: "scale(1.05)" }
+        },
+        "scale-down": {
+          "0%": { transform: "scale(1)" },
+          "100%": { transform: "scale(0.95)" }
+        },
+        "subtle-scale": {
+          "0%": { transform: "scale(1)" },
+          "100%": { transform: "scale(1.02)" }
+        }
+      },
+      animation: {
+        "fade-up": "fade-up 0.5s ease-out forwards",
+        "slide-right": "slide-right 0.2s ease-out forwards",
+        "scale-up": "scale-up 0.2s ease-out forwards",
+        "scale-down": "scale-down 0.2s ease-out forwards",
+        "subtle-scale": "subtle-scale 0.2s ease-out forwards"
+      },
       typography: {
         DEFAULT: {
           css: {

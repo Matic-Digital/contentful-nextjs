@@ -6,14 +6,11 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 // Custom hooks
 import { getAllArticles } from "@/lib/api";
 
+// Constants
+import { ARTICLES_PER_PAGE } from "@/constants/pagination";
+
 // Types
 import type { Article, ArticlesResponse } from "@/types";
-
-/**
- * Number of articles to fetch per page
- * Used for pagination and infinite scroll implementation
- */
-const ARTICLES_PER_PAGE = 3;
 
 /**
  * Custom hook for fetching and managing paginated articles
