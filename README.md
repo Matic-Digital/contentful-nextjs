@@ -196,6 +196,35 @@ https://github.com/alan2207/bulletproof-react/blob/master/docs/error-handling.md
 - **React Error Boundary** for component-level error handling
 - **ErrorPage** for custom error pages
 
+## Animation Decision Framework
+
+When implementing animations in your components, ask these questions to determine the best approach:
+
+1. **Is it a simple state transition?**
+   - If yes → Use Tailwind animations
+   - Examples: hover states, fade-ins, simple transitions
+
+2. **Does it need user interaction?**
+   - Basic interaction → Use Tailwind animations
+   - Complex interaction (gestures, drag) → Use Framer Motion
+   - Examples: 
+     - Tailwind: hover effects, click feedback
+     - Framer: drag and drop, pinch to zoom
+
+3. **Does it need to respond to gestures?**
+   - If yes → Use Framer Motion
+   - Examples: swipe actions, pull to refresh
+
+4. **Is it purely decorative?**
+   - If yes → Use Tailwind animations
+   - Examples: loading states, entrance animations
+
+5. **Does it need to coordinate with other elements?**
+   - If yes → Use Framer Motion
+   - Examples: synchronized animations, staggered lists
+
+See the animation examples in `src/app/template/page.tsx` for implementation details.
+
 ## Testing
 
 TBD
