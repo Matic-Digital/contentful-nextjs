@@ -162,12 +162,11 @@ export default async function ArticlePage({
             ) : (
               // Fallback for when there's no video
               <Image
-                src={article.featuredImage?.url ?? PLACEHOLDER_IMAGE.url}
-                alt={article.featuredImage?.description ?? "Article featured image"}
-                width={article.featuredImage?.width ?? PLACEHOLDER_IMAGE.width}
-                height={article.featuredImage?.height ?? PLACEHOLDER_IMAGE.height}
-                className="aspect-video rounded-lg object-cover"
-                priority
+                src={article.featuredImage?.url ?? PLACEHOLDER_IMAGE}
+                alt={`Cover image for ${article.title}`}
+                height={263}
+                width={350}
+                className="aspect-video w-full rounded-md object-cover"
               />
             )}
 

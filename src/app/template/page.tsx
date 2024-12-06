@@ -44,10 +44,10 @@ export default async function TemplatePage() {
         {/* Figures */}
         <figure>
           <Image
-            src={PLACEHOLDER_IMAGE.url}
+            src={PLACEHOLDER_IMAGE}
             alt="Figure example"
-            width={PLACEHOLDER_IMAGE.width}
-            height={PLACEHOLDER_IMAGE.height}
+            width={600}
+            height={400}
             className="aspect-video rounded-lg object-cover"
             priority
           />
@@ -108,10 +108,10 @@ export default async function TemplatePage() {
         <div>
           {/* Image */}
           <Image
-            src={PLACEHOLDER_IMAGE.url}
+            src={PLACEHOLDER_IMAGE}
             alt="Image example"
-            width={PLACEHOLDER_IMAGE.width}
-            height={PLACEHOLDER_IMAGE.height}
+            width={500}
+            height={300}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="aspect-video rounded-lg object-cover"
             priority

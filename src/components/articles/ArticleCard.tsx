@@ -31,11 +31,12 @@ export function ArticleCard({ article, onMouseEnter }: ArticleCardProps) {
       <Card className="h-full overflow-hidden transition-colors">
         <CardContent className="overflow-hidden p-0">
           <Image
-            src={article.featuredImage?.url ?? PLACEHOLDER_IMAGE.url}
-            alt={article.featuredImage?.description ?? "Article featured image"}
-            width={article.featuredImage?.width ?? PLACEHOLDER_IMAGE.width}
-            height={article.featuredImage?.height ?? PLACEHOLDER_IMAGE.height}
-            className="aspect-video object-cover"
+            src={article.featuredImage?.url ?? PLACEHOLDER_IMAGE}
+            alt={`Cover image for ${article.title}`}
+            height={263}
+            width={350}
+            className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            priority={false}
           />
         </CardContent>
         <CardHeader>
