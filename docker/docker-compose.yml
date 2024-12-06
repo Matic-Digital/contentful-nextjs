@@ -59,6 +59,8 @@ services:
     # Development tools
     stdin_open: true  # Keep STDIN open for debugging
     tty: true        # Allocate a pseudo-TTY
+    # Add init to handle signals properly
+    init: true
 
 # Named volumes for caching
 volumes:

@@ -189,7 +189,7 @@ case "$1" in
         fi
         
         echo -e "${YELLOW}Running linting and type checking...${NC}"
-        if docker compose -f "${DOCKER_DIR}/docker-compose.yml" exec app npm run check; then
+        if docker compose -f "${DOCKER_DIR}/docker-compose.yml" exec -T app npm run check; then
             echo -e "${GREEN}✓ Checks complete${NC}"
             CHECK_STATUS=0
         else
