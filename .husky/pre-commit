@@ -1,5 +1,3 @@
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Try local check first
 echo "\033[33mRunning local checks...\033[0m"
 if OUTPUT=$(npm run check 2>&1); then

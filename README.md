@@ -122,6 +122,7 @@ Our feature development workflow is designed to maintain high code quality and c
 
 ### 1. Branch Management
 
+  <!-- <type>/<ticket-number>-<brief-description> -->
 - **Branch Naming Convention**: 
   ```
   <type>/<ticket-number>-<brief-description>
