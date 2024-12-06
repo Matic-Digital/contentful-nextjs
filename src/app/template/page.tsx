@@ -2,19 +2,17 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import MuxVideo from "@mux/mux-video-react";
+import { PLACEHOLDER_IMAGE } from "@/constants/images";
+import { DEFAULT_METADATA } from "@/constants/metadata";
 
 /**
  * Metadata for the Template page
  */
 export const metadata: Metadata = {
-  title: "Template | Matic",
-  description: "Our Matic Template",
+  ...DEFAULT_METADATA,
+  title: `Template | ${DEFAULT_METADATA.title}`,
+  description: "Template page showcasing various content elements and styles",
 };
-
-/**
- * Default image to display when article has no featured image
- */
-const PLACEHOLDER_IMAGE = "https://placehold.co/600x400/png";
 
 export default async function TemplatePage() {
   return (
@@ -30,19 +28,19 @@ export default async function TemplatePage() {
 
         {/* Paragraphs */}
         <p>
-          This is a paragraph demonstrating the prose-p utility class. It
+          This is a paragraph demonstrating the prose utility class. It
           inherits styles from @tailwindcss/typography without requiring any
           overrides.
         </p>
 
         {/* Links */}
         <a href="#">
-          This is a link using prose-a
+          This is a link using prose
         </a>
 
         {/* Blockquotes */}
         <blockquote>
-          This is a blockquote using prose-blockquote
+          This is a blockquote using prose
         </blockquote>
 
         {/* Figures */}
@@ -52,19 +50,20 @@ export default async function TemplatePage() {
             alt="Figure example"
             width={600}
             height={400}
-            sizes="(max-width: 768px) 100vw, 600px"
+            className="aspect-video rounded-lg object-cover"
+            priority
           />
           <figcaption>
-            This is a figure caption using prose-figcaption
+            This is a figure caption using prose
           </figcaption>
         </figure>
 
         {/* Inline Text */}
         <div className="flex flex-col space-y-2">
-          <strong>Bold text using prose-strong</strong>
-          <em>Emphasized text using prose-em</em>
-          <kbd>Keyboard input using prose-kbd</kbd>
-          <code>Code using prose-code</code>
+          <strong>Bold text using prose</strong>
+          <em>Emphasized text using prose</em>
+          <kbd>Keyboard input using prose</kbd>
+          <code>Code using prose</code>
         </div>
 
         {/* Preformatted Text */}
@@ -116,6 +115,8 @@ export default async function TemplatePage() {
             width={500}
             height={300}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="aspect-video rounded-lg object-cover"
+            priority
           />
 
           {/* Video */}
