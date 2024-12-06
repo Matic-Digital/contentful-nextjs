@@ -1,4 +1,4 @@
-# Try local check first
+# Try local check first ::
 echo "\033[33mRunning local checks...\033[0m"
 if OUTPUT=$(npm run check 2>&1); then
     echo "\033[32m✓ Local checks passed\033[0m"
