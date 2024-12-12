@@ -8,7 +8,7 @@ import { Provider as JotaiProvider } from "jotai";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Theme
-import { ThemeProvider } from "@/components/global/ThemeProvider";
+import { ThemeProvider } from "next-themes";
 
 // Utils
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -29,7 +29,7 @@ export const Providers = ({ children }: { children: ReactNode }) => {
     <QueryClientProvider client={queryClient}>
       <JotaiProvider>
         <DevTools theme="dark" />
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider attribute="class">{children}</ThemeProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </JotaiProvider>
     </QueryClientProvider>
