@@ -1,6 +1,6 @@
 "use client";
 
-import { useTheme } from "@/components/global/ThemeProvider";
+import { useTheme } from "next-themes";
 
 import {
   DropdownMenu,
