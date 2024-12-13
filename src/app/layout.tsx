@@ -2,7 +2,7 @@
 import "@/styles/globals.css";
 
 // Dependencies
-import { GeistSans } from "geist/font/sans";
+import { Inter } from "next/font/google";
 import { type Metadata } from "next";
 
 // Components
@@ -10,6 +10,12 @@ import { Providers } from "@/app/providers";
 import { Header } from "@/components/global/Header";
 import { Footer } from "@/components/global/Footer";
 import { Toaster } from "@/components/ui/toaster";
+
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 /**
  * Metadata for the application
@@ -25,7 +31,7 @@ export const metadata: Metadata = {
 /**
  * Root layout component that wraps all pages
  * Features:
- * - Applies Geist Sans font
+ * - Applies Inter font
  * - Sets HTML language
  * - Provides global context via Providers component
  *
@@ -37,7 +43,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${GeistSans.variable}`}
+      className={`${inter.variable}`}
       suppressHydrationWarning
     >
       <body className="flex min-h-screen flex-col">
