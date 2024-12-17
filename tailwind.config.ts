@@ -33,6 +33,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
       keyframes: {
         "fade-up": {
           "0%": { opacity: "0", transform: "translateY(20px)" },
@@ -65,6 +68,7 @@ export default {
       typography: {
         DEFAULT: {
           css: {
+            fontFamily: 'Inter, sans-serif',
             color: 'hsl(var(--foreground))',
             a: {
               color: 'hsl(var(--primary))',
@@ -129,6 +133,7 @@ export default {
         },
         dark: {
           css: {
+            fontFamily: 'Inter, sans-serif',
             color: 'hsl(var(--foreground))',
             a: {
               color: 'hsl(var(--primary))',

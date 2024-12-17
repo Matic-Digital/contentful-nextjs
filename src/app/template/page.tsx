@@ -4,6 +4,7 @@ import Image from "next/image";
 import MuxVideo from "@mux/mux-video-react";
 import { PLACEHOLDER_IMAGE } from "@/constants/images";
 import { DEFAULT_METADATA } from "@/constants/metadata";
+import { Prose } from "@/components/global/Prose";
 
 /**
  * Metadata for the Template page
@@ -17,25 +18,30 @@ export const metadata: Metadata = {
 export default async function TemplatePage() {
   return (
     <main className="container mx-auto px-4 py-8">
-      {/* Typography Section */}
-      <article className="prose prose-slate mx-auto lg:prose-lg mb-16">
-        <h1>Typography Components</h1>
+      <Prose>
+
+        <h5>Headings</h5>
+
+        {/* Typography Section */}
+        <h1>XLarge Header</h1>
         
         {/* Headings */}
-        <h2>Headings</h2>
-        <h3>Tertiary Heading</h3>
-        <h4>Quaternary Heading</h4>
+        <h2>Large Header</h2>
+        <h3>Large Section Header</h3>
+
+        <br />
+
+        <hr />
+        <h5>Body Copy</h5>
 
         {/* Paragraphs */}
         <p>
-          This is a paragraph demonstrating the prose utility class. It
-          inherits styles from @tailwindcss/typography without requiring any
-          overrides.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         </p>
 
         {/* Links */}
         <a href="#">
-          This is a link using prose
+          Link using prose
         </a>
 
         {/* Blockquotes */}
@@ -69,7 +75,7 @@ export default async function TemplatePage() {
         {/* Preformatted Text */}
         <pre>
           {`function example() {
-  return "Preformatted text using prose-pre";
+  return "Preformatted text using prose";
 }`}
         </pre>
 
@@ -103,40 +109,45 @@ export default async function TemplatePage() {
               <td>Cell 1</td>
               <td>Cell 2</td>
             </tr>
+            <tr>
+              <td>Cell 3</td>
+              <td>Cell 4</td>
+            </tr>
           </tbody>
         </table>
 
-        {/* Media */}
-        <div>
-          {/* Image */}
-          <Image
-            src={PLACEHOLDER_IMAGE}
-            alt="Image example"
-            width={500}
-            height={300}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="aspect-video rounded-lg object-cover"
-            priority
-          />
+        {/* Media Section */}
+        <hr />
+        <h4>Media Components</h4>
 
-          {/* Video */}
-          <MuxVideo
-            playbackId="DS00Spx1CV902MCtPj5WknGlR102V5HFkDe"
-            metadata={{
-              video_title: "Video example",
-            }}
-            controls
-          />
-        </div>
-      </article>
+        <br />
 
-      {/* Animation Examples Section */}
-      <article className="prose prose-slate mx-auto lg:prose-lg">
-        <h1>Animation Examples</h1>
+        {/* Images */}
+        <Image
+          src={PLACEHOLDER_IMAGE}
+          alt="Example image"
+          width={600}
+          height={400}
+          className="aspect-video rounded-lg object-cover"
+          priority
+        />
+
+        {/* Videos */}
+        <MuxVideo
+          playbackId="DS00Spx1CV902MCtPj5WknGlR102V5HFkDe"
+          metadata={{
+            video_title: "Example Video",
+          }}
+          className="aspect-video rounded-lg"
+        />
+
+        {/* Animation Examples Section */}
+        <hr />
+        <h4>Animation Examples</h4>
         
         {/* Fade Up Animation */}
         <section>
-          <h2>Fade Up Animation</h2>
+          <h5>Fade Up Animation</h5>
           <p className="animate-fade-up">
             This paragraph demonstrates the fade up animation with prose styling.
           </p>
@@ -147,10 +158,9 @@ export default async function TemplatePage() {
 
         {/* Scale Animations */}
         <section>
-          <h2>Scale Animations</h2>
+          <h5>Scale Animations</h5>
           <div className="not-prose grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
-            <a href="" className="hover:animate-scale-up active:animate-scale-down
-            text-primary border border-primary rounded-md text-center p-4">
+            <a href="#" className="hover:animate-scale-up active:animate-scale-down text-primary border border-primary rounded-md text-center p-4">
               Interactive link with scale animations
             </a>
             <blockquote className="hover:animate-subtle-scale my-auto">
@@ -161,7 +171,7 @@ export default async function TemplatePage() {
 
         {/* Slide Animation */}
         <section>
-          <h2>Slide Animation</h2>
+          <h5>Slide Animation</h5>
           <blockquote className="hover:animate-slide-right">
             This blockquote slides right on hover while maintaining prose styling
           </blockquote>
@@ -169,7 +179,7 @@ export default async function TemplatePage() {
 
         {/* Combined Animations */}
         <section>
-          <h2>Combined Animations</h2>
+          <h5>Combined Animations</h5>
           <div className="not-prose grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
             <figure className="animate-fade-up hover:animate-scale-up m-0">
               <Image
@@ -215,7 +225,7 @@ export default async function TemplatePage() {
             </tbody>
           </table>
         </section>
-      </article>
+      </Prose>
     </main>
   );
 }

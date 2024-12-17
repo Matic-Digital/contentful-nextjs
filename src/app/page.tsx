@@ -1,12 +1,12 @@
 // Next.js metadata types
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
 /**
  * Metadata configuration for SEO
  */
 export const metadata: Metadata = {
-  title: "Contentful Next.js Starter",
-  description: "Contentful Next.js Starter",
+  title: 'Contentful Next.js Starter',
+  description: 'Contentful Next.js Starter'
 };
 
 /**
@@ -22,6 +22,7 @@ export default async function HomePage() {
             {/* <span className="text-gradient-pink">|||</span> */}
             <span className="text-foreground">Matic Digital</span>
             <span className="text-gradient-pink">Starter</span>
+            <div className="text-blue-800">test</div>
           </div>
         </h1>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-8">
