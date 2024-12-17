@@ -6,6 +6,7 @@ import { documentToPlainTextString } from "@contentful/rich-text-plain-text-rend
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import MuxVideo from "@mux/mux-video-react";
 import { ErrorBoundary } from "@/components/global/ErrorBoundary";
+import { Prose } from "@/components/global/Prose"
 
 // API functions
 import { getAllArticles, getArticle } from "@/lib/api";
@@ -170,9 +171,9 @@ export default async function ArticlePage({
               />
             )}
 
-            <div className="prose dark:prose-invert">
+            <Prose>
               {documentToReactComponents(article.description.json)}
-            </div>
+            </Prose>
           </article>
         </div>
       </ErrorBoundary>

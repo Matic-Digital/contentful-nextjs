@@ -4,7 +4,7 @@ import Image from "next/image";
 import MuxVideo from "@mux/mux-video-react";
 import { PLACEHOLDER_IMAGE } from "@/constants/images";
 import { DEFAULT_METADATA } from "@/constants/metadata";
-import { Prose } from "@/components/Prose";
+import { Prose } from "@/components/global/Prose";
 
 /**
  * Metadata for the Template page
