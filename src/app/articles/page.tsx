@@ -1,19 +1,21 @@
 // Next.js metadata types
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
 // API and constants
-import { getAllArticles } from "@/lib/api";
+import { getAllArticles } from '@/lib/api';
 
 // Components
-import { ArticlesList } from "@/components/articles/ArticlesList";
-import { ErrorBoundary } from "@/components/global/ErrorBoundary";
+import { Container } from '@/components/global/matic-ds';
+
+import { ArticlesList } from '@/components/articles/ArticlesList';
+import { ErrorBoundary } from '@/components/global/ErrorBoundary';
 
 /**
  * Metadata configuration for SEO
  */
 export const metadata: Metadata = {
-  title: "All Articles",
-  description: "Browse all our articles and blog posts",
+  title: 'All Articles',
+  description: 'Browse all our articles and blog posts'
 };
 
 /**
@@ -21,13 +23,11 @@ export const metadata: Metadata = {
  */
 export default async function ArticlesPage() {
   const initialArticles = await getAllArticles(4);
-  console.log("Articles page data:", initialArticles);
+  console.log('Articles page data:', initialArticles);
 
   return (
-    <div className="container py-8 md:py-12">
-      <header className="mb-8 md:mb-12">
-        <h1 className="text-4xl font-bold">All Articles</h1>
-      </header>
+    <Container>
+      <h1>All Articles</h1>
 
       <div className="mt-8 md:mt-12">
         <ErrorBoundary>
@@ -39,6 +39,6 @@ export default async function ArticlesPage() {
           />
         </ErrorBoundary>
       </div>
-    </div>
+    </Container>
   );
 }

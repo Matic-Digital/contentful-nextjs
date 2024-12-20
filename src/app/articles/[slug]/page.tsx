@@ -1,15 +1,17 @@
 // Next.js components and utilities
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import Image from "next/image";
-import { documentToPlainTextString } from "@contentful/rich-text-plain-text-renderer";
-import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
-import MuxVideo from "@mux/mux-video-react";
-import { ErrorBoundary } from "@/components/global/ErrorBoundary";
-import { Prose } from "@/components/global/Prose"
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer';
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import MuxVideo from '@mux/mux-video-react';
+import { ErrorBoundary } from '@/components/global/ErrorBoundary';
+import { Prose } from '@/components/global/matic-ds';
 
 // API functions
-import { getAllArticles, getArticle } from "@/lib/api";
+import { getAllArticles, getArticle } from '@/lib/api';
+
+import { Container, Article, Box } from '@/components/global/matic-ds';
 
 import {
   Breadcrumb,
@@ -17,13 +19,13 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb';
 
 // Types
-import { type Article } from "@/types";
+import { type Article as ArticleProps } from '@/types';
 
-import { PLACEHOLDER_IMAGE } from "@/constants/images";
+import { PLACEHOLDER_IMAGE } from '@/constants/images';
 
 /**
  * Props interface for the article page
@@ -42,8 +44,8 @@ interface Props {
  */
 export async function generateStaticParams() {
   const { items: articles } = await getAllArticles(3);
-  return articles.map((article: Article) => ({
-    slug: article.slug,
+  return articles.map((article: ArticleProps) => ({
+    slug: article.slug
   }));
 }
 
@@ -55,16 +57,16 @@ export async function generateStaticParams() {
  * @returns Metadata object for the page
  */
 export async function generateMetadata({
-  params,
+  params
 }: {
-  params: Promise<Props["params"]>;
+  params: Promise<Props['params']>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
   const article = await getArticle(resolvedParams.slug);
 
   if (!article) {
     return {
-      title: "Article Not Found",
+      title: 'Article Not Found'
     };
   }
 
@@ -74,10 +76,9 @@ export async function generateMetadata({
     openGraph: {
       title: article.title,
       description:
-        documentToPlainTextString(article.description.json) ||
-        `Read about ${article.title}`,
-      images: article.featuredImage?.url,
-    },
+        documentToPlainTextString(article.description.json) || `Read about ${article.title}`,
+      images: article.featuredImage?.url
+    }
   };
 }
 
@@ -92,11 +93,7 @@ export async function generateMetadata({
  *
  * @param params - Contains the article slug from the URL
  */
-export default async function ArticlePage({
-  params,
-}: {
-  params: Promise<Props["params"]>;
-}) {
+export default async function ArticlePage({ params }: { params: Promise<Props['params']> }) {
   const resolvedParams = await params;
   const article = await getArticle(resolvedParams.slug);
 
@@ -110,41 +107,34 @@ export default async function ArticlePage({
     : null;
 
   return (
-    <div className="container mx-auto px-5">
+    <Container>
       <ErrorBoundary>
-        <div className="stack mt-12 gap-4">
-          {/* Breadcrumb Navigation */}
-          <Breadcrumb className="mx-auto w-full max-w-3xl">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  href="/"
-                  className="text-blue-600 hover:underline"
-                >
-                  Home
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  href="/articles"
-                  className="text-blue-600 hover:underline"
-                >
-                  Articles
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{article.title}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-
-          <article className="prose mx-auto w-full max-w-3xl space-y-8 dark:prose-invert">
-            <h1 className="mb-4 text-4xl font-bold">{article.title}</h1>
+        <Box cols={1} gap={4}>
+          <Article className="space-y-8">
+            {/* Breadcrumb Navigation */}
+            <Breadcrumb>
+              <BreadcrumbList className="ml-0">
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/" className="text-blue-600 hover:underline">
+                    Home
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/articles" className="text-blue-600 hover:underline">
+                    Articles
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{article.title}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+            <h1>{article.title}</h1>
 
             {/* Article metadata */}
-            <div className="mt-4">
+            <div>
               <div>ID: {article.sys.id}</div>
               <div>Slug: {article.slug}</div>
             </div>
@@ -156,7 +146,7 @@ export default async function ArticlePage({
                 type="hls"
                 metadata={{
                   video_id: `video-id-${article.sys.id}`,
-                  video_title: article.title,
+                  video_title: article.title
                 }}
                 controls
               />
@@ -171,12 +161,10 @@ export default async function ArticlePage({
               />
             )}
 
-            <Prose>
-              {documentToReactComponents(article.description.json)}
-            </Prose>
-          </article>
-        </div>
+            <Prose>{documentToReactComponents(article.description.json)}</Prose>
+          </Article>
+        </Box>
       </ErrorBoundary>
-    </div>
+    </Container>
   );
 }

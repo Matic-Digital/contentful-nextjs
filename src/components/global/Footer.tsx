@@ -1,7 +1,9 @@
 // Next.js imports
-import Link from "next/link";
+import Link from 'next/link';
 
-import { Logo } from "@/components/global/Logo";
+import { Container, Box } from '@/components/global/matic-ds';
+
+import { Logo } from '@/components/global/Logo';
 
 /**
  * Footer navigation configuration
@@ -13,26 +15,26 @@ import { Logo } from "@/components/global/Logo";
  */
 const footerLinks = [
   {
-    title: "Company",
+    title: 'Company',
     links: [
-      { href: "/about", label: "About" },
-      { href: "/contact", label: "Contact" },
-      { href: "/privacy", label: "Privacy" },
-      { href: "/terms", label: "Terms" },
-    ],
+      { href: '/about', label: 'About' },
+      { href: '/contact', label: 'Contact' },
+      { href: '/privacy', label: 'Privacy' },
+      { href: '/terms', label: 'Terms' }
+    ]
   },
   {
-    title: "Resources",
-    links: [{ href: "/articles", label: "Articles" }],
+    title: 'Resources',
+    links: [{ href: '/articles', label: 'Articles' }]
   },
   {
-    title: "Social",
+    title: 'Social',
     links: [
-      { href: "https://twitter.com", label: "Twitter" },
-      { href: "https://github.com", label: "GitHub" },
-      { href: "https://linkedin.com", label: "LinkedIn" },
-    ],
-  },
+      { href: 'https://twitter.com', label: 'Twitter' },
+      { href: 'https://github.com', label: 'GitHub' },
+      { href: 'https://linkedin.com', label: 'LinkedIn' }
+    ]
+  }
 ];
 
 /**
@@ -46,44 +48,49 @@ const footerLinks = [
  */
 export function Footer() {
   return (
-    <footer className="border-t bg-background">
-      <div className="container py-8 md:py-12">
+    <footer className="mt-24 border-t bg-background py-12">
+      <Container width="full">
         {/* Main footer content grid */}
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+        <Box cols={{ sm: 2 }} gap={12}>
           {/* Company information */}
           <div>
             <Logo />
-            <p className="mt-4 max-w-xs text-sm text-muted-foreground">
+            <p className="max-w-xs text-sm text-muted-foreground">
               Modern blog platform built with Next.js, Contentful and Mux
             </p>
           </div>
 
-          {/* Footer sections with links */}
-          {footerLinks.map((section) => (
-            <div key={section.title}>
-              <h3 className="text-sm font-medium">{section.title}</h3>
-              <ul className="mt-4 space-y-2">
-                {section.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-muted-foreground hover:text-primary"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        {/* Copyright section */}
-        <div className="mt-8 border-t pt-8">
-          <p className="text-center text-sm text-muted-foreground">
+          <Box gap={12} className="justify-start lg:justify-between">
+            {/* Footer sections with links */}
+            {footerLinks.map((section) => (
+              <div key={section.title}>
+                <h3 className="text-sm font-medium">{section.title}</h3>
+                <nav>
+                  <ul className="ml-1 mt-4 space-y-2">
+                    {section.links.map((link) => (
+                      <li key={link.href}>
+                        <Link
+                          href={link.href}
+                          className="text-sm text-muted-foreground hover:text-primary"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
+            ))}
+          </Box>
+        </Box>
+      </Container>
+      {/* Copyright section */}
+      <div className="mt-8 border-t pt-8">
+        <Container width="full">
+          <p className="text-right text-sm text-muted-foreground">
             {new Date().getFullYear()} Matic. All rights reserved.
           </p>
-        </div>
+        </Container>
       </div>
     </footer>
   );

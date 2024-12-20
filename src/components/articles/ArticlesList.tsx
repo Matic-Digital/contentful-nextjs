@@ -1,35 +1,32 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from '@tanstack/react-query';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 // Custom hooks for article data fetching
-import { useGetArticlesPagination } from "@/hooks/useGetArticlesPagination";
-import { articleQueryOptions } from "@/hooks/useGetArticle";
+import { useGetArticlesPagination } from '@/hooks/useGetArticlesPagination';
+import { articleQueryOptions } from '@/hooks/useGetArticle';
 
 // UI Components
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+  PaginationPrevious
+} from '@/components/ui/pagination';
 
-import { ArticleCard } from "@/components/articles/ArticleCard";
+import { Box } from '@/components/global/matic-ds';
+
+import { ArticleCard } from '@/components/articles/ArticleCard';
 
 // Types
-import { type Article } from "@/types";
+import { type Article } from '@/types';
 
 /** Props for the main ArticlesList component */
 interface ArticlesListProps {
@@ -72,7 +69,7 @@ export function ArticlesList({
   initialArticles,
   initialTotal,
   showPagination = true,
-  perPage = 3,
+  perPage = 3
 }: ArticlesListProps) {
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
@@ -80,9 +77,9 @@ export function ArticlesList({
   // Determine grid columns based on perPage
   const gridCols =
     {
-      3: "lg:grid-cols-3",
-      4: "lg:grid-cols-4",
-    }[perPage] ?? "lg:grid-cols-3";
+      3: 'lg:grid-cols-3',
+      4: 'lg:grid-cols-4'
+    }[perPage] ?? 'lg:grid-cols-3';
 
   // Only fetch data if pagination is enabled
   const { data, isLoading } = useGetArticlesPagination({
@@ -92,8 +89,8 @@ export function ArticlesList({
       items: initialArticles,
       total: initialTotal ?? initialArticles.length,
       hasMore: (initialTotal ?? initialArticles.length) > perPage,
-      totalPages: Math.ceil((initialTotal ?? initialArticles.length) / perPage),
-    },
+      totalPages: Math.ceil((initialTotal ?? initialArticles.length) / perPage)
+    }
   });
 
   // Prefetch article data on hover
@@ -101,35 +98,29 @@ export function ArticlesList({
     void queryClient.prefetchQuery(articleQueryOptions(slug));
   };
 
-  console.log("ArticlesList render:", {
+  console.log('ArticlesList render:', {
     initialArticles,
     perPage,
     showPagination,
     currentData: data,
     isLoading,
-    initialTotal,
+    initialTotal
   });
 
   // Only show pagination if we have more than one page and pagination is enabled
-  const shouldShowPagination =
-    showPagination && (data?.total ?? initialTotal ?? 0) > perPage;
+  const shouldShowPagination = showPagination && (data?.total ?? initialTotal ?? 0) > perPage;
 
   // Use initial articles when pagination is disabled
-  const articles = showPagination
-    ? (data?.items ?? initialArticles)
-    : initialArticles;
+  const articles = showPagination ? (data?.items ?? initialArticles) : initialArticles;
   const totalPages = showPagination
-    ? (data?.totalPages ??
-      Math.ceil((initialTotal ?? initialArticles.length) / perPage))
+    ? (data?.totalPages ?? Math.ceil((initialTotal ?? initialArticles.length) / perPage))
     : 1;
 
   return (
-    <div className="stack gap-8">
-      <div className={cn("grid grid-cols-1 gap-6 sm:grid-cols-2", gridCols)}>
+    <Box direction="col" gap={8}>
+      <Box cols={{ sm: 1, md: 2 }} gap={6} className={cn(gridCols)}>
         {isLoading
-          ? Array.from({ length: perPage }).map((_, i) => (
-              <ArticleSkeleton key={i} />
-            ))
+          ? Array.from({ length: perPage }).map((_, i) => <ArticleSkeleton key={i} />)
           : articles.map((article) => (
               <ArticleCard
                 key={article.sys.id}
@@ -137,7 +128,7 @@ export function ArticlesList({
                 onMouseEnter={handleArticleHover}
               />
             ))}
-      </div>
+      </Box>
 
       {shouldShowPagination && (
         <Pagination>
@@ -165,6 +156,6 @@ export function ArticlesList({
           </PaginationContent>
         </Pagination>
       )}
-    </div>
+    </Box>
   );
 }

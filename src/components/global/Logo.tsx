@@ -1,10 +1,14 @@
-import Link from "next/link";
+import Link from 'next/link';
+
+import { Box } from '@/components/global/matic-ds';
 
 export function Logo() {
   return (
-    <Link href="/" className="mr-6 flex items-center space-x-2">
-      <span className="text-gradient-pink text-lg font-extrabold">|||</span>
-      <span className="text-xl font-bold">Matic</span>
+    <Link href="/" className="mr-6">
+      <Box gap={2} className="items-center">
+        <span className="text-lg font-extrabold text-gradient-pink">|||</span>
+        <h1 className="text-2xl">Matic</h1>
+      </Box>
     </Link>
   );
 }

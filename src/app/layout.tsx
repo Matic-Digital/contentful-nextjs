@@ -1,20 +1,25 @@
 // Global styles
-import "@/styles/globals.css";
+import '@/styles/globals.css';
+import '@/styles/matic.css';
 
 // Dependencies
-import { Inter } from "next/font/google";
-import { type Metadata } from "next";
+import { Inter } from 'next/font/google';
+import { type Metadata } from 'next';
 
 // Components
-import { Providers } from "@/app/providers";
-import { Header } from "@/components/global/Header";
-import { Footer } from "@/components/global/Footer";
-import { Toaster } from "@/components/ui/toaster";
+import { Providers } from '@/app/providers';
 
-const inter = Inter({ 
+import { Layout } from '@/components/global/matic-ds';
+
+import { Main } from '@/components/global/matic-ds';
+import { Header } from '@/components/global/Header';
+import { Footer } from '@/components/global/Footer';
+import { Toaster } from '@/components/ui/toaster';
+
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
-  display: 'swap',
+  display: 'swap'
 });
 
 /**
@@ -23,9 +28,9 @@ const inter = Inter({
  * @see https://nextjs.org/docs/app/api-reference/functions/generate-metadata
  */
 export const metadata: Metadata = {
-  title: "Matic - Contentful Next.js Starter",
-  description: "Modern content management and digital experiences",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  title: 'Matic - Contentful Next.js Starter',
+  description: 'Modern content management and digital experiences',
+  icons: [{ rel: 'icon', url: '/favicon.ico' }]
 };
 
 /**
@@ -37,23 +42,17 @@ export const metadata: Metadata = {
  *
  * @param children - Page content to be rendered
  */
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable}`}
-      suppressHydrationWarning
-    >
+    <Layout className={`${inter.variable}`}>
       <body className="flex min-h-screen flex-col">
         <Providers>
           <Header />
-          <main className="flex-1">{children}</main>
+          <Main className="mt-24">{children}</Main>
           <Toaster />
           <Footer />
         </Providers>
       </body>
-    </html>
+    </Layout>
   );
 }
