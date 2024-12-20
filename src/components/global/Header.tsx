@@ -48,11 +48,12 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-6 z-50 m-auto w-[95%] rounded-3xl border border-b border-slate-400 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:w-max">
-      <Container className="max-md:py-1.5 md:px-8">
-        <Box className="items-center">
+    <header className="sticky top-6 z-50 m-auto w-[95%] rounded-xl border border-b border-slate-400 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="px-6 max-md:py-1.5">
+        <Box className="items-center justify-between">
           {/* Desktop Navigation */}
           <Logo />
+
           <div className="mr-4 hidden md:flex">
             {/* Desktop Menu Items */}
             <ErrorBoundary>
@@ -75,44 +76,44 @@ export function Header() {
             </ErrorBoundary>
           </div>
 
-          <div className="ml-auto mr-4">
+          <Box gap={2}>
             <ThemeToggle />
-          </div>
 
-          {/* Mobile Navigation */}
-          <div className="md:hidden">
-            {/* Hamburger Menu Sheet */}
-            <Sheet>
-              <SheetTrigger asChild>
-                <button className="inline-flex h-10 w-10 items-center justify-center rounded-md text-sm font-medium">
-                  <Menu className="size-7" />
-                  <span className="sr-only">Toggle Menu</span>
-                </button>
-              </SheetTrigger>
-              <SheetContent side="right">
-                <SheetHeader>
-                  <Logo />
-                </SheetHeader>
-                {/* Mobile Menu Items */}
-                <nav className="mt-8 flex flex-col space-y-4">
-                  {menuItems.map((item) => (
-                    <SheetClose key={item.href} asChild>
-                      <Link
-                        href={item.href}
-                        className={`text-lg font-medium hover:text-primary ${
-                          pathname === item.href ? 'text-foreground' : 'text-foreground/60'
-                        }`}
-                      >
-                        {item.label}
-                      </Link>
-                    </SheetClose>
-                  ))}
-                </nav>
-              </SheetContent>
-            </Sheet>
-          </div>
+            {/* Mobile Navigation */}
+            <div className="md:hidden">
+              {/* Hamburger Menu Sheet */}
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button className="inline-flex h-10 w-10 items-center justify-center rounded-md text-sm font-medium">
+                    <Menu className="size-7" />
+                    <span className="sr-only">Toggle Menu</span>
+                  </button>
+                </SheetTrigger>
+                <SheetContent side="right">
+                  <SheetHeader>
+                    <Logo />
+                  </SheetHeader>
+                  {/* Mobile Menu Items */}
+                  <nav className="mt-8 flex flex-col space-y-4">
+                    {menuItems.map((item) => (
+                      <SheetClose key={item.href} asChild>
+                        <Link
+                          href={item.href}
+                          className={`text-lg font-medium hover:text-primary ${
+                            pathname === item.href ? 'text-foreground' : 'text-foreground/60'
+                          }`}
+                        >
+                          {item.label}
+                        </Link>
+                      </SheetClose>
+                    ))}
+                  </nav>
+                </SheetContent>
+              </Sheet>
+            </div>
+          </Box>
         </Box>
-      </Container>
+      </div>
     </header>
   );
 }
