@@ -1,23 +1,48 @@
 // Dependencies
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
 // API
-import { getTeamMembers } from "@/lib/api";
+import { getTeamMembers } from '@/lib/api';
 
 // Components
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from '@/components/ui/card';
 
-import { TeamSection } from "@/components/team/TeamSection";
+import { Container, Box } from '@/components/global/matic-ds';
 
-// Icons
-import { Building2, Users, Target } from "lucide-react";
+import { TeamSection } from '@/components/team/TeamSection';
+
+import { Building2, Target, Users } from 'lucide-react';
+
+const ABOUT_CARDS = [
+  {
+    id: 'company',
+    title: 'Our Company',
+    description:
+      'Founded with a vision to transform digital experiences through innovative solutions and cutting-edge technology.',
+    icon: Building2
+  },
+  {
+    id: 'mission',
+    title: 'Our Mission',
+    description:
+      'To empower businesses with seamless content management and exceptional user experiences that drive growth.',
+    icon: Target
+  },
+  {
+    id: 'values',
+    title: 'Our Values',
+    description:
+      'Innovation, collaboration, and customer success are at the heart of everything we do.',
+    icon: Users
+  }
+] as const;
 
 /**
- * Metadata for the About page
+ * Metadata configuration for SEO
  */
 export const metadata: Metadata = {
-  title: "About Us | Matic",
-  description: "Learn more about our company, mission, and team",
+  title: 'About Us',
+  description: 'Learn more about our company, mission, and team'
 };
 
 /**
@@ -35,68 +60,37 @@ export default async function AboutPage() {
   const teamMembers = await getTeamMembers();
 
   return (
-    <div className="container py-8 md:py-12">
+    <Container className="space-y-12">
       {/* Hero Section - Company overview */}
-      <div className="mx-auto max-w-3xl text-center">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-          About Matic
-        </h1>
-        <p className="mt-4 text-lg text-muted-foreground">
-          We&apos;re building the future of digital experiences through
-          innovative solutions and cutting-edge technology.
+      <div className="mx-auto max-w-3xl space-y-4 text-center">
+        <h1>About Matic</h1>
+        <p className="mx-auto max-w-lg">
+          We&apos;re building the future of digital experiences through innovative solutions and
+          cutting-edge technology.
         </p>
       </div>
 
       {/* Mission and Values Section - Three card grid */}
-      <div className="mt-16 grid gap-8 md:grid-cols-3">
-        <Card>
-          <CardContent className="flex flex-col items-center space-y-4 pt-6">
-            <div className="rounded-full bg-primary/10 p-3">
-              <Building2 className="h-6 w-6 text-primary" />
-            </div>
-            <div className="space-y-2 text-center">
-              <h3 className="font-semibold">Our Company</h3>
-              <p className="text-sm text-muted-foreground">
-                Founded with a vision to transform digital experiences through
-                innovative solutions and cutting-edge technology.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="flex flex-col items-center space-y-4 pt-6">
-            <div className="rounded-full bg-primary/10 p-3">
-              <Target className="h-6 w-6 text-primary" />
-            </div>
-            <div className="space-y-2 text-center">
-              <h3 className="font-semibold">Our Mission</h3>
-              <p className="text-sm text-muted-foreground">
-                To empower businesses with seamless content management and
-                exceptional user experiences that drive growth.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="flex flex-col items-center space-y-4 pt-6">
-            <div className="rounded-full bg-primary/10 p-3">
-              <Users className="h-6 w-6 text-primary" />
-            </div>
-            <div className="space-y-2 text-center">
-              <h3 className="font-semibold">Our Values</h3>
-              <p className="text-sm text-muted-foreground">
-                Innovation, collaboration, and customer success are at the heart
-                of everything we do.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <Box cols={{ sm: 1, md: 2, lg: 3 }} gap={8}>
+        {ABOUT_CARDS.map(({ id, title, description, icon: Icon }) => (
+          <Card key={id}>
+            <CardContent>
+              <Box direction="col" gap={4} className="items-center pt-6">
+                <div className="rounded-full bg-primary/10 p-3">
+                  <Icon className="h-6 w-6 text-primary" />
+                </div>
+                <div className="space-y-2 text-center">
+                  <h3>{title}</h3>
+                  <p className="text-sm">{description}</p>
+                </div>
+              </Box>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
 
       {/* Team Section */}
       <TeamSection members={teamMembers} />
-    </div>
+    </Container>
   );
 }

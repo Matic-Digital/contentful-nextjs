@@ -1,6 +1,8 @@
-import { TeamMemberImage } from "./TeamMemberImage";
+import { TeamMemberImage } from './TeamMemberImage';
 
-import { type TeamSection } from "@/types";
+import { Box } from '@/components/global/matic-ds';
+
+import { type TeamSection } from '@/types';
 
 /**
  * A server component that renders a grid of team members
@@ -11,20 +13,17 @@ import { type TeamSection } from "@/types";
  */
 export function TeamGrid({ members }: TeamSection) {
   return (
-    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <Box cols={{ sm: 1, md: 2, lg: 3 }} gap={8}>
       {members.map((member) => (
-        <div
-          key={member.name}
-          className="flex flex-col items-center space-y-4 text-center"
-        >
+        <Box direction="col" key={member.name} className="items-center space-y-4 text-center">
           <TeamMemberImage src={member.image.url} alt={member.name} />
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">{member.name}</h3>
-            <p className="text-sm text-muted-foreground">{member.title}</p>
+            <h3>{member.name}</h3>
+            <p>{member.title}</p>
           </div>
-        </div>
+        </Box>
       ))}
-    </div>
+    </Box>
   );
 }
 
@@ -36,10 +35,7 @@ export function TeamGridSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 3 }).map((_, index) => (
-        <div
-          key={index}
-          className="flex flex-col items-center space-y-4 text-center"
-        >
+        <div key={index} className="flex flex-col items-center space-y-4 text-center">
           <div className="relative h-40 w-40">
             <div className="absolute inset-0 z-10">
               <div className="h-full w-full animate-pulse rounded-full bg-muted" />

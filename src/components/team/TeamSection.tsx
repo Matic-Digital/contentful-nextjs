@@ -1,9 +1,11 @@
-import { Suspense } from "react";
+import { Suspense } from 'react';
 
-import { TeamGrid, TeamGridSkeleton } from "@/components/team/TeamGrid";
-import { ErrorBoundary } from "@/components/global/ErrorBoundary";
+import { Section, Box } from '@/components/global/matic-ds';
 
-import type { TeamSection } from "@/types";
+import { TeamGrid, TeamGridSkeleton } from '@/components/team/TeamGrid';
+import { ErrorBoundary } from '@/components/global/ErrorBoundary';
+
+import type { TeamSection } from '@/types';
 
 /**
  * A server component that displays the team section with loading states
@@ -15,18 +17,18 @@ import type { TeamSection } from "@/types";
  */
 export function TeamSection({ members }: TeamSection) {
   return (
-    <section className="container space-y-8 py-12">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold sm:text-4xl">Meet Our Team</h2>
-        <p className="mt-4 text-muted-foreground">
-          The talented individuals who make it all possible
-        </p>
-      </div>
-      <ErrorBoundary>
-        <Suspense fallback={<TeamGridSkeleton />}>
-          <TeamGrid members={members} />
-        </Suspense>
-      </ErrorBoundary>
-    </section>
+    <Section>
+      <Box direction="col" wrap={true} gap={12}>
+        <div className="space-y-4 text-center">
+          <h2>Meet Our Team</h2>
+          <p>The talented individuals who make it all possible</p>
+        </div>
+        <ErrorBoundary>
+          <Suspense fallback={<TeamGridSkeleton />}>
+            <TeamGrid members={members} />
+          </Suspense>
+        </ErrorBoundary>
+      </Box>
+    </Section>
   );
 }

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Image from "next/image";
+import { useState } from 'react';
+import Image from 'next/image';
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton';
 
 /**
  * Props for the TeamMemberImage component
@@ -43,7 +43,7 @@ export function TeamMemberImage({ src, alt }: TeamMemberImageProps) {
       {/* Image container with fade-in transition */}
       <div
         className={`relative h-full w-full overflow-hidden rounded-full transition-opacity duration-300 ${
-          isLoading ? "opacity-0" : "opacity-100"
+          isLoading ? 'opacity-0' : 'opacity-100'
         }`}
       >
         <Image

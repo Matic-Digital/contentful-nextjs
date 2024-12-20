@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 /** Contact form component with real-time validation
  * Features:
@@ -8,29 +8,30 @@
  * - Toast notifications for form submission feedback
  */
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { type FieldApi, type Validator, useForm } from "@tanstack/react-form";
-import { zodValidator } from "@tanstack/zod-form-adapter";
-import { z, type ZodType, type ZodTypeDef } from "zod";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
+import { type FieldApi, type Validator, useForm } from '@tanstack/react-form';
+import { zodValidator } from '@tanstack/zod-form-adapter';
+import { z, type ZodType, type ZodTypeDef } from 'zod';
 
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from '@/hooks/use-toast';
 
 // UI Components
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+  CardTitle
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
-import { Loader2 } from "lucide-react";
+import { Loader2 } from 'lucide-react';
 
 /** Props for form field components */
 interface FormFieldProps {
@@ -41,12 +42,12 @@ interface FormFieldProps {
   /** Placeholder text for the input */
   placeholder: string;
   /** Type of form control to render */
-  component?: "input" | "textarea";
+  component?: 'input' | 'textarea';
 }
 
 /** Displays validation state and error messages for a form field */
 function FieldInfo({
-  field,
+  field
 }: {
   field: FieldApi<
     { email: string; firstName: string; lastName: string; message: string },
@@ -59,9 +60,7 @@ function FieldInfo({
   return (
     <>
       {field.state.meta.isTouched && field.state.meta.errors.length ? (
-        <em className="text-sm text-destructive">
-          {field.state.meta.errors.join(",")}
-        </em>
+        <em className="text-sm text-destructive">{field.state.meta.errors.join(',')}</em>
       ) : null}
       {field.state.meta.isValidating ? (
         <em className="text-sm text-primary">Validating...</em>
@@ -74,25 +73,25 @@ function FieldInfo({
 const contactSchema = z.object({
   firstName: z
     .string()
-    .min(2, "First name must be at least 2 characters")
-    .max(50, "First name cannot exceed 50 characters"),
+    .min(2, 'First name must be at least 2 characters')
+    .max(50, 'First name cannot exceed 50 characters'),
   lastName: z
     .string()
-    .min(2, "Last name must be at least 2 characters")
-    .max(50, "Last name cannot exceed 50 characters"),
+    .min(2, 'Last name must be at least 2 characters')
+    .max(50, 'Last name cannot exceed 50 characters'),
   email: z
     .string()
-    .email("Please enter a valid email address")
-    .min(1, "Email is required")
-    .max(100, "Email cannot exceed 100 characters")
+    .email('Please enter a valid email address')
+    .min(1, 'Email is required')
+    .max(100, 'Email cannot exceed 100 characters')
     .transform((email) => email.toLowerCase()),
   message: z
     .string()
-    .min(10, "Message must be at least 10 characters long")
-    .max(1000, "Message cannot exceed 1000 characters")
-    .refine((val) => !val.includes("<script>"), {
-      message: "Message contains invalid characters",
-    }),
+    .min(10, 'Message must be at least 10 characters long')
+    .max(1000, 'Message cannot exceed 1000 characters')
+    .refine((val) => !val.includes('<script>'), {
+      message: 'Message contains invalid characters'
+    })
 });
 
 /** Type definition for form data based on Zod schema */
@@ -110,25 +109,25 @@ export function ContactForm() {
   /** Initialize form with validation and submission handling */
   const form = useForm({
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      message: "",
+      firstName: '',
+      lastName: '',
+      email: '',
+      message: ''
     } as ContactFormData,
     onSubmit: async ({ value }) => {
-      console.log("Form submitted:", value);
+      console.log('Form submitted:', value);
       if (isSubmitting) return;
       setIsSubmitting(true);
       try {
         // Simulate API call - replace with actual API endpoint
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        router.push("/contact/success");
+        router.push('/contact/success');
       } catch (error) {
-        console.log("Error sending message:", error);
+        console.log('Error sending message:', error);
         toast({
-          title: "Error",
-          description: "Failed to send message. Please try again.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to send message. Please try again.',
+          variant: 'destructive'
         });
       } finally {
         setIsSubmitting(false);
@@ -136,27 +135,22 @@ export function ContactForm() {
     },
     validatorAdapter: zodValidator(),
     validators: {
-      onChange: contactSchema,
-    },
+      onChange: contactSchema
+    }
   });
 
   /**
    * Renders a form field with label, input/textarea, and validation feedback
    * Handles both text inputs and textareas with shared validation logic
    */
-  function FormField({
-    label,
-    name,
-    placeholder,
-    component = "input",
-  }: FormFieldProps) {
+  function FormField({ label, name, placeholder, component = 'input' }: FormFieldProps) {
     return (
       <div className="space-y-2">
         <Label htmlFor={name}>{label}</Label>
         <form.Field name={name}>
           {(field) => (
             <>
-              {component === "input" ? (
+              {component === 'input' ? (
                 <Input
                   id={name}
                   name={field.name}
@@ -188,6 +182,8 @@ export function ContactForm() {
     );
   }
 
+  const { theme } = useTheme();
+
   return (
     <form
       onSubmit={async (e) => {
@@ -201,30 +197,17 @@ export function ContactForm() {
         <CardHeader>
           <CardTitle>Contact Us</CardTitle>
           <CardDescription>
-            Fill out the form below and we&apos;ll get back to you as soon as
-            possible.
+            Fill out the form below and we&apos;ll get back to you as soon as possible.
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
           {/* First Name */}
-          <FormField
-            label="First Name"
-            name="firstName"
-            placeholder="Your first name"
-          />
+          <FormField label="First Name" name="firstName" placeholder="Your first name" />
           {/* Last Name */}
-          <FormField
-            label="Last Name"
-            name="lastName"
-            placeholder="Your last name"
-          />
+          <FormField label="Last Name" name="lastName" placeholder="Your last name" />
           {/* Email */}
-          <FormField
-            label="Email"
-            name="email"
-            placeholder="your.email@example.com"
-          />
+          <FormField label="Email" name="email" placeholder="your.email@example.com" />
           {/* Message Field */}
           <FormField
             label="Message"
@@ -235,14 +218,19 @@ export function ContactForm() {
         </CardContent>
 
         <CardFooter>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button
+            variant={theme === 'dark' ? 'secondary' : 'default'}
+            type="submit"
+            className="w-full"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? (
               <>
                 <span className="mr-2">Sending...</span>
                 <Loader2 className="animate-spin" />
               </>
             ) : (
-              "Send Message"
+              'Send Message'
             )}
           </Button>
         </CardFooter>
