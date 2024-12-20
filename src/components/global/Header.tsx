@@ -48,7 +48,7 @@ export function Header() {
 
   return (
     <Container className="sticky top-0 z-50">
-      <header className="mt-12 w-[95%] rounded-xl border border-b border-slate-400 bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60 max-md:py-1.5 lg:w-full">
+      <header className="mt-6 w-[95%] rounded-xl border border-b border-slate-400 bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60 max-md:py-1.5 lg:w-full">
         <Box className="items-center justify-between">
           {/* Desktop Navigation */}
           <Logo />
