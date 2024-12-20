@@ -29,8 +29,7 @@ import { ThemeToggle } from '@/components/global/ThemeToggle';
  * Each item has a URL and display label
  */
 const menuItems = [
-  { href: '/articles', label: 'Articles' },
-  { href: '/about', label: 'About' },
+  { href: '/talent', label: 'Talent' },
   { href: '/contact', label: 'Contact' },
   { href: '/template', label: 'Templates' }
 ];
@@ -45,6 +44,14 @@ const menuItems = [
  */
 export function Header() {
   const pathname = usePathname();
+
+  // Helper function to check if a path is active
+  const isActive = (href: string) => {
+    if (href === '/') {
+      return pathname === href;
+    }
+    return pathname?.startsWith(href);
+  };
 
   return (
     <Container className="sticky top-0 z-50">
@@ -63,7 +70,7 @@ export function Header() {
                       <Link href={item.href} legacyBehavior passHref>
                         <NavigationMenuLink
                           className={navigationMenuTriggerStyle()}
-                          {...(pathname === item.href && { 'data-active': true })}
+                          active={isActive(item.href)}
                         >
                           {item.label}
                         </NavigationMenuLink>
@@ -99,7 +106,7 @@ export function Header() {
                         <Link
                           href={item.href}
                           className={`text-lg font-medium hover:text-primary ${
-                            pathname === item.href ? 'text-foreground' : 'text-foreground/60'
+                            isActive(item.href) ? 'text-foreground' : 'text-foreground/60'
                           }`}
                         >
                           {item.label}

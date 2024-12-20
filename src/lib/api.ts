@@ -6,10 +6,16 @@
 // Types
 import type {
   Article,
-  TeamMember,
   ArticlesResponse,
   ContentfulResponse,
-} from "@/types";
+  TeamMember,
+  Talent,
+  Tier,
+  Profile,
+  Education,
+  Awards,
+  Language
+} from "@/types/contentful";
 
 import {
   ContentfulError,
@@ -59,6 +65,101 @@ const TEAM_MEMBER_GRAPHQL_FIELDS = `
   }
 `;
 
+const TALENT_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  name
+  slug
+  headshot {
+    url
+  }
+  location {
+    lat
+    lon
+  }
+  tier {
+    sys {
+      id
+    }
+    name
+  }
+`;
+
+const TIER_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  name
+  description {
+    json
+  }
+  talentCollection {
+    items {
+      sys {
+        id
+      }
+      name
+      slug
+      headshot {
+        url
+      }
+      location {
+        lat
+        lon
+      }
+    }
+  }
+`;
+
+const PROFILE_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  talent {
+    sys {
+      id
+    }
+  }
+  slug
+  talentBriefDescription {
+    json
+  }
+  role
+`;
+
+const EDUCATION_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  institution
+  degreeName
+  location {
+    lat
+    lon
+  }
+  timeframe
+`;
+
+const AWARD_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  awardName
+  awardDate
+  description {
+    json
+  }
+`;
+
+const LANGUAGE_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  name
+  type
+`;
+
 /**
  * Executes GraphQL queries against Contentful's API with caching
  * @param query - GraphQL query string
@@ -74,40 +175,77 @@ async function fetchGraphQL<T>(
   cacheConfig?: { next: { revalidate: number } },
 ): Promise<ContentfulResponse<T>> {
   try {
+    const spaceId = process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID;
+    const token = preview
+      ? process.env.NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN
+      : process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN;
+
+    if (!spaceId || !token) {
+      console.error('Missing Contentful credentials:', { spaceId: !!spaceId, token: !!token });
+      throw new ContentfulError('Missing Contentful credentials');
+    }
+
+    const url = `https://graphql.contentful.com/content/v1/spaces/${spaceId}`;
+    const requestBody = JSON.stringify({ query, variables });
+    
+    console.log('GraphQL Request:', {
+      url,
+      method: 'POST',
+      variables,
+      query,
+      preview,
+      hasToken: !!token,
+      requestBody,
+    });
+
     const response = await fetch(
-      `https://graphql.contentful.com/content/v1/spaces/${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}`,
+      url,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            preview
-              ? process.env.NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN
-              : process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN
-          }`,
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ query, variables }),
+        body: requestBody,
         next: cacheConfig?.next,
       },
     );
 
+    const responseText = await response.text();
+    console.log('Raw Response:', responseText);
+
     if (!response.ok) {
+      console.error('GraphQL Error Response:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: responseText,
+        headers: Object.fromEntries(response.headers.entries()),
+      });
       throw new NetworkError(
-        `Network error: ${response.statusText}`,
+        `Network error: ${response.statusText}. Body: ${responseText}`,
         response
       );
     }
 
-    const json = (await response.json()) as ContentfulResponse<T>;
+    try {
+      const json = JSON.parse(responseText) as ContentfulResponse<T>;
+      
+      // Check for GraphQL errors in the response
+      if (json.errors?.length) {
+        console.error('GraphQL errors in response:', json.errors);
+        throw new GraphQLError(
+          'GraphQL query execution error',
+          json.errors.map(e => ({
+            message: typeof e === 'string' ? e : e.message || 'Unknown error'
+          }))
+        );
+      }
 
-    if (json.errors) {
-      throw new GraphQLError(
-        'GraphQL query execution error',
-        json.errors
-      );
+      return json;
+    } catch (parseError) {
+      console.error('Error parsing JSON response:', parseError);
+      throw new Error(`Invalid JSON response: ${responseText}`);
     }
-
-    return json;
   } catch (error) {
     if (error instanceof NetworkError || error instanceof GraphQLError) {
       throw error;
@@ -150,7 +288,10 @@ export async function getAllArticles(
     if (response.errors) {
       throw new GraphQLError(
         'GraphQL query execution error',
-        response.errors
+        response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
+          message: e?.message ?? (typeof e === 'string' ? e : 'Unknown error'),
+          ...(e?.extensions && { extensions: e.extensions })
+        }))
       );
     }
 
@@ -208,7 +349,10 @@ export async function getArticle(
     if (response.errors) {
       throw new GraphQLError(
         'GraphQL query execution error',
-        response.errors
+        response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
+          message: e?.message ?? (typeof e === 'string' ? e : 'Unknown error'),
+          ...(e?.extensions && { extensions: e.extensions })
+        }))
       );
     }
 
@@ -250,7 +394,10 @@ export async function getTeamMembers(
     if (response.errors) {
       throw new GraphQLError(
         'GraphQL query execution error',
-        response.errors
+        response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
+          message: e?.message ?? (typeof e === 'string' ? e : 'Unknown error'),
+          ...(e?.extensions && { extensions: e.extensions })
+        }))
       );
     }
 
@@ -258,5 +405,480 @@ export async function getTeamMembers(
     return response.data?.teamMemberCollection?.items ?? [];
   } catch (error) {
     throw new ContentfulError('Failed to fetch team members', error);
+  }
+}
+
+/**
+ * Fetches all talent entries from Contentful
+ * @param isDraftMode - Whether to fetch draft content (default: false)
+ * @returns Promise resolving to array of Talent entries
+ */
+export async function getAllTalent(
+  isDraftMode = false
+): Promise<Talent[]> {
+  try {
+    console.log('Fetching talent:', { isDraftMode });
+    
+    const query = `query GetTalent {
+      talentCollection {
+        items {
+          ${TALENT_GRAPHQL_FIELDS}
+        }
+      }
+    }`;
+
+    console.log('GraphQL Query:', query);
+    
+    const response = await fetchGraphQL<{
+      talentCollection: {
+        items: Talent[];
+      };
+    }>(query, {}, isDraftMode);
+
+    console.log('Talent response:', JSON.stringify(response, null, 2));
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      console.error('GraphQL errors:', response.errors);
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
+          message: e?.message ?? (typeof e === 'string' ? e : 'Unknown error'),
+          ...(e?.extensions && { extensions: e.extensions })
+        }))
+      );
+    }
+
+    if (!response.data?.talentCollection?.items) {
+      console.error('No talent collection in response:', response);
+      throw new ContentfulError('Invalid response format - missing talentCollection.items');
+    }
+
+    return response.data.talentCollection.items;
+  } catch (error) {
+    console.error('Error fetching talent:', error);
+    throw new ContentfulError('Failed to fetch talent', error);
+  }
+}
+
+export async function getTalent(
+  slug: string,
+  isDraftMode = false
+): Promise<Talent | null> {
+  try {
+    console.log('Fetching talent by slug:', { slug, isDraftMode });
+    
+    const query = `query GetTalentBySlug {
+      talentCollection(where: { slug: "${slug}" }, limit: 1) {
+        items {
+          ${TALENT_GRAPHQL_FIELDS}
+        }
+      }
+    }`;
+
+    console.log('GraphQL Query:', query);
+    
+    const response = await fetchGraphQL<{
+      talentCollection: {
+        items: Talent[];
+      };
+    }>(query, {}, isDraftMode);
+
+    console.log('Contentful Response:', JSON.stringify(response, null, 2));
+
+    if (!response.data?.talentCollection?.items?.length) {
+      console.log('No talent found with slug:', slug);
+      return null;
+    }
+
+    return response.data.talentCollection.items[0] ?? null;
+  } catch (error) {
+    console.error('Error fetching talent:', error);
+    throw error;
+  }
+}
+
+export async function getAllTiers(
+  isDraftMode = false
+): Promise<Tier[]> {
+  try {
+    console.log('Fetching tiers:', { isDraftMode });
+    
+    const query = `query GetTiers {
+      tierCollection {
+        items {
+          ${TIER_GRAPHQL_FIELDS}
+        }
+      }
+    }`;
+
+    console.log('GraphQL Query:', query);
+    
+    const response = await fetchGraphQL<Tier>(
+      query,
+      {},
+      isDraftMode
+    );
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      console.error('GraphQL errors:', response.errors);
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
+          message: e?.message ?? (typeof e === 'string' ? e : 'Unknown error'),
+          ...(e?.extensions && { extensions: e.extensions })
+        }))
+      );
+    }
+
+    return response.data?.tierCollection?.items ?? [];
+  } catch (error) {
+    console.error('Error fetching tiers:', error);
+    throw new ContentfulError('Failed to fetch tiers', error);
+  }
+}
+
+export async function getTier (
+  slug: string,
+  isDraftMode = false
+): Promise<Tier> {
+  try {
+    const response = await fetchGraphQL<Tier>(
+      `query GetTier {
+        tierCollection(
+          where: { slug: "${slug}" },
+          limit: 1,
+        ) {
+          items {
+            ${TIER_GRAPHQL_FIELDS}
+          }
+        }
+      }`,
+      {},
+      isDraftMode,
+    );
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
+          message: e?.message ?? (typeof e === 'string' ? e : 'Unknown error'),
+          ...(e?.extensions && { extensions: e.extensions })
+        }))
+      );
+    }
+
+    const tier = response.data?.tierCollection?.items[0];
+
+    if (!tier) {
+      throw new ResourceNotFoundError(
+        `Tier with slug '${slug}' not found`,
+        'tier'
+      );
+    }
+
+    return tier;
+  } catch (error) {
+    if (error instanceof ResourceNotFoundError) {
+      throw error;
+    }
+    throw new ContentfulError('Failed to fetch tier', error);
+  }
+}
+
+export async function getAllProfiles(
+  isDraftMode = false
+): Promise<Profile[]> {
+  try {
+    const response = await fetchGraphQL<Profile>(
+      `query GetProfiles {
+        profileCollection {
+          items {
+            ${PROFILE_GRAPHQL_FIELDS}
+          }
+        }
+      }`,
+      {},
+      isDraftMode,
+    );
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
+          message: e?.message ?? (typeof e === 'string' ? e : 'Unknown error'),
+          ...(e?.extensions && { extensions: e.extensions })
+        }))
+      );
+    }
+
+    return response.data?.profileCollection?.items ?? [];
+  } catch (error) {
+    throw new ContentfulError('Failed to fetch profiles', error);
+  }
+}
+
+export async function getProfile(
+  talentId: string,
+  isDraftMode = false
+): Promise<Profile> {
+  try {
+    const response = await fetchGraphQL<Profile>(
+      `query GetProfile {
+        profileCollection(
+          where: { talent: { sys: { id: "${talentId}" } } },
+          limit: 1,
+        ) {
+          items {
+            ${PROFILE_GRAPHQL_FIELDS}
+          }
+        }
+      }`,
+      {},
+      isDraftMode,
+    );
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
+          message: e?.message ?? (typeof e === 'string' ? e : 'Unknown error'),
+          ...(e?.extensions && { extensions: e.extensions })
+        }))
+      );
+    }
+
+    const profile = response.data?.profileCollection?.items[0];
+
+    if (!profile) {
+      throw new ResourceNotFoundError(
+        `Profile for talent with ID '${talentId}' not found`,
+        'profile'
+      );
+    }
+
+    return profile;
+  } catch (error: unknown) {
+    if (error instanceof ResourceNotFoundError) {
+      throw error;
+    }
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new ContentfulError('Failed to fetch profile', new Error(errorMessage));
+  }
+}
+
+export async function getEducation(
+  talentId: string,
+  isDraftMode = false
+): Promise<Education[]> {
+  try {
+    const response = await fetchGraphQL<ContentfulResponse<Education>>(`
+      query GetEducation {
+        educationCollection(
+          where: { talent: { sys: { id: "${talentId}" } } }
+        ) {
+          items {
+            ${EDUCATION_GRAPHQL_FIELDS}
+          }
+        }
+      }
+    `, {}, isDraftMode);
+
+    const educations = response.data?.educationCollection?.items ?? [];
+
+    if (!educations) {
+      throw new ResourceNotFoundError(
+        `No education found for talent '${talentId}'`,
+        'education'
+      );
+    }
+    return educations;    
+  } catch (error: unknown) {
+    if (error instanceof ResourceNotFoundError) {
+      throw error;
+    }
+    const errorMessage = 
+      error instanceof Error ? error.message : 
+      typeof error === 'string' ? error :
+      'An unknown error occurred';
+    throw new Error(errorMessage);
+  }
+}
+
+export async function getAllAwards(
+  isDraftMode = false
+): Promise<Awards[]> {
+  try {
+    const response = await fetchGraphQL<Awards>(
+      `query GetAwards {
+        awardsCollection {
+          items {
+            ${AWARD_GRAPHQL_FIELDS}
+          }
+        }
+      }`,
+      {},
+      isDraftMode,
+    );
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
+          message: e?.message ?? (typeof e === 'string' ? e : 'Unknown error'),
+          ...(e?.extensions && { extensions: e.extensions })
+        }))
+      );
+    }
+
+    if (!response.data?.awardsCollection) {
+      return [];
+    }
+
+    return response.data.awardsCollection.items;
+  } catch (error: unknown) {
+    // Ensure type-safe error handling
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new ContentfulError('Failed to fetch awards', new Error(errorMessage));
+  }
+}
+
+export async function getAwards(
+  talentId: string,
+  isDraftMode = false
+): Promise<Awards[]> {
+  try {
+    const response = await fetchGraphQL<Awards>(
+      `query GetAwardsByTalent($talentId: String!) {
+        awardsCollection(where: { talent: { sys: { id: $talentId } } }) {
+          items {
+            ${AWARD_GRAPHQL_FIELDS}
+          }
+        }
+      }`,
+      { talentId },
+      isDraftMode,
+    );
+
+    if (response.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map((e: unknown) => ({
+          message: typeof e === 'string' 
+            ? e 
+            : (e && typeof e === 'object' && 'message' in e && typeof e.message === 'string')
+              ? e.message
+              : 'Unknown error',
+          ...(e && typeof e === 'object' && 'extensions' in e && e.extensions 
+              ? { extensions: e.extensions as Record<string, unknown> }
+              : {})
+        }))
+      );
+    }
+
+    if (!response.data?.awardsCollection) {
+      return [];
+    }
+
+    return response.data.awardsCollection.items;
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(errorMessage);
+  }
+}
+
+export async function getLanguage(
+  id: string,
+  isDraftMode?: boolean
+): Promise<Language> {
+  try {
+    const response = await fetchGraphQL<ContentfulResponse<Language>>(
+      `query GetLanguage($id: String!) {
+        languagesCollection(
+          where: { 
+            sys: { id: $id }
+          },
+          limit: 1,
+        ) {
+          items {
+            ${LANGUAGE_GRAPHQL_FIELDS}
+          }
+        }
+      }`,
+      { id },
+      isDraftMode ?? false,
+    );
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map((e: unknown) => ({
+          message: typeof e === 'string' 
+            ? e 
+            : (e && typeof e === 'object' && 'message' in e && typeof e.message === 'string')
+              ? e.message
+              : 'Unknown error',
+          ...(e && typeof e === 'object' && 'extensions' in e && e.extensions 
+              ? { extensions: e.extensions as Record<string, unknown> }
+              : {})
+        }))
+      );
+    }
+
+    const language = response.data?.languagesCollection?.items[0];
+
+    if (!language) {
+      throw new ResourceNotFoundError(`Language with ID ${id} not found`, 'language');
+    }
+
+    return language;
+  } catch (error) {
+    if (error instanceof ResourceNotFoundError) {
+      throw error;
+    }
+    throw new ContentfulError('Failed to fetch language', error);
+  }
+}
+
+export async function getLanguages(
+  talentId: string,
+  isDraftMode = false
+): Promise<Language[]> {
+  try {
+    const response = await fetchGraphQL<ContentfulResponse<Language>>(`
+      query GetLanguages {
+        languagesCollection(
+          where: { talent: { sys: { id: "${talentId}" } } }
+        ) {
+          items {
+            ${LANGUAGE_GRAPHQL_FIELDS}
+          }
+        }
+      }
+    `, {}, isDraftMode);
+
+    if (response.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map((e: { message?: string }) => ({
+          message: e?.message ?? 'Unknown error'
+        }))
+      );
+    }
+
+    if (!response.data?.languagesCollection) {
+      return [];
+    }
+
+    return response.data.languagesCollection.items;
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(errorMessage);
   }
 }

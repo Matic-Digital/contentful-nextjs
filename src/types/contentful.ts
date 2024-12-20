@@ -75,6 +75,176 @@ export interface TeamSection {
 }
 
 /**
+ * Represents a talent from Contentful CMS
+ * @property sys - System metadata containing the talent's unique identifier
+ * @property name - Talent's name
+ */
+export interface Talent {
+  sys: {
+    id: string;
+  };
+  name: string;
+  slug: string;
+  headshot: {
+    url: string;
+  };
+  location: {
+    lat: number;
+    lon: number;
+  }
+  tier: {
+    sys: {
+      id: string;
+    };
+    name: string;
+  };
+  linkedFrom: {
+    educationCollection: {
+      items: Array<{
+        sys: {
+          id: string;
+        };
+        institution: string;
+        degreeName: string;
+        location: {
+          lat: number;
+          lon: number;
+        }
+        timeframe: string;
+      }>;
+    };
+  };
+  awards: {
+    sys: {
+      id: string;
+    };
+    awardName: string;
+    awardDate: {
+      start: string;
+    };
+    description: {
+      json: Document;
+    };
+  };
+  languages: {
+    sys: {
+      id: string;
+    };
+    name: string;
+    type: string;
+  };
+}
+
+export interface Tier {
+  sys: {
+    id: string;
+  };
+  name: string;
+  description: {
+    json: Document;
+  };
+  talent: Array<{
+    sys: {
+      id: string;
+    };
+  }>;
+}
+
+export interface Profile {
+  sys: {
+    id: string;
+  };
+  talent?: {
+    sys: {
+      id: string;
+    };
+  };
+  slug?: string;
+  profileType?: {
+    sys: {
+      id: string;
+    };
+  };
+  talentBriefDescription?: {
+    json: Document;
+  };
+  role: string;
+  focus?: string;
+  rate?: number;
+  engagementType?: Array<'Full-Time' | 'Dedicated' | 'Fractional'>;
+  technicalEvaluation?: Array<{
+    sys: {
+      id: string;
+    };
+  }>;
+  experience?: number;
+  workSamples?: Array<{
+    sys: {
+      id: string;
+    };
+  }>;
+  markets?: Array<{
+    sys: {
+      id: string;
+    };
+  }>;
+  sectors?: Array<{
+    sys: {
+      id: string;
+    };
+  }>;
+  skills?: string[];
+  tools?: string[];
+  rolesBackground?: Array<{
+    sys: {
+      id: string;
+    };
+  }>;
+}
+
+export interface Education {
+  sys: {
+    id: string;
+  };
+  institution: string;
+  degreeName: string;
+  location: {
+    lat: number;
+    lon: number;
+  }
+  timeframe: {
+    start: string;
+    end: string;
+  }
+}
+
+export interface Awards {
+  sys: {
+    id: string;
+  };
+  awardName: string;
+  awardDate: {
+    start: string;
+  };
+  description: {
+    json: Document;
+  };
+}
+
+export interface Language {
+  sys: {
+    id: string;
+  };
+  name: string;
+  type: string;
+  talent: Array<{
+    sys: {
+      id: string;
+    };
+  }>;
+}
+
+/**
  * Raw response structure from Contentful GraphQL API
  * @template T - The type of items in the collection (usually Article)
  * @property data - Contains the blog article collection if request succeeds
@@ -88,6 +258,30 @@ export interface ContentfulResponse<T> {
     };
     teamMemberCollection?: {
       items: T[];
+      total: number;
+    };
+    talentCollection?: {
+      items: Talent[];
+      total: number;
+    };
+    tierCollection?: {
+      items: Tier[];
+      total: number;
+    };
+    profileCollection?: {
+      items: Profile[];
+      total: number;
+    };
+    educationCollection?: {
+      items: Education[];
+      total: number;
+    };
+    awardsCollection?: {
+      items: Awards[];
+      total: number;
+    };
+    languagesCollection?: {
+      items: Language[];
       total: number;
     };
   };
