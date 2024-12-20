@@ -29,7 +29,6 @@ import { ThemeToggle } from '@/components/global/ThemeToggle';
  * Each item has a URL and display label
  */
 const menuItems = [
-  { href: '/', label: 'Home' },
   { href: '/articles', label: 'Articles' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
@@ -48,8 +47,8 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-6 z-50 m-auto w-[95%] rounded-xl border border-b border-slate-400 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="px-6 max-md:py-1.5">
+    <Container className="sticky top-0 z-50">
+      <header className="mt-12 w-[95%] rounded-xl border border-b border-slate-400 bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60 max-md:py-1.5 lg:w-full">
         <Box className="items-center justify-between">
           {/* Desktop Navigation */}
           <Logo />
@@ -113,7 +112,7 @@ export function Header() {
             </div>
           </Box>
         </Box>
-      </div>
-    </header>
+      </header>
+    </Container>
   );
 }
