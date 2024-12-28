@@ -126,6 +126,10 @@ const PROFILE_GRAPHQL_FIELDS = `
     json
   }
   role
+  rate
+  focus
+  experience
+  engagementType
 `;
 
 const EDUCATION_GRAPHQL_FIELDS = `
