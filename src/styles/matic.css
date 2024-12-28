@@ -430,7 +430,7 @@ select {
 
   /* Headings */
   h1 {
-    @apply mb-0 mt-0;
+    @apply mb-8 mt-14;
   }
 
   h2 {

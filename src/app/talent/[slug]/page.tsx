@@ -96,7 +96,7 @@ export default async function TalentPage({ params }: PageProps) {
                                     <p>{education.degreeName}</p>
                                     {education.timeframe && (
                                         <p className="text-gray-600">
-                                            {education.timeframe.start} - {education.timeframe.end}
+                                            {education.timeframe}
                                         </p>
                                     )}
                                     {education.location && (

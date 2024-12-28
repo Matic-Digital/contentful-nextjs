@@ -48,7 +48,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="flex min-h-screen flex-col">
         <Providers>
           <Header />
-          <Main className="mt-24">{children}</Main>
+          <Main className="mt-0">{children}</Main>
           <Toaster />
           <Footer />
         </Providers>

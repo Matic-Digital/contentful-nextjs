@@ -14,7 +14,9 @@ import type {
   Profile,
   Education,
   Awards,
-  Language
+  Language,
+  WorkSample,
+  ProfessionalBackground,
 } from "@/types/contentful";
 
 import {
@@ -125,11 +127,22 @@ const PROFILE_GRAPHQL_FIELDS = `
   talentBriefDescription {
     json
   }
+  talentBriefLocation
+  profileType
+  level
+  profileTags
   role
   rate
   focus
   experience
   engagementType
+  markets
+  sectors
+  skills
+  availability
+  notes {
+    json
+  }
 `;
 
 const EDUCATION_GRAPHQL_FIELDS = `
@@ -164,6 +177,48 @@ const LANGUAGE_GRAPHQL_FIELDS = `
   type
 `;
 
+const WORK_SAMPLE_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  sampleName
+  sampleType
+  briefDescription {
+    json
+  }
+  featuredImage {
+    url
+  }
+  roleTags
+  talent {
+    sys {
+      id
+    }
+  }
+  title
+`;
+
+const PROFESSIONAL_BACKGROUND_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  talent {
+    sys {
+      id
+    }
+  }
+  companyName
+  companyLogo {
+    url
+  }
+  startDate
+  endDate
+  roleTitle
+  roleDescription {
+    json
+  }
+`;
+
 /**
  * Executes GraphQL queries against Contentful's API with caching
  * @param query - GraphQL query string
@@ -174,7 +229,7 @@ const LANGUAGE_GRAPHQL_FIELDS = `
  */
 async function fetchGraphQL<T>(
   query: string,
-  variables?: Record<string, unknown>,
+  variables: Record<string, unknown>,
   preview = false,
   cacheConfig?: { next: { revalidate: number } },
 ): Promise<ContentfulResponse<T>> {
@@ -258,7 +313,7 @@ async function fetchGraphQL<T>(
   }
 }
 
-export const ARTICLES_PER_PAGE = 3;
+const ARTICLES_PER_PAGE = 3;
 
 /**
  * Fetches a paginated list of articles
@@ -267,7 +322,7 @@ export const ARTICLES_PER_PAGE = 3;
  * @param skip - Number of articles to skip for pagination (default: 0)
  * @returns Promise resolving to articles response with pagination info
  */
-export async function getAllArticles(
+async function getAllArticles(
   limit = ARTICLES_PER_PAGE,
   isDraftMode = false,
   skip = 0,
@@ -329,7 +384,7 @@ export async function getAllArticles(
  * @param isDraftMode - Whether to fetch draft content (default: false)
  * @returns Promise resolving to the article or null if not found
  */
-export async function getArticle(
+async function getArticle(
   slug: string,
   isDraftMode = false,
 ): Promise<Article | null> {
@@ -378,7 +433,7 @@ export async function getArticle(
   }
 }
 
-export async function getTeamMembers(
+async function getTeamMembers(
   isDraftMode = false,
 ): Promise<TeamMember[]> {
   try {
@@ -417,7 +472,7 @@ export async function getTeamMembers(
  * @param isDraftMode - Whether to fetch draft content (default: false)
  * @returns Promise resolving to array of Talent entries
  */
-export async function getAllTalent(
+async function getAllTalent(
   isDraftMode = false
 ): Promise<Talent[]> {
   try {
@@ -465,7 +520,7 @@ export async function getAllTalent(
   }
 }
 
-export async function getTalent(
+async function getTalent(
   slug: string,
   isDraftMode = false
 ): Promise<Talent | null> {
@@ -502,7 +557,7 @@ export async function getTalent(
   }
 }
 
-export async function getAllTiers(
+async function getAllTiers(
   isDraftMode = false
 ): Promise<Tier[]> {
   try {
@@ -543,7 +598,7 @@ export async function getAllTiers(
   }
 }
 
-export async function getTier (
+async function getTier (
   slug: string,
   isDraftMode = false
 ): Promise<Tier> {
@@ -592,7 +647,7 @@ export async function getTier (
   }
 }
 
-export async function getAllProfiles(
+async function getAllProfiles(
   isDraftMode = false
 ): Promise<Profile[]> {
   try {
@@ -625,7 +680,7 @@ export async function getAllProfiles(
   }
 }
 
-export async function getProfile(
+async function getProfile(
   talentId: string,
   isDraftMode = false
 ): Promise<Profile> {
@@ -675,7 +730,7 @@ export async function getProfile(
   }
 }
 
-export async function getEducation(
+async function getEducation(
   talentId: string,
   isDraftMode = false
 ): Promise<Education[]> {
@@ -713,7 +768,7 @@ export async function getEducation(
   }
 }
 
-export async function getAllAwards(
+async function getAllAwards(
   isDraftMode = false
 ): Promise<Awards[]> {
   try {
@@ -752,7 +807,7 @@ export async function getAllAwards(
   }
 }
 
-export async function getAwards(
+async function getAwards(
   talentId: string,
   isDraftMode = false
 ): Promise<Awards[]> {
@@ -796,7 +851,7 @@ export async function getAwards(
   }
 }
 
-export async function getLanguage(
+async function getLanguage(
   id: string,
   isDraftMode?: boolean
 ): Promise<Language> {
@@ -850,7 +905,7 @@ export async function getLanguage(
   }
 }
 
-export async function getLanguages(
+async function getLanguages(
   talentId: string,
   isDraftMode = false
 ): Promise<Language[]> {
@@ -886,3 +941,195 @@ export async function getLanguages(
     throw new Error(errorMessage);
   }
 }
+
+async function getAllWorkSamples(
+  isDraftMode = false
+): Promise<WorkSample[]> {
+  try {
+    const query = `query GetAllWorkSamples {
+      workSamplesCollection {
+        total
+        items {
+          ${WORK_SAMPLE_GRAPHQL_FIELDS}
+        }
+      }
+    }`;
+
+    const response = await fetchGraphQL<{ workSamplesCollection: { items: WorkSample[]; total: number; } }>(
+      query,
+      {},
+      isDraftMode
+    );
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      console.error('GraphQL errors:', response.errors);
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map(e => ({
+          message: typeof e === 'string' ? e : e.message || 'Unknown error'
+        }))
+      );
+    }
+
+    if (!response.data?.workSamplesCollection?.items) {
+      return [];
+    }
+
+    return response.data.workSamplesCollection.items;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new ContentfulError('Failed to fetch work samples', new Error(errorMessage));
+  }
+}
+
+async function getWorkSamples(
+  talentId: string,
+  isDraftMode = false
+): Promise<WorkSample[]> {
+  try {
+    const query = `query GetWorkSamples {
+      workSamplesCollection(
+        where: { talent: { sys: { id: "${talentId}" } } }
+      ) {
+        total
+        items {
+          ${WORK_SAMPLE_GRAPHQL_FIELDS}
+        }
+      }
+    }`;
+
+    const response = await fetchGraphQL<{ workSamplesCollection: { items: WorkSample[]; total: number; } }>(
+      query,
+      {},
+      isDraftMode
+    );
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      console.error('GraphQL errors:', response.errors);
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map(e => ({
+          message: typeof e === 'string' ? e : e.message || 'Unknown error'
+        }))
+      );
+    }
+
+    if (!response.data?.workSamplesCollection?.items) {
+      return [];
+    }
+
+    return response.data.workSamplesCollection.items;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new ContentfulError('Failed to fetch work samples', new Error(errorMessage));
+  }
+}
+
+async function getAllProfessionalBackgrounds(
+  isDraftMode = false
+): Promise<ProfessionalBackground[]> {
+  try {
+    const query = `query GetAllProfessionalBackgrounds {
+      professionalBackgroundCollection {
+        total
+        items {
+          ${PROFESSIONAL_BACKGROUND_GRAPHQL_FIELDS}
+        }
+      }
+    }`;
+
+    const response = await fetchGraphQL<{ professionalBackgroundCollection: { items: ProfessionalBackground[]; total: number; } }>(
+      query,
+      {},
+      isDraftMode
+    );
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      console.error('GraphQL errors:', response.errors);
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map(e => ({
+          message: typeof e === 'string' ? e : e.message || 'Unknown error'
+        }))
+      );
+    }
+
+    if (!response.data?.professionalBackgroundCollection?.items) {
+      return [];
+    }
+
+    return response.data.professionalBackgroundCollection.items;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new ContentfulError('Failed to fetch professional backgrounds', new Error(errorMessage));
+  }
+}
+
+async function getProfessionalBackground(
+  talentId: string,
+  isDraftMode = false
+): Promise<ProfessionalBackground[]> {
+  try {
+    const query = `query GetProfessionalBackground {
+      professionalBackgroundCollection(
+        where: { talent: { sys: { id: "${talentId}" } } }
+      ) {
+        total
+        items {
+          ${PROFESSIONAL_BACKGROUND_GRAPHQL_FIELDS}
+        }
+      }
+    }`;
+
+    const response = await fetchGraphQL<{ professionalBackgroundCollection: { items: ProfessionalBackground[]; total: number; } }>(
+      query,
+      {},
+      isDraftMode
+    );
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      console.error('GraphQL errors:', response.errors);
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map(e => ({
+          message: typeof e === 'string' ? e : e.message || 'Unknown error'
+        }))
+      );
+    }
+
+    if (!response.data?.professionalBackgroundCollection?.items) {
+      return [];
+    }
+
+    return response.data.professionalBackgroundCollection.items;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new ContentfulError('Failed to fetch professional background', new Error(errorMessage));
+  }
+}
+
+export {
+  ARTICLES_PER_PAGE,
+  getAllArticles,
+  getArticle,
+  getTeamMembers,
+  getAllTalent,
+  getTalent,
+  getAllTiers,
+  getTier,
+  getAllProfiles,
+  getProfile,
+  getEducation,
+  getAllAwards,
+  getAwards,
+  getLanguage,
+  getLanguages,
+  getAllWorkSamples,
+  getWorkSamples,
+  getAllProfessionalBackgrounds,
+  getProfessionalBackground
+};

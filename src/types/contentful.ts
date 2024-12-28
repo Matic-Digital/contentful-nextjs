@@ -160,14 +160,13 @@ export interface Profile {
     };
   };
   slug?: string;
-  profileType?: {
-    sys: {
-      id: string;
-    };
-  };
+  profileType: 'Strategy' | 'Design' | 'Engineering' | 'Management';
+  profileTags?: string[];
   talentBriefDescription?: {
     json: Document;
   };
+  talentBriefLocation?: string;
+  level?: 'Junior' | 'Mid' | 'Senior' | 'Director';
   role: string;
   focus?: string;
   rate?: number;
@@ -176,30 +175,16 @@ export interface Profile {
     sys: {
       id: string;
     };
-  }>;
+  }>; 
   experience?: number;
-  workSamples?: Array<{
-    sys: {
-      id: string;
-    };
-  }>;
-  markets?: Array<{
-    sys: {
-      id: string;
-    };
-  }>;
-  sectors?: Array<{
-    sys: {
-      id: string;
-    };
-  }>;
+  markets?: string[];
+  sectors?: string[];
   skills?: string[];
   tools?: string[];
-  rolesBackground?: Array<{
-    sys: {
-      id: string;
-    };
-  }>;
+  availability?: string;
+  notes: {
+    json: Document;
+  }
 }
 
 export interface Education {
@@ -212,10 +197,7 @@ export interface Education {
     lat: number;
     lon: number;
   }
-  timeframe: {
-    start: string;
-    end: string;
-  }
+  timeframe: string;
 }
 
 export interface Awards {
@@ -223,9 +205,7 @@ export interface Awards {
     id: string;
   };
   awardName: string;
-  awardDate: {
-    start: string;
-  };
+  awardDate: string;
   description: {
     json: Document;
   };
@@ -245,12 +225,80 @@ export interface Language {
 }
 
 /**
+ * Represents a work sample from Contentful CMS
+ * @property sys - System metadata containing the work sample's unique identifier
+ * @property talent - Reference to the associated talent
+ * @property sampleName - Name of the work sample
+ * @property sampleType - Type of work sample (Contract, Employee, Project)
+ * @property title - Title of the work sample
+ * @property briefDescription - Rich text description of the work sample
+ * @property featuredImage - Optional featured image
+ * @property sampleGallery - Optional gallery of images
+ * @property roleTags - Optional array of role tags
+ */
+export interface WorkSample {
+  sys: {
+    id: string;
+  };
+  talent?: {
+    sys: {
+      id: string;
+    };
+  };
+  sampleName: string;
+  sampleType?: 'Contract' | 'Employee' | 'Project';
+  title: string;
+  briefDescription: {
+    json: Document;
+  };
+  featuredImage?: {
+    url: string;
+  };
+  sampleGallery?: Array<{
+    url: string;
+  }>;
+  roleTags?: string[];
+}
+
+/**
+ * Represents a professional background entry from Contentful CMS
+ * @property sys - System metadata containing the entry's unique identifier
+ * @property talent - Reference to the associated talent
+ * @property companyName - Name of the company
+ * @property companyLogo - Optional company logo
+ * @property startDate - Start date of the role
+ * @property endDate - Optional end date of the role
+ * @property roleTitle - Title of the role
+ * @property roleDescription - Rich text description of the role
+ */
+export interface ProfessionalBackground {
+  sys: {
+    id: string;
+  };
+  talent?: {
+    sys: {
+      id: string;
+    };
+  };
+  companyName?: string;
+  companyLogo?: {
+    url: string;
+  };
+  startDate?: string;
+  endDate?: string;
+  roleTitle?: string;
+  roleDescription?: {
+    json: Document;
+  };
+}
+
+/**
  * Raw response structure from Contentful GraphQL API
  * @template T - The type of items in the collection (usually Article)
  * @property data - Contains the blog article collection if request succeeds
  * @property errors - Contains error details if request fails
  */
-export interface ContentfulResponse<T> {
+export interface ContentfulResponse<T = unknown> {
   data?: {
     blogArticleCollection?: {
       items: Article[];
@@ -282,6 +330,14 @@ export interface ContentfulResponse<T> {
     };
     languagesCollection?: {
       items: Language[];
+      total: number;
+    };
+    workSamplesCollection?: {
+      items: WorkSample[];
+      total: number;
+    };
+    professionalBackgroundCollection?: {
+      items: ProfessionalBackground[];
       total: number;
     };
   };
