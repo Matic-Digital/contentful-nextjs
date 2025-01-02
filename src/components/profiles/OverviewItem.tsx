@@ -9,11 +9,12 @@ interface OverviewItemProps {
 export default function OverviewItem({ label, value, color }: OverviewItemProps) {
     return (
         <Box direction="col" gap={0.5} className={`
-            items-start border p-4 h-full justify-center
-            ${color === 'Design' ? 'border-[#d6bbfb]' : ''}
+            items-start border p-4 h-full justify-center flex-grow
+            ${color === 'Design' ? 'border-[#e9d7fe]/80' : ''}
+            ${color === 'Engineering' ? 'border-[#c7d7fe]/80' : ''}
         `}>
-            <p className="uppercase font-medium">{label}</p>
-            <div className="font-semibold">{value}</div>
+            <p className="uppercase font-bold text-[#a4a7ae] text-[10px]">{label}</p>
+            <p className="font-semibold">{value}</p>
         </Box>
     )
 }

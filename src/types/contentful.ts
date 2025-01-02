@@ -187,6 +187,8 @@ export interface Profile {
   }
 }
 
+
+
 export interface Education {
   sys: {
     id: string;
@@ -233,7 +235,7 @@ export interface Language {
  * @property title - Title of the work sample
  * @property briefDescription - Rich text description of the work sample
  * @property featuredImage - Optional featured image
- * @property sampleGallery - Optional gallery of images
+ * @property sampleGalleryCollection - Optional gallery of images
  * @property roleTags - Optional array of role tags
  */
 export interface WorkSample {
@@ -254,9 +256,11 @@ export interface WorkSample {
   featuredImage?: {
     url: string;
   };
-  sampleGallery?: Array<{
-    url: string;
-  }>;
+  sampleGalleryCollection?: {
+    items: Array<{
+      url: string;
+    }>;
+  };
   roleTags?: string[];
 }
 
@@ -288,6 +292,60 @@ export interface ProfessionalBackground {
   endDate?: string;
   roleTitle?: string;
   roleDescription?: {
+    json: Document;
+  };
+}
+
+export interface Evaluation {
+  sys: {
+    id: string;
+  };
+  talent: {
+    sys: {
+      id: string;
+    };
+  };
+  repo?: string;
+  evaluationField: string;
+  blendedScore: number;
+  field1: string;
+  field1Score: number;
+  field1Description: {
+    json: Document;
+  };
+  field2: string;
+  field2Score: number;
+  field2Description: {
+    json: Document;
+  };
+  field3: string;
+  field3Score: number;
+  field3Description: {
+    json: Document;
+  };
+  field4: string;
+  field4Score: number;
+  field4Description: {
+    json: Document;
+  };
+  field5: string;
+  field5Score: number;
+  field5Description: {
+    json: Document;
+  };
+  field6: string;
+  field6Score: number;
+  field6Description: {
+    json: Document;
+  };
+  field7: string;
+  field7Score: number;
+  field7Description: {
+    json: Document;
+  };
+  field8: string;
+  field8Score: number;
+  field8Description: {
     json: Document;
   };
 }
@@ -338,6 +396,10 @@ export interface ContentfulResponse<T = unknown> {
     };
     professionalBackgroundCollection?: {
       items: ProfessionalBackground[];
+      total: number;
+    };
+    techSpecificationCollection?: {
+      items: Evaluation[];
       total: number;
     };
   };

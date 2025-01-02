@@ -19,7 +19,7 @@
 @layer base {
   :root {
     /* Light theme colors */
-    --background: 210 40% 98%;
+    --background: 0 0% 96%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -38,6 +38,7 @@
     --border: 210 40% 96.1%;
     --input: 210 40% 96.1%;
     --ring: 222.2 84% 4.9%;
+    --design-purple: 257, 52%, 56%;
     /* Chart color palette */
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;

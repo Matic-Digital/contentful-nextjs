@@ -20,39 +20,39 @@ body {
 
 h1,
 .h1 {
-  @apply text-4xl font-semibold tracking-tight;
+  @apply text-[22px] md:text-[36px] font-bold tracking-tight;
 }
 
 h2,
 .h2 {
-  @apply text-3xl font-semibold tracking-tight;
+  @apply text-[20px] md:text-[28px] font-bold tracking-tight;
 }
 
 h3,
 .h3 {
-  @apply text-2xl font-semibold tracking-tight;
+  @apply text-[18px] md:text-[22px] font-semibold tracking-tight;
 }
 
 h4,
 .h4 {
-  @apply text-xl font-semibold tracking-tight;
+  @apply text-[16px] md:text-[18px] font-semibold tracking-tight;
 }
 
 h5,
 .h5 {
-  @apply text-lg font-semibold tracking-tight;
+  @apply text-[14px] md:text-[16px] font-semibold tracking-tight;
 }
 
 h6,
 .h6 {
-  @apply text-base font-semibold tracking-tight;
+  @apply text-[12px] md:text-[14px] font-semibold tracking-tight;
 }
 
 /* Paragraph */
 
 p,
 .p {
-  @apply text-base leading-7 text-foreground;
+  @apply text-base text-foreground text-[12px] md:text-[14px] leading-[160%];
 }
 
 /* Blockquotes */

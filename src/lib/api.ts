@@ -17,6 +17,7 @@ import type {
   Language,
   WorkSample,
   ProfessionalBackground,
+  Evaluation,
 } from "@/types/contentful";
 
 import {
@@ -139,6 +140,7 @@ const PROFILE_GRAPHQL_FIELDS = `
   markets
   sectors
   skills
+  tools
   availability
   notes {
     json
@@ -196,6 +198,11 @@ const WORK_SAMPLE_GRAPHQL_FIELDS = `
     }
   }
   title
+  sampleGalleryCollection {
+    items {
+      url
+    }
+  }
 `;
 
 const PROFESSIONAL_BACKGROUND_GRAPHQL_FIELDS = `
@@ -217,6 +224,60 @@ const PROFESSIONAL_BACKGROUND_GRAPHQL_FIELDS = `
   roleDescription {
     json
   }
+`;
+
+const EVALUATION_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  talent {
+    sys {
+      id
+    }
+  }
+  repo
+  evaluationField
+  field1
+  field1Score
+  field1Description {
+    json
+  }
+  field2
+  field2Score
+  field2Description {
+    json
+  }
+  field3
+  field3Score
+  field3Description {
+    json
+  }
+  field4
+  field4Score
+  field4Description {
+    json
+  }
+  field5
+  field5Score
+  field5Description {
+    json
+  }
+  field6
+  field6Score
+  field6Description {
+    json
+  }
+  field7
+  field7Score
+  field7Description {
+    json
+  }
+  field8
+  field8Score
+  field8Description {
+    json
+  }
+
 `;
 
 /**
@@ -999,11 +1060,15 @@ async function getWorkSamples(
       }
     }`;
 
+    console.log('GraphQL Query:', query);
+
     const response = await fetchGraphQL<{ workSamplesCollection: { items: WorkSample[]; total: number; } }>(
       query,
       {},
       isDraftMode
     );
+
+    console.log('GraphQL Response:', JSON.stringify(response, null, 2));
 
     // Check for GraphQL errors
     if (response.errors) {
@@ -1023,6 +1088,7 @@ async function getWorkSamples(
     return response.data.workSamplesCollection.items;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Work Samples Error:', errorMessage);
     throw new ContentfulError('Failed to fetch work samples', new Error(errorMessage));
   }
 }
@@ -1112,6 +1178,93 @@ async function getProfessionalBackground(
   }
 }
 
+async function getTechSpecification(
+  talentId: string,
+  isDraftMode = false
+): Promise<Evaluation[]> {
+  try {
+    const response = await fetchGraphQL<Evaluation>(
+      `query GetTechSpecification($talentId: String!) {
+        techSpecificationCollection(where: { talent: { sys: { id: $talentId } } }) {
+          items {
+            talent {
+              sys {
+                id
+              }
+            }
+            repo
+            blendedScore
+            field1
+            field1Score
+            field1Description {
+              json
+            }
+            field2
+            field2Score
+            field2Description {
+              json
+            }
+            field3
+            field3Score
+            field3Description {
+              json
+            }
+            field4
+            field4Score
+            field4Description {
+              json
+            }
+            field5
+            field5Score
+            field5Description {
+              json
+            }
+            field6
+            field6Score
+            field6Description {
+              json
+            }
+            field7
+            field7Score
+            field7Description {
+              json
+            }
+            field8
+            field8Score
+            field8Description {
+              json
+            }
+          }
+        }
+      }`,
+      { talentId },
+      isDraftMode,
+    );
+
+    if (response.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors.map((e: unknown) => ({
+          message: typeof e === 'string' 
+            ? e 
+            : (e && typeof e === 'object' && 'message' in e && typeof e.message === 'string')
+              ? e.message
+              : 'Unknown error',
+          ...(e && typeof e === 'object' && 'extensions' in e && e.extensions 
+              ? { extensions: e.extensions as Record<string, unknown> }
+              : {})
+        }))
+      );
+    }
+
+    return response.data?.techSpecificationCollection?.items || [];
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(errorMessage);
+  }
+}
+
+
 export {
   ARTICLES_PER_PAGE,
   getAllArticles,
@@ -1131,5 +1284,6 @@ export {
   getAllWorkSamples,
   getWorkSamples,
   getAllProfessionalBackgrounds,
-  getProfessionalBackground
+  getProfessionalBackground,
+  getTechSpecification,
 };

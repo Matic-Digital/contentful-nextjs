@@ -399,6 +399,38 @@ export default {
         '.text-gradient-orange': {
           '@apply bg-gradient-to-r from-orange-400 via-amber-500 to-yellow-500 bg-clip-text text-transparent':
             ''
+        },
+        '.bg-design-purple': {
+          '@apply bg-[#7756C9]':
+            ''
+        },
+        '.bg-engineering-blue': {
+          '@apply bg-[#157DEF]':
+            ''
+        },
+        '.bg-management-red': {
+          '@apply bg-[#DD2590]':
+            ''
+        },
+        '.bg-strategy-pink': {
+          '@apply bg-[#7756C9]':
+            ''
+        },
+        '.text-design-purple': {
+          '@apply text-[#7756C9]':
+            ''
+        },
+        '.text-engineering-blue': {
+          '@apply text-[#157DEF]':
+            ''
+        },
+        '.text-management-red': {
+          '@apply text-[#DD2590]':
+            ''
+        },
+        '.text-strategy-pink': {
+          '@apply text-[#7756C9]':
+            ''
         }
       });
     }

@@ -8,16 +8,17 @@ interface OverviewListProps {
     level: string;
     location: string;
     color: string;
-    experience: number | undefined;
+    experience: string | undefined;
     engagementType: ("Full-Time" | "Dedicated" | "Fractional")[] | undefined;
 }
 
 export default function OverviewList({ role, focus, tier, level, location, color, experience, engagementType}: OverviewListProps) {
     return (
-        <Box cols={{ sm: 2, md: 3 }} className={
+        <Box  cols={{ sm: 2, md: 3}} className={
             `
-                items-start rounded-lg overflow-hidden border
-                ${color === 'Design' ? 'bg-[#d6bbfb]/15 border-[#d6bbfb]' : ''}
+                rounded-lg overflow-hidden border 
+                ${color === 'Design' ? 'bg-[#fcfaff] border-[#d6bbfb]' : ''}
+                ${color === 'Engineering' ? 'bg-[#f5f8ff] border-[#c7d7fe]' : ''}
             `
         }>
             <OverviewItem label="Role" value={`${level} ${role}`} color={color} />
