@@ -1,7 +1,8 @@
-import { Document } from '@contentful/rich-text-types';
+import type { Document } from '@contentful/rich-text-types';
 import { Box, Container } from '@/components/global/matic-ds';
 import Image from 'next/image';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { BLOCKS } from '@contentful/rich-text-types';
 import OverviewList from './OverviewList';
 
 interface ProfileOverviewProps {
@@ -31,16 +32,21 @@ export const levelMapping = {
 
 type LevelKey = keyof typeof levelMapping;
 
+interface ContentNode {
+    nodeType: string;
+    value?: string;
+    content?: ContentNode[];
+}
+
 const options = {
     renderNode: {
-        'paragraph': (node: any) => {
+        [BLOCKS.PARAGRAPH]: (node: { content: ContentNode[] }) => {
             return (
                 <p style={{ margin: '1em 0' }}>
-                    {node.content.map((content: any) => {
-                        if (content.nodeType === 'text') {
-                            // Split the text by newline characters and render with <br />
-                            return content.value.split('\n').map((line: string, index: number) => (
-                                <span key={index}>{line}<br /></span>
+                    {node.content.map((content, index) => {
+                        if (content.nodeType === 'text' && content.value) {
+                            return content.value.split('\n').map((line, lineIndex) => (
+                                <span key={`${index}-${lineIndex}`}>{line}<br /></span>
                             ));
                         }
                         return null;
@@ -48,7 +54,6 @@ const options = {
                 </p>
             );
         },
-        // Add other node types as needed
     },
 };
 
@@ -116,12 +121,12 @@ export default function ProfileOverview({ name, tags, tier, type, availability, 
                     </Box>
                 </Box>
                 <OverviewList
-                    role={role || ''}
+                    role={role ?? ''}
                     focus={focus}
-                    tier={tier.toString() || ''}
-                    level={profileLevel || ''}
-                    color={type || ''}
-                    location={timezone || ''}
+                    tier={tier.toString() ?? ''}
+                    level={profileLevel ?? ''}
+                    color={type ?? ''}
+                    location={timezone ?? ''}
                     experience={`${Number(experience)}+ Years`}
                     engagementType={engagementType}
                 />

@@ -296,7 +296,7 @@ export interface ProfessionalBackground {
   };
 }
 
-export interface Evaluation {
+export interface TechSpecification {
   sys: {
     id: string;
   };
@@ -399,7 +399,7 @@ export interface ContentfulResponse<T = unknown> {
       total: number;
     };
     techSpecificationCollection?: {
-      items: Evaluation[];
+      items: TechSpecification[];
       total: number;
     };
   };

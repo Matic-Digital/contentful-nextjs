@@ -17,7 +17,7 @@ import type {
   Language,
   WorkSample,
   ProfessionalBackground,
-  Evaluation,
+  TechSpecification,
 } from "@/types/contentful";
 
 import {
@@ -224,60 +224,6 @@ const PROFESSIONAL_BACKGROUND_GRAPHQL_FIELDS = `
   roleDescription {
     json
   }
-`;
-
-const EVALUATION_GRAPHQL_FIELDS = `
-  sys {
-    id
-  }
-  talent {
-    sys {
-      id
-    }
-  }
-  repo
-  evaluationField
-  field1
-  field1Score
-  field1Description {
-    json
-  }
-  field2
-  field2Score
-  field2Description {
-    json
-  }
-  field3
-  field3Score
-  field3Description {
-    json
-  }
-  field4
-  field4Score
-  field4Description {
-    json
-  }
-  field5
-  field5Score
-  field5Description {
-    json
-  }
-  field6
-  field6Score
-  field6Description {
-    json
-  }
-  field7
-  field7Score
-  field7Description {
-    json
-  }
-  field8
-  field8Score
-  field8Description {
-    json
-  }
-
 `;
 
 /**
@@ -1181,9 +1127,21 @@ async function getProfessionalBackground(
 async function getTechSpecification(
   talentId: string,
   isDraftMode = false
-): Promise<Evaluation[]> {
+): Promise<TechSpecification[]> {
   try {
-    const response = await fetchGraphQL<Evaluation>(
+    interface TechSpecResponse {
+      data?: {
+        techSpecificationCollection?: {
+          items: TechSpecification[];
+        };
+      };
+      errors?: Array<{
+        message: string;
+        extensions?: Record<string, unknown>;
+      }>;
+    }
+
+    const response = await fetchGraphQL<TechSpecResponse>(
       `query GetTechSpecification($talentId: String!) {
         techSpecificationCollection(where: { talent: { sys: { id: $talentId } } }) {
           items {
@@ -1257,7 +1215,8 @@ async function getTechSpecification(
       );
     }
 
-    return response.data?.techSpecificationCollection?.items || [];
+    const items = response.data?.techSpecificationCollection?.items ?? [];
+    return items;
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     throw new Error(errorMessage);

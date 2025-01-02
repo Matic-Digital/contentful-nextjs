@@ -75,12 +75,10 @@ export default function ProfileWorkSamples({ type, samples }: ProfileWorkSamples
                                                 <h5 className="text-[10px] md:text-[12px] uppercase font-bold text-[#a4a7ae]">Summary</h5>
                                                 <h3 className="text-xl font-semibold">{workSample.title}</h3>
                                                 <div className="mt-2">
-                                                    {workSample.briefDescription && workSample.briefDescription.json ? (
+                                                    {workSample.briefDescription?.json && (
                                                         <Prose className="matic spaced prose max-w-prose text-base leading-7 prose-headings:font-semibold">
                                                             {documentToReactComponents(workSample.briefDescription.json, options)}
                                                         </Prose>
-                                                    ) : (
-                                                        <span>No description available.</span>
                                                     )}
                                                 </div>
                                             </Box>

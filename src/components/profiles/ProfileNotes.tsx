@@ -2,23 +2,28 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import { Box, Container, Prose } from "../global/matic-ds";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { Document } from "@contentful/rich-text-types";
+import type { Document, Node } from "@contentful/rich-text-types";
 
 interface ProfileNotesProps {
     type: string;
     notes: { json: Document; } | undefined;
 } 
 
+interface ContentNode extends Node {
+    content?: ContentNode[];
+    value?: string;
+    nodeType: string;
+}
+
 const options = {
     renderNode: {
-        'paragraph': (node: any) => {
+        'paragraph': (node: { content: ContentNode[] }) => {
             return (
                 <p style={{ margin: '1em 0' }}>
-                    {node.content.map((content: any) => {
-                        if (content.nodeType === 'text') {
-                            // Split the text by newline characters and render with <br />
-                            return content.value.split('\n').map((line: string, index: number) => (
-                                <span key={index}>{line}<br /></span>
+                    {node.content.map((content, index) => {
+                        if (content.nodeType === 'text' && content.value) {
+                            return content.value.split('\n').map((line, lineIndex) => (
+                                <span key={`${index}-${lineIndex}`}>{line}<br /></span>
                             ));
                         }
                         return null;
@@ -26,7 +31,6 @@ const options = {
                 </p>
             );
         },
-        // Add other node types as needed
     },
 };
 
