@@ -5,10 +5,6 @@
 
 // Types
 import type {
-  Article,
-  ArticlesResponse,
-  ContentfulResponse,
-  TeamMember,
   Talent,
   Tier,
   Profile,
@@ -18,6 +14,7 @@ import type {
   WorkSample,
   ProfessionalBackground,
   TechSpecification,
+  ContentfulResponse,
 } from "@/types/contentful";
 
 import {
@@ -31,43 +28,6 @@ import {
  * GraphQL fragment defining the structure of article data to fetch
  * Includes system metadata, content, and media assets
  */
-const ARTICLE_GRAPHQL_FIELDS = `
-  sys {
-    id
-  }
-  title
-  slug
-  description {
-    json
-    links {
-      assets {
-        block {
-          sys {
-            id
-          }
-          url
-          description
-        }
-      }
-    }
-  }
-  featuredImage {
-    url
-  }
-  video
-`;
-
-const TEAM_MEMBER_GRAPHQL_FIELDS = `
-  sys {
-    id
-  }
-  name
-  title
-  image {
-    url
-  }
-`;
-
 const TALENT_GRAPHQL_FIELDS = `
   sys {
     id
@@ -317,160 +277,6 @@ async function fetchGraphQL<T>(
       throw error;
     }
     throw new ContentfulError('Failed to fetch data from Contentful', error);
-  }
-}
-
-const ARTICLES_PER_PAGE = 3;
-
-/**
- * Fetches a paginated list of articles
- * @param limit - Maximum number of articles to fetch (default: 3)
- * @param isDraftMode - Whether to fetch draft content (default: false)
- * @param skip - Number of articles to skip for pagination (default: 0)
- * @returns Promise resolving to articles response with pagination info
- */
-async function getAllArticles(
-  limit = ARTICLES_PER_PAGE,
-  isDraftMode = false,
-  skip = 0,
-): Promise<ArticlesResponse> {
-  try {
-    console.log("Fetching articles:", { limit, skip, isDraftMode });
-
-    const response = await fetchGraphQL(
-      `query GetArticles($limit: Int!, $skip: Int!) {
-        blogArticleCollection(limit: $limit, skip: $skip, order: sys_firstPublishedAt_DESC) {
-          total
-          items {
-            ${ARTICLE_GRAPHQL_FIELDS}
-          }
-        }
-      }`,
-      { limit, skip },
-      isDraftMode,
-    );
-
-    // Check for GraphQL errors
-    if (response.errors) {
-      throw new GraphQLError(
-        'GraphQL query execution error',
-        response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
-          message: e?.message ?? (typeof e === 'string' ? e : 'Unknown error'),
-          ...(e?.extensions && { extensions: e.extensions })
-        }))
-      );
-    }
-
-    console.log("GraphQL Response:", response.data?.blogArticleCollection);
-
-    const collection = response.data?.blogArticleCollection;
-    if (!collection) {
-      return { items: [], total: 0, hasMore: false, totalPages: 0 };
-    }
-
-    const result = {
-      items: collection.items,
-      total: collection.total,
-      hasMore: skip + limit < collection.total,
-      totalPages: Math.ceil(collection.total / limit),
-    };
-
-    console.log("Returning articles:", result);
-    return result;
-  } catch (error) {
-    if (error instanceof GraphQLError) {
-      throw error;
-    }
-    throw new ContentfulError('Failed to fetch articles', error);
-  }
-}
-
-/**
- * Fetches a single article by its slug
- * @param slug - URL-friendly identifier for the article
- * @param isDraftMode - Whether to fetch draft content (default: false)
- * @returns Promise resolving to the article or null if not found
- */
-async function getArticle(
-  slug: string,
-  isDraftMode = false,
-): Promise<Article | null> {
-  try {
-    const response = await fetchGraphQL<Article>(
-      `query GetArticle {
-        blogArticleCollection(
-          where: { slug: "${slug}" },
-          limit: 1,
-        ) {
-          items {
-            ${ARTICLE_GRAPHQL_FIELDS}
-          }
-        }
-      }`,
-      {},
-      isDraftMode,
-    );
-
-    // Check for GraphQL errors
-    if (response.errors) {
-      throw new GraphQLError(
-        'GraphQL query execution error',
-        response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
-          message: e?.message ?? (typeof e === 'string' ? e : 'Unknown error'),
-          ...(e?.extensions && { extensions: e.extensions })
-        }))
-      );
-    }
-
-    const article = response.data?.blogArticleCollection?.items[0];
-
-    if (!article) {
-      throw new ResourceNotFoundError(
-        `Article with slug '${slug}' not found`,
-        'article'
-      );
-    }
-
-    return article;
-  } catch (error) {
-    if (error instanceof ResourceNotFoundError) {
-      throw error;
-    }
-    throw new ContentfulError('Failed to fetch article', error);
-  }
-}
-
-async function getTeamMembers(
-  isDraftMode = false,
-): Promise<TeamMember[]> {
-  try {
-    const response = await fetchGraphQL<TeamMember>(
-      `query GetTeamMembers {
-        teamMemberCollection {
-          items {
-            ${TEAM_MEMBER_GRAPHQL_FIELDS}
-          }
-        }
-      }`,
-      {},
-      isDraftMode,
-    );
-
-    // Check for GraphQL errors
-    if (response.errors) {
-      throw new GraphQLError(
-        'GraphQL query execution error',
-        response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
-          message: e?.message ?? (typeof e === 'string' ? e : 'Unknown error'),
-          ...(e?.extensions && { extensions: e.extensions })
-        }))
-      );
-    }
-
-    // Add null check and return empty array if no team members found
-    return response.data?.teamMemberCollection?.items ?? [];
-  } catch (error) {
-    throw new ContentfulError('Failed to fetch team members', error);
   }
 }
 
@@ -1225,12 +1031,8 @@ async function getTechSpecification(
 
 
 export {
-  ARTICLES_PER_PAGE,
-  getAllArticles,
-  getArticle,
-  getTeamMembers,
-  getAllTalent,
   getTalent,
+  getAllTalent,
   getAllTiers,
   getTier,
   getAllProfiles,

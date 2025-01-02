@@ -1,80 +1,6 @@
 import { type Document } from "@contentful/rich-text-types";
 
 /**
- * Represents a blog article from Contentful CMS
- * @property sys - System metadata containing the article's unique identifier
- * @property title - Article title
- * @property slug - URL-friendly version of the title
- * @property description - Rich text content with embedded assets
- * @property featuredImage - Optional header image for the article
- */
-export interface Article {
-  sys: {
-    id: string;
-  };
-  title: string;
-  slug: string;
-  description: {
-    json: Document;
-    links: {
-      assets: {
-        block: {
-          sys: {
-            id: string;
-          };
-          url: string;
-          description: string;
-        };
-      };
-    };
-  };
-  featuredImage: {
-    url: string;
-  } | null;
-  video: {
-    assetId: string;
-    playbackId: string;
-    duration: number;
-  };
-}
-
-/**
- * Processed response for article listings
- * @property items - Array of articles
- * @property total - Total number of articles available
- * @property hasMore - Indicates if there are more articles to load
- * @property totalPages - Total number of pages available
- */
-export interface ArticlesResponse {
-  items: Article[];
-  total: number;
-  hasMore: boolean;
-  totalPages: number;
-}
-
-/**
- * Represents a team member from Contentful CMS
- * @property name - Team member's name
- * @property title - Team member's title or role
- * @property image - URL of the team member's image
- */
-export interface TeamMember {
-  name: string;
-  title: string;
-  image: {
-    url: string;
-  };
-}
-
-/**
- * Processed response for team member grid
- * @property members - Array of team members
- */
-export interface TeamSection {
-  members: TeamMember[];
-}
-
-/**
  * Represents a talent from Contentful CMS
  * @property sys - System metadata containing the talent's unique identifier
  * @property name - Talent's name
@@ -187,8 +113,14 @@ export interface Profile {
   }
 }
 
-
-
+/**
+ * Represents an education from Contentful CMS
+ * @property sys - System metadata containing the education's unique identifier
+ * @property institution - Education institution
+ * @property degreeName - Name of the degree
+ * @property location - Location of the education
+ * @property timeframe - Timeframe of the education
+ */
 export interface Education {
   sys: {
     id: string;
@@ -202,6 +134,13 @@ export interface Education {
   timeframe: string;
 }
 
+/**
+ * Represents an award from Contentful CMS
+ * @property sys - System metadata containing the award's unique identifier
+ * @property awardName - Name of the award
+ * @property awardDate - Date of the award
+ * @property description - Description of the award
+ */
 export interface Awards {
   sys: {
     id: string;
@@ -213,6 +152,12 @@ export interface Awards {
   };
 }
 
+/**
+ * Represents a language from Contentful CMS
+ * @property sys - System metadata containing the language's unique identifier
+ * @property name - Name of the language
+ * @property type - Type of the language
+ */
 export interface Language {
   sys: {
     id: string;
@@ -296,6 +241,38 @@ export interface ProfessionalBackground {
   };
 }
 
+/**
+ * Represents a technical specification from Contentful CMS
+ * @property sys - System metadata containing the technical specification's unique identifier
+ * @property talent - Reference to the associated talent
+ * @property repo - Optional repository URL
+ * @property evaluationField - Field of evaluation
+ * @property blendedScore - Blended score of the evaluation
+ * @property field1 - Field 1 of the evaluation
+ * @property field1Score - Score of field 1
+ * @property field1Description - Description of field 1
+ * @property field2 - Field 2 of the evaluation
+ * @property field2Score - Score of field 2
+ * @property field2Description - Description of field 2
+ * @property field3 - Field 3 of the evaluation
+ * @property field3Score - Score of field 3
+ * @property field3Description - Description of field 3
+ * @property field4 - Field 4 of the evaluation
+ * @property field4Score - Score of field 4
+ * @property field4Description - Description of field 4
+ * @property field5 - Field 5 of the evaluation
+ * @property field5Score - Score of field 5
+ * @property field5Description - Description of field 5
+ * @property field6 - Field 6 of the evaluation
+ * @property field6Score - Score of field 6
+ * @property field6Description - Description of field 6
+ * @property field7 - Field 7 of the evaluation
+ * @property field7Score - Score of field 7
+ * @property field7Description - Description of field 7
+ * @property field8 - Field 8 of the evaluation
+ * @property field8Score - Score of field 8
+ * @property field8Description - Description of field 8
+ */
 export interface TechSpecification {
   sys: {
     id: string;
@@ -352,20 +329,12 @@ export interface TechSpecification {
 
 /**
  * Raw response structure from Contentful GraphQL API
- * @template T - The type of items in the collection (usually Article)
- * @property data - Contains the blog article collection if request succeeds
+ * @template T - The type of items in the collection
+ * @property data - Contains the collection if request succeeds
  * @property errors - Contains error details if request fails
  */
-export interface ContentfulResponse<T = unknown> {
+export interface ContentfulResponse<T> {
   data?: {
-    blogArticleCollection?: {
-      items: Article[];
-      total: number;
-    };
-    teamMemberCollection?: {
-      items: T[];
-      total: number;
-    };
     talentCollection?: {
       items: Talent[];
       total: number;

@@ -10,13 +10,6 @@ import ProfileWorkSamples from '@/components/profiles/ProfileWorkSamples';
 import ProfileCareerExperience from '@/components/profiles/ProfileCareerExperience';
 import EvalItem from '@/components/profiles/EvalItem';
 
-interface PageProps {
-  params: {
-    slug: string;
-    profileSlug: string;
-  };
-}
-
 interface LocationResponse {
   address?: {
     city?: string;
@@ -46,8 +39,15 @@ const getLocationName = async (location: string): Promise<string> => {
   }
 };
 
-export default async function ProfilePage({ params }: PageProps) {
-  const { slug, profileSlug } = params;
+type Props = {
+  params: Promise<{
+    slug: string;
+    profileSlug: string;
+  }>;
+};
+
+export default async function ProfilePage({ params }: Props) {
+  const { slug, profileSlug } = await params;
 
   try {
     const talent = await getTalent(slug);
