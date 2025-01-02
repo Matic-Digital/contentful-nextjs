@@ -5,18 +5,19 @@
   "framework": "nextjs",
   "outputDirectory": ".next",
   "env": {
-    "NEXT_PUBLIC_CONTENTFUL_SPACE_ID": "@next_public_contentful_space_id",
-    "NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN": "@next_public_contentful_access_token",
-    "NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN": "@next_public_contentful_preview_access_token"
+    "NEXT_PUBLIC_CONTENTFUL_SPACE_ID": "${{ secrets.NEXT_PUBLIC_CONTENTFUL_SPACE_ID }}",
+    "NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN": "${{ secrets.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN }}",
+    "NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN": "${{ secrets.NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN }}"
   },
   "build": {
     "env": {
-      "NEXT_PUBLIC_CONTENTFUL_SPACE_ID": "@next_public_contentful_space_id",
-      "NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN": "@next_public_contentful_access_token",
-      "NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN": "@next_public_contentful_preview_access_token"
+      "NEXT_PUBLIC_CONTENTFUL_SPACE_ID": "${{ secrets.NEXT_PUBLIC_CONTENTFUL_SPACE_ID }}",
+      "NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN": "${{ secrets.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN }}",
+      "NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN": "${{ secrets.NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN }}"
     }
   },
   "github": {
-    "silent": true
+    "silent": true,
+    "enabled": true
   }
 }
