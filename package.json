@@ -19,7 +19,7 @@
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "dev:fresh": "npm run docker:clean && npm run dev:docker-build",
-    "prepare": "husky",
+    "prepare": "[ \"$VERCEL\" = \"1\" ] && exit 0 || husky",
     "test:types": "tsc --noEmit --pretty",
     "clean:all": "rm -rf .next node_modules && npm run docker:clean",
     "start": "next start",
