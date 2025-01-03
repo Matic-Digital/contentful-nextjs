@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import OverviewItem from './OverviewItem';
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Profile {
     name: string;
@@ -25,7 +25,19 @@ interface Profile {
 
 export default function ProfileNav({ profile }: { profile: Profile }) {
     const [hidden, setHidden] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { scrollY } = useScroll();
+
+    useEffect(() => {
+        if (isDialogOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isDialogOpen]);
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         const previous = scrollY.getPrevious() ?? 0;
@@ -53,7 +65,7 @@ export default function ProfileNav({ profile }: { profile: Profile }) {
                             <h2>{profile.name.split(' ')[0]}</h2>
                         </Link>
                         <Box gap={4} className="items-center">
-                            <Dialog>
+                            <Dialog onOpenChange={setIsDialogOpen}>
                                 <DialogTrigger asChild>
                                     <Button className={`
                                         rounded-full flex aspect-square items-center justify-center relative border
@@ -144,7 +156,7 @@ export default function ProfileNav({ profile }: { profile: Profile }) {
                             <Link href="#experience" className={`flex items-center justify-center p-4 text-sm`}>Experience</Link>
                         </Box>
                         <Box gap={4} className="items-center">
-                            <Dialog>
+                            <Dialog onOpenChange={setIsDialogOpen}>
                                 <DialogTrigger asChild>
                                     <Button className={`
                                         rounded-full flex aspect-square items-center justify-center relative border

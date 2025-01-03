@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Container } from '@/components/global/matic-ds';
 import { Prose } from '@/components/global/matic-ds';
 import { Button } from "../ui/button";
@@ -28,6 +28,18 @@ const options = {
 
 export default function ProfileWorkSamples({ type, samples }: ProfileWorkSamplesProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    useEffect(() => {
+        if (isDialogOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isDialogOpen]);
 
     return (
         <Container id="samples">
@@ -39,7 +51,7 @@ export default function ProfileWorkSamples({ type, samples }: ProfileWorkSamples
                 <Box gap={{ base: 2, md: 8 }} cols={{ base: 1, md: 2 }}>
                     {[...samples].reverse().map((workSample, index) => (
                         <Box key={workSample.sys.id ?? index} className="">
-                            <Dialog>
+                            <Dialog onOpenChange={setIsDialogOpen}>
                                 <DialogTrigger asChild>
                                     <Button className="w-full h-full aspect-[4/3] p-0 relative rounded-lg overflow-hidden transition-all">
                                         {workSample.featuredImage?.url && (
