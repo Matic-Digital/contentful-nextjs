@@ -36,12 +36,14 @@ export default async function TalentPage({ params }: PageProps) {
         }
 
         console.log('Fetching related data for talent:', talent.sys.id);
-        const profile = await Promise.resolve(
+        const profiles = await Promise.resolve(
             getProfile(talent.sys.id).catch(error => {
-                console.error('Failed to fetch profile:', error);
-                return null;
+                console.error('Failed to fetch profiles:', error);
+                return [];
             }),
         );
+
+        console.log('Fetched profiles:', JSON.stringify(profiles, null, 2));
 
         return (
             <ErrorBoundary>
@@ -63,14 +65,24 @@ export default async function TalentPage({ params }: PageProps) {
                                 <Box direction="col" gap={2} className="">
                                     <h4 className="text-[16px] text-maticgreen">{talent.primaryTitle}</h4>
                                     <h1 className="font-medium text-6xl">{talent.name}</h1>
-                                    {profile && (
-                                        <Link href={`/talent/${talent.slug}/profile/${profile.slug}`} className="">
-                                            <Box direction="col" gap={0} className="border border-gray-300 w-fit p-4 rounded-lg">
-                                                <h4 className="text-maticgreen">{profile.profileType}</h4>
-                                                <h3 className="">{profile.role}</h3>
-                                            </Box>
-                                        </Link>
-                                    )}
+                                    <Box direction="row" gap={4} className="flex-wrap">
+                                        {profiles.map((profile, index) => (
+                                            <Link key={profile.slug ?? index} href={`/talent/${talent.slug}/profile/${profile.slug}`} className="">
+                                                <Box direction="col" gap={0} className={`border w-fit p-4 rounded-lg
+                                                    ${profile.profileType === 'Design' ? 'border-designpurpleborder bg-designpurplebg' : ''}
+                                                    ${profile.profileType === 'Engineering' ? 'border-engblueborder bg-engbluebg' : ''}
+                                                    ${profile.profileType === 'Management' ? 'border-manpinkborder bg-manpinkbg' : ''}
+                                                `}>
+                                                    <h4 className={`
+                                                        ${profile.profileType === 'Design' ? 'text-designpurple' : ''}
+                                                        ${profile.profileType === 'Engineering' ? 'text-engblue' : ''}
+                                                        ${profile.profileType === 'Management' ? 'text-manpink' : ''}
+                                                    `}>{profile.profileType}</h4>
+                                                    <h3 className="">{profile.role}</h3>
+                                                </Box>
+                                            </Link>
+                                        ))}
+                                    </Box>
                                 </Box>
                             </Box>
                         </Container>

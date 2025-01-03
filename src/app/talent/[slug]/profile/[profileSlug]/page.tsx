@@ -128,7 +128,7 @@ export default async function ProfilePage({ params }: Props) {
               />
             )}
             {techSpecification.length > 0 && (
-              <Container>
+              <Container id="evaluation">
                 <Box direction="col" className="p-4 md:p-8 shadow-lg rounded-lg bg-white">
                   {techSpecification.map((tech, index) => (
                     <Box key={index} direction="col" className="gap-2">
@@ -179,8 +179,6 @@ export default async function ProfilePage({ params }: Props) {
               awards={awards}
               languages={languages}
             />
-          </Section>
-          <Section>
             <ProfileNotes
               type={profile.profileType}
               notes={profile.notes}

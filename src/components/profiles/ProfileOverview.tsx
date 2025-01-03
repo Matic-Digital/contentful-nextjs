@@ -100,22 +100,22 @@ export default function ProfileOverview({ name, tags, tier, type, availability, 
                         </span>
                     </p>
                 </Box>
-                <Box className='relative pb-10 mt-4 flex-col md:flex-row' gap={12}>
+                <Box className='relative pb-4 md:pb-10 mt-4 flex-col md:flex-row' gap={{ base: 4, md: 12 }}>
                     <Box gap={4} className="mt-4">
                         <Image
                             src={headshot}
                             alt={name}
                             width={300}
                             height={300}
-                            className="w-[175px] md:min-w-[211px] h-[200px] md:h-[241px] rounded-[0.8rem] z-10"
+                            className="w-[175px] md:min-w-[211px] h-[200px] md:h-[241px] rounded-lg z-10 object-cover shadow-md"
                         />
-                        <div className={`
-                        w-[175px] md:w-[211px] h-[200px] md:h-[241px] rounded-[0.8rem] absolute top-6 left-1.5
-                        ${type === 'Design' ? 'bg-designpurple' : ''}
-                        ${type === 'Engineering' ? 'bg-engblue' : ''}
-                        ${type === 'Management' ? 'bg-manpink' : ''}
-                    `}>
-                        </div>
+                        {/* <div className={`
+                            w-[175px] md:w-[211px] h-[200px] md:h-[241px] rounded-[0.8rem] absolute top-6 left-1.5
+                            ${type === 'Design' ? 'bg-designpurple' : ''}
+                            ${type === 'Engineering' ? 'bg-engblue' : ''}
+                            ${type === 'Management' ? 'bg-manpink' : ''}
+                        `}>
+                        </div> */}
                         <Box direction="col" gap={2} className="flex-grow flex md:hidden">
                             {tags?.map((tag: string, index: number) => (
                                 <p

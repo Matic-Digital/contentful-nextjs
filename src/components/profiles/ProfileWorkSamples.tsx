@@ -70,11 +70,11 @@ export default function ProfileWorkSamples({ type, samples }: ProfileWorkSamples
                                         </Box>
                                     </Button>
                                 </DialogTrigger>
-                                <DialogContent className="backdrop-blur-md bg-[#101828]/60 fixed h-screen w-screen top-0 flex left-0 z-50">
+                                <DialogContent className="backdrop-blur-md bg-[#101828]/60 fixed inset-0 flex items-center justify-center z-50">
                                     <DialogTitle asChild>
                                         <VisuallyHidden>{workSample.sampleName}</VisuallyHidden>
                                     </DialogTitle>
-                                    <Container className="bg-white m-auto relative p-6 rounded-lg max-w-4xl w-[90vw] max-h-[80vh] overflow-auto">
+                                    <Container className="bg-white relative p-4 md:p-6 md:rounded-lg w-full h-full md:h-auto md:w-[90vw] md:max-w-4xl md:max-h-[90vh] overflow-auto">
                                         <DialogClose className="absolute right-4 top-4 text-gray-500 hover:text-gray-700">
                                             <span className="sr-only">Close</span>
                                             ✕
@@ -82,7 +82,7 @@ export default function ProfileWorkSamples({ type, samples }: ProfileWorkSamples
 
                                         <h1 className="text-2xl font-bold mb-4">{workSample.sampleName}</h1>
 
-                                        <Box direction={{ base: 'col', md: 'row' }} gap={8} className="">
+                                        <Box direction={{ base: 'col', md: 'row' }} gap={{ base: 4, md: 8 }} className="">
                                             <Box direction="col" gap={2}>
                                                 <h5 className="text-[10px] md:text-[12px] uppercase font-bold text-[#a4a7ae]">Summary</h5>
                                                 <h3 className="text-xl font-semibold">{workSample.title}</h3>
@@ -97,10 +97,10 @@ export default function ProfileWorkSamples({ type, samples }: ProfileWorkSamples
 
                                             {workSample.roleTags && workSample.roleTags.length > 0 && (
                                                 <Box direction="col" className="">
-                                                    <h5 className="text-[10px] md:text-[12px] uppercase font-bold text-[#a4a7ae]">Tactics</h5>
+                                                    <h5 className="text-[10px] md:text-[12px] uppercase font-bold text-[#a4a7ae] hidden md:flex">Tactics</h5>
                                                     <Box direction="col" className="mt-4 gap-2">
                                                         {workSample.roleTags.map((tag: string, tagIndex: number) => (
-                                                            <div key={tagIndex} className="">{tag}</div>
+                                                            <div key={tagIndex} className="font-bold text-[10px] md:text-[12px] hidden md:flex">{tag}</div>
                                                         ))}
                                                     </Box>
                                                 </Box>
@@ -117,14 +117,13 @@ export default function ProfileWorkSamples({ type, samples }: ProfileWorkSamples
                                                         alt={`${workSample.sampleName} - Image ${imageIndex + 1}`}
                                                         width={800}
                                                         height={600}
-                                                        className="w-full aspect-[4/3] object-contain rounded-lg"
+                                                        className="w-full md:w-[50%] mx-auto aspect-[4/3] object-cover rounded-lg"
                                                     />
                                                 );
                                             })}
-
                                             {(workSample.sampleGalleryCollection?.items?.length ?? 0) > 1 && (
                                                 <div className=" overflow-x-auto">
-                                                    <div className="flex gap-2 justify-center min-w-0">
+                                                    <div className="flex gap-4 mt-4 justify-center min-w-0">
                                                         {workSample.sampleGalleryCollection?.items?.map((image, thumbIndex) => (
                                                             <button
                                                                 key={thumbIndex}

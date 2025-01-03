@@ -497,25 +497,38 @@ async function getAllProfiles(
 async function getProfile(
   talentId: string,
   isDraftMode = false
-): Promise<Profile> {
+): Promise<Profile[]> {
   try {
-    const response = await fetchGraphQL<Profile>(
-      `query GetProfile {
-        profileCollection(
-          where: { talent: { sys: { id: "${talentId}" } } },
-          limit: 1,
-        ) {
-          items {
-            ${PROFILE_GRAPHQL_FIELDS}
-          }
+    type ProfileResponse = ContentfulResponse<{
+      data: {
+        profileCollection?: {
+          items: Profile[];
+          total: number;
+        };
+      };
+    }>;
+
+    const query = `query GetProfile {
+      profileCollection(where: { talent: { sys: { id: "${talentId}" } } }, limit: 100) {
+        total
+        items {
+          ${PROFILE_GRAPHQL_FIELDS}
         }
-      }`,
+      }
+    }`;
+    
+    console.log('GetProfile Query:', query);
+    
+    const response = await fetchGraphQL<ProfileResponse>(
+      query,
       {},
-      isDraftMode,
+      isDraftMode
     );
 
-    // Check for GraphQL errors
+    console.log('GetProfile Response:', JSON.stringify(response, null, 2));
+
     if (response.errors) {
+      console.error('GraphQL errors:', response.errors);
       throw new GraphQLError(
         'GraphQL query execution error',
         response.errors.map((e: { message?: string; extensions?: Record<string, unknown> }): { message: string; extensions?: Record<string, unknown> } => ({
@@ -525,22 +538,22 @@ async function getProfile(
       );
     }
 
-    const profile = response.data?.profileCollection?.items[0];
+    const profiles = response.data?.profileCollection?.items ?? [];
 
-    if (!profile) {
+    if (profiles.length === 0) {
       throw new ResourceNotFoundError(
-        `Profile for talent with ID '${talentId}' not found`,
+        `No profiles found for talent with ID '${talentId}'`,
         'profile'
       );
     }
 
-    return profile;
+    return profiles;
   } catch (error: unknown) {
     if (error instanceof ResourceNotFoundError) {
       throw error;
     }
     const errorMessage = error instanceof Error ? error.message : String(error);
-    throw new ContentfulError('Failed to fetch profile', new Error(errorMessage));
+    throw new ContentfulError('Failed to fetch profiles', new Error(errorMessage));
   }
 }
 
