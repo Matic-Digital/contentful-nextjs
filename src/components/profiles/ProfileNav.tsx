@@ -159,11 +159,11 @@ export default function ProfileNav({ profile }: { profile: Profile }) {
                                     We&apos;re here to help
                                 </DialogTitle>
                                 <DialogContent className="fixed flex w-screen h-screen top-0 left-0 backdrop-blur-sm bg-[#101828]/60">
-                                    <Container className=" w-[45vw] p-6 my-auto bg-background rounded-lg relative h-fit">
+                                    <Container className=" w-[45vw] md:w-[39.333rem] p-6 my-auto bg-white rounded-lg relative h-fit">
                                         <Box direction="col" gap={4} className="items-center">
                                             <DialogClose asChild>
                                                 <Button variant='ghost' className="absolute right-4 top-4">
-                                                    X
+                                                    ✕
                                                 </Button>
                                             </DialogClose>
                                             <Box direction="col" gap={2} className="">
