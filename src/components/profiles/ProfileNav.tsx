@@ -49,11 +49,11 @@ export default function ProfileNav({ profile }: { profile: Profile }) {
     });
 
     return (
-        <Container id='overview' className='sticky top-[4.0rem] z-[30]'>
+        <Container id='overview' className='sticky top-[4.5rem] z-[30]'>
             <motion.div
                 variants={{
                     visible: { y: 0 },
-                    hidden: { y: "-4.0rem" },
+                    hidden: { y: "-4.5rem" },
                 }}
                 animate={hidden ? "hidden" : "visible"}
                 transition={{ duration: 0.35, ease: "easeInOut" }}

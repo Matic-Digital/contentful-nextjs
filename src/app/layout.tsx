@@ -45,10 +45,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <Layout className={`${inter.variable}`}>
-      <body className="flex min-h-screen flex-col">
+      <body className="flex flex-col">
         <Providers>
           <Header />
-          <Main className="mt-24 min-h-screen">{children}</Main>
+          <Main className="mt-36">{children}</Main>
           <Toaster />
           <Footer />
         </Providers>

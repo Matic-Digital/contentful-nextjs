@@ -47,12 +47,9 @@ export default async function TalentPage({ params }: PageProps) {
 
         return (
             <ErrorBoundary>
-                <Container width="full">
-                    <Box className="">
-                        <BackButton href="/talent" />
-                    </Box>
-                    <Section>
-                        <Container>
+                    <Section className="">
+                        <Container className="">
+                            <BackButton href="/talent" />
                             <Box gap={12}>
                                 <Image
                                     src={talent.headshot.url}
@@ -62,12 +59,14 @@ export default async function TalentPage({ params }: PageProps) {
                                     className="aspect-square object-cover rounded-lg shadow-lg"
                                     priority={false}
                                 />
-                                <Box direction="col" gap={2} className="">
-                                    <h4 className="text-[16px] text-maticgreen">{talent.primaryTitle}</h4>
-                                    <h1 className="font-medium text-6xl">{talent.name}</h1>
+                                <Box direction="col" gap={12} className="">
+                                    <Box direction="col" gap={2} className="">
+                                        <h4 className="text-[16px] text-maticgreen">{talent.primaryTitle}</h4>
+                                        <h1 className="font-medium text-6xl">{talent.name}</h1>
+                                    </Box>
                                     <Box direction="row" gap={4} className="flex-wrap">
-                                        {profiles.map((profile, index) => (
-                                            <Link key={profile.slug ?? index} href={`/talent/${talent.slug}/profile/${profile.slug}`} className="">
+                                        {profiles.reverse().map((profile, index) => (
+                                            <Link key={profile.slug ?? index} href={`/talent/${talent.slug}/profile/${profile.slug}`} className="hover:scale-95">
                                                 <Box direction="col" gap={0} className={`border w-fit p-4 rounded-lg
                                                     ${profile.profileType === 'Design' ? 'border-designpurpleborder bg-designpurplebg' : ''}
                                                     ${profile.profileType === 'Engineering' ? 'border-engblueborder bg-engbluebg' : ''}
@@ -87,7 +86,6 @@ export default async function TalentPage({ params }: PageProps) {
                             </Box>
                         </Container>
                     </Section>
-                </Container>
             </ErrorBoundary>
         );
     } catch (error) {
