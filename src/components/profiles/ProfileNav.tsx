@@ -3,6 +3,8 @@
 import { Box, Container } from '@/components/global/matic-ds';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from '@radix-ui/react-dialog';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import * as Portal from '@radix-ui/react-portal';
 import Image from 'next/image';
 import Link from 'next/link';
 import OverviewItem from './OverviewItem';
@@ -76,45 +78,47 @@ export default function ProfileNav({ profile }: { profile: Profile }) {
                                         <div className="absolute">$</div>
                                     </Button>
                                 </DialogTrigger>
-                                <DialogTitle className='hidden'>
-                                    We&apos;re here to help
-                                </DialogTitle>
-                                <DialogContent className="fixed flex w-screen h-screen top-0 left-0 backdrop-blur-sm bg-[#101828]/60">
-                                    <Container className="w-[39.333rem] m-auto py-8 bg-background rounded-lg relative">
-                                        <Box direction="col" gap={4} className="items-center">
-                                            <DialogClose asChild>
-                                                <Button variant='ghost' className="absolute right-4 top-4">
-                                                    X
-                                                </Button>
-                                            </DialogClose>
-                                            <Box direction="col" gap={2} className="">
-                                                <h1>{profile.name.split(' ')[0]}&apos;s <span className={`
-                                                    ${profile.profileType === 'Design' ? 'text-designpurple' : profile.profileType === 'Engineering' ? 'text-engblue' : ''}
-                                                `}>Rate</span></h1>
-                                                <p className="">
-                                                    Matic Teams pays people well to do what they love. Some adjustment is possible based on factors like duration, team scale, and individual considerations.
-                                                </p>
-                                            </Box>
-                                            <Box cols={3} className={`
-                                                border rounded-lg flex
-                                                ${profile.profileType === 'Design' ? 'border-[#d6bbfb] bg-[#fcfaff]' : ''}
-                                            `}>
-                                                <OverviewItem label="Individual Hourly" value={`$${profile.rate}`} color={profile.profileType} />
-                                                <OverviewItem label="Team Hourly" value={'Contact Us'} color={profile.profileType} />
-                                                <OverviewItem label="Full-Time" value={'Contact Us'} color={profile.profileType} />
-                                            </Box>
-                                            <Box className="justify-between items-center">
-                                                <Button>Request Introduction</Button>
-                                                <Box gap={2} className="">
-                                                    <p className="">Ready to discuss?</p>
-                                                    <Link href="#" className="">
-                                                        <p className="">Get in Touch</p>
-                                                    </Link>
+                                <Portal.Root>
+                                    <DialogContent className="fixed inset-0 w-[100vw] h-[100vh] flex items-center justify-center backdrop-blur-sm bg-[#101828]/60 z-[9999] data-[state=open]:animate-in">
+                                        <DialogTitle asChild>
+                                            <VisuallyHidden>{profile.name}&apos;s Rate Information</VisuallyHidden>
+                                        </DialogTitle>
+                                        <div className="w-[39.333rem] bg-background rounded-lg p-8 relative">
+                                            <Box direction="col" gap={4} className="items-center">
+                                                <DialogClose asChild>
+                                                    <Button variant='ghost' className="absolute right-4 top-4">
+                                                        X
+                                                    </Button>
+                                                </DialogClose>
+                                                <Box direction="col" gap={2} className="">
+                                                    <h1>{profile.name.split(' ')[0]}&apos;s <span className={`
+                                                        ${profile.profileType === 'Design' ? 'text-designpurple' : profile.profileType === 'Engineering' ? 'text-engblue' : ''}
+                                                    `}>Rate</span></h1>
+                                                    <p className="">
+                                                        Matic Teams pays people well to do what they love. Some adjustment is possible based on factors like duration, team scale, and individual considerations.
+                                                    </p>
+                                                </Box>
+                                                <Box cols={3} className={`
+                                                    border rounded-lg flex
+                                                    ${profile.profileType === 'Design' ? 'border-[#d6bbfb] bg-[#fcfaff]' : ''}
+                                                `}>
+                                                    <OverviewItem label="Individual Hourly" value={`$${profile.rate}`} color={profile.profileType} />
+                                                    <OverviewItem label="Team Hourly" value={'Contact Us'} color={profile.profileType} />
+                                                    <OverviewItem label="Full-Time" value={'Contact Us'} color={profile.profileType} />
+                                                </Box>
+                                                <Box className="justify-between items-center">
+                                                    <Button>Request Introduction</Button>
+                                                    <Box gap={2} className="">
+                                                        <p className="">Ready to discuss?</p>
+                                                        <Link href="#" className="">
+                                                            <p className="">Get in Touch</p>
+                                                        </Link>
+                                                    </Box>
                                                 </Box>
                                             </Box>
-                                        </Box>
-                                    </Container>
-                                </DialogContent>
+                                        </div>
+                                    </DialogContent>
+                                </Portal.Root>
                             </Dialog>
                             <Button className={`
                                 rounded-lg hover:bg-blue-100
@@ -167,51 +171,53 @@ export default function ProfileNav({ profile }: { profile: Profile }) {
                                         <div className="absolute">$</div>
                                     </Button>
                                 </DialogTrigger>
-                                <DialogTitle className='hidden'>
-                                    We&apos;re here to help
-                                </DialogTitle>
-                                <DialogContent className="fixed flex w-screen h-screen top-0 left-0 backdrop-blur-sm bg-[#101828]/60">
-                                    <Container className=" w-[45vw] md:w-[39.333rem] p-6 my-auto bg-white rounded-lg relative h-fit">
-                                        <Box direction="col" gap={4} className="items-center">
-                                            <DialogClose asChild>
-                                                <Button variant='ghost' className="absolute right-4 top-4">
-                                                    ✕
-                                                </Button>
-                                            </DialogClose>
-                                            <Box direction="col" gap={2} className="">
-                                                <h1>{profile.name.split(' ')[0]}&apos;s <span className={`
-                                                    ${profile.profileType === 'Design' ? 'text-design-purple' : profile.profileType === 'Engineering' ? 'text-engineering-blue' : ''}
-                                                `}>Rate</span></h1>
-                                                <p className="">
-                                                    Matic Teams pays people well to do what they love. Some adjustment is possible based on factors like duration, team scale, and individual considerations.
-                                                </p>
-                                            </Box>
-                                            <Box cols={3} className={`
-                                                border rounded-lg flex w-full
-                                                ${profile.profileType === 'Design' ? 'border-designpurpleborder bg-designpurplebg' : ''}
-                                                ${profile.profileType === 'Engineering' ? 'border-engblueborder bg-engbluebg' : ''}
-                                                ${profile.profileType === 'Management' ? 'border-manpinkborder bg-manpinkbg' : ''}
-                                            `}>
-                                                <OverviewItem label="Individual Hourly" value={`$${profile.rate}`} color={profile.profileType} />
-                                                <OverviewItem label="Team Hourly" value={'Contact Us'} color={profile.profileType} />
-                                                <OverviewItem label="Full-Time" value={'Contact Us'} color={profile.profileType} />
-                                            </Box>
-                                            <Box className="justify-between items-center w-full">
-                                                <Button className={`
-                                                    ${profile.profileType === 'Design' ? 'bg-designpurple' : ''}
-                                                    ${profile.profileType === 'Engineering' ? 'bg-engblue' : ''}    
-                                                    ${profile.profileType === 'Management' ? 'bg-manpink' : ''}
-                                                `}>Request Introduction</Button>
-                                                <Box gap={2} className="">
-                                                    <p className="">Ready to discuss?</p>
-                                                    <Link href="#" className="">
-                                                        <p className="">Get in Touch</p>
-                                                    </Link>
+                                <Portal.Root>
+                                    <DialogContent className="fixed inset-0 w-[100vw] h-[100vh] flex items-center justify-center backdrop-blur-sm bg-[#101828]/60 z-[9999] data-[state=open]:animate-in">
+                                        <DialogTitle asChild>
+                                            <VisuallyHidden>{profile.name}&apos;s Rate Information</VisuallyHidden>
+                                        </DialogTitle>
+                                        <div className="w-[39.333rem] bg-background rounded-lg p-8 relative">
+                                            <Box direction="col" gap={4} className="items-center">
+                                                <DialogClose asChild>
+                                                    <Button variant='ghost' className="absolute right-4 top-4">
+                                                        ✕
+                                                    </Button>
+                                                </DialogClose>
+                                                <Box direction="col" gap={2} className="">
+                                                    <h1>{profile.name.split(' ')[0]}&apos;s <span className={`
+                                                        ${profile.profileType === 'Design' ? 'text-design-purple' : profile.profileType === 'Engineering' ? 'text-engineering-blue' : ''}
+                                                    `}>Rate</span></h1>
+                                                    <p className="">
+                                                        Matic Teams pays people well to do what they love. Some adjustment is possible based on factors like duration, team scale, and individual considerations.
+                                                    </p>
+                                                </Box>
+                                                <Box cols={3} className={`
+                                                    border rounded-lg flex w-full
+                                                    ${profile.profileType === 'Design' ? 'border-designpurpleborder bg-designpurplebg' : ''}
+                                                    ${profile.profileType === 'Engineering' ? 'border-engblueborder bg-engbluebg' : ''}
+                                                    ${profile.profileType === 'Management' ? 'border-manpinkborder bg-manpinkbg' : ''}
+                                                `}>
+                                                    <OverviewItem label="Individual Hourly" value={`$${profile.rate}`} color={profile.profileType} />
+                                                    <OverviewItem label="Team Hourly" value={'Contact Us'} color={profile.profileType} />
+                                                    <OverviewItem label="Full-Time" value={'Contact Us'} color={profile.profileType} />
+                                                </Box>
+                                                <Box className="justify-between items-center w-full">
+                                                    <Button className={`
+                                                        ${profile.profileType === 'Design' ? 'bg-designpurple' : ''}
+                                                        ${profile.profileType === 'Engineering' ? 'bg-engblue' : ''}    
+                                                        ${profile.profileType === 'Management' ? 'bg-manpink' : ''}
+                                                    `}>Request Introduction</Button>
+                                                    <Box gap={2} className="">
+                                                        <p className="">Ready to discuss?</p>
+                                                        <Link href="#" className="">
+                                                            <p className="">Get in Touch</p>
+                                                        </Link>
+                                                    </Box>
                                                 </Box>
                                             </Box>
-                                        </Box>
-                                    </Container>
-                                </DialogContent>
+                                        </div>
+                                    </DialogContent>
+                                </Portal.Root>
                             </Dialog>
                             <Button className={`
                                 ${profile.profileType === 'Design' ? 'bg-design-purple' : ''}
