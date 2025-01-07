@@ -98,6 +98,24 @@ type BoxProps = {
 // Layout Component
 // This component sets up the basic HTML structure and applies global styles
 
+/**
+ * Layout component that sets up the basic HTML structure and applies global styles
+ * @example
+ * ```tsx
+ * <Layout>
+ *   <Main>
+ *     <Section>
+ *       <Container>Content</Container>
+ *     </Section>
+ *   </Main>
+ * </Layout>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Content to be rendered within the layout
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} Layout component
+ */
 export const Layout = ({ children, className }: LayoutProps) => {
   return (
     <html
@@ -113,6 +131,26 @@ export const Layout = ({ children, className }: LayoutProps) => {
 // Main Component
 // This component is used for the main content area of the page
 
+/**
+ * Main component for the primary content area of the page
+ * @example
+ * ```tsx
+ * <Main>
+ *   <Section>
+ *     <Container>
+ *       <h1>Page Title</h1>
+ *       <p>Main content</p>
+ *     </Container>
+ *   </Section>
+ * </Main>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Main content
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {string} [props.id] - Optional ID for the main element
+ * @returns {JSX.Element} Main component
+ */
 export const Main = ({ children, className, id }: MainProps) => {
   return (
     <main className={cn(className)} id={id}>
@@ -124,6 +162,24 @@ export const Main = ({ children, className, id }: MainProps) => {
 // Section Component
 // This component is used for defining sections within the page
 
+/**
+ * Section component for grouping related content
+ * @example
+ * ```tsx
+ * <Section>
+ *   <Container>
+ *     <h2>Section Title</h2>
+ *     <p>Section content</p>
+ *   </Container>
+ * </Section>
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Section content
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {string} [props.id] - Optional ID for the section
+ * @returns {JSX.Element} Section component
+ */
 export const Section = ({ children, className, id }: SectionProps) => {
   return (
     <section className={cn('section', className)} id={id}>
@@ -132,9 +188,28 @@ export const Section = ({ children, className, id }: SectionProps) => {
   );
 };
 
-// Container Component
-// This component is used for containing content with a maximum width and padding
-
+/**
+ * Container component that wraps content with consistent maximum width and padding
+ * @example
+ * ```tsx
+ * <Container>
+ *   <h1>Heading</h1>
+ *   <p>Content</p>
+ * </Container>
+ *
+ * // With custom width
+ * <Container width="full">
+ *   <h1>Full Width Content</h1>
+ * </Container>
+ * ```
+ *
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Content to be contained
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {string} [props.id] - Optional ID for the container
+ * @param {'boxed' | 'full'} [props.width] - Container width variant
+ * @returns {JSX.Element} Container component
+ */
 export const Container = ({ children, className, id, width }: ContainerProps) => {
   return (
     <div className={cn('container', { 'max-w-full': width === 'full' }, className)} id={id}>
@@ -146,6 +221,27 @@ export const Container = ({ children, className, id, width }: ContainerProps) =>
 // Article Component
 // This component is used for rendering articles with optional dangerouslySetInnerHTML
 
+/**
+ * Article component for rendering article content with optional HTML injection
+ * @example
+ * ```tsx
+ * // With children
+ * <Article>
+ *   <h1>Article Title</h1>
+ *   <p>Article content</p>
+ * </Article>
+ * 
+ * // With HTML content
+ * <Article html={{ __html: htmlContent }} />
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} [props.children] - Article content
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {string} [props.id] - Optional ID for the article
+ * @param {{ __html: string }} [props.html] - HTML content to be rendered using dangerouslySetInnerHTML
+ * @returns {JSX.Element} Article component
+ */
 export const Article = ({ children, className, id, html }: ArticleProps) => {
   return (
     <article dangerouslySetInnerHTML={html} className={cn('matic spaced', className)} id={id}>
@@ -157,6 +253,31 @@ export const Article = ({ children, className, id, html }: ArticleProps) => {
 // Prose Component
 // This component is used for rendering prose content with appropriate typography styles
 
+/**
+ * Prose component for rendering content with proper typography styles
+ * @example
+ * ```tsx
+ * // With children
+ * <Prose>
+ *   <h1>Title</h1>
+ *   <p>Beautifully styled text content</p>
+ *   <ul>
+ *     <li>List item 1</li>
+ *     <li>List item 2</li>
+ *   </ul>
+ * </Prose>
+ * 
+ * // With HTML content
+ * <Prose html={{ __html: htmlContent }} />
+ * ```
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} [props.children] - Content to be styled
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {string} [props.id] - Optional ID for the prose container
+ * @param {{ __html: string }} [props.html] - HTML content to be rendered using dangerouslySetInnerHTML
+ * @returns {JSX.Element} Prose component
+ */
 export const Prose = ({ children, className, id, html }: ArticleProps) => {
   return (
     <div
@@ -237,6 +358,38 @@ export const Prose = ({ children, className, id, html }: ArticleProps) => {
 // Box Component
 // This component is used for creating flexible layouts
 
+/**
+ * Box component for creating flexible layouts using either Flexbox or Grid
+ * @example
+ * ```tsx
+ * // Flex layout
+ * <Box direction="row" gap={4}>
+ *   <div>Item 1</div>
+ *   <div>Item 2</div>
+ * </Box>
+ *
+ * // Responsive grid
+ * <Box
+ *   cols={{ sm: 1, md: 2, lg: 3 }}
+ *   gap={{ sm: 2, md: 4 }}
+ *   className="justify-items-center"
+ * >
+ *   <div>Item 1</div>
+ *   <div>Item 2</div>
+ *   <div>Item 3</div>
+ * </Box>
+ * ```
+ *
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Content to be laid out
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {'row' | 'col' | Object} [props.direction] - Flex direction (use for flex layouts)
+ * @param {boolean | Object} [props.wrap] - Whether items should wrap
+ * @param {number | Object} [props.gap] - Space between items
+ * @param {number | Object} [props.cols] - Number of grid columns (use for grid layouts)
+ * @param {number | Object} [props.rows] - Number of grid rows
+ * @returns {JSX.Element} Box component
+ */
 export const Box = ({
   children,
   className,
@@ -318,97 +471,3 @@ export const Box = ({
 
   return <div className={stackClasses}>{children}</div>;
 };
-
-// Instructions for AI
-
-// How to use matic-ds:
-// 1. Import the components you need in your React components:
-//    import { Layout, Main, Section, Container, Article, Box } from "@/components/matic";
-
-// 2. Use the components to build your layout:
-//    export default function Page() {
-//      return (
-//        <Main>
-//          <Section>
-//            <Container>
-//              <h1>Heading</h1>
-//              <p>Content</p>
-//            </Container>
-//          </Section>
-//        </Main>
-//      );
-//    }
-
-// 3. Customize the components using the className prop:
-//    <Container className="custom-container">
-//      {/* Your content here */}
-//    </Container>
-
-// 4. Use the Box component for flexible layouts:
-// this can be used as a Box wrapping comonent
-//    <Box direction="row" wrap={true} gap={4}>
-//      <div>Item 1</div>
-//      <div>Item 2</div>
-//    </Box>
-
-//    <Box cols={3} gap={4}>
-//      <div>Item 1</div>
-//      <div>Item 2</div>
-//      <div>Item 3</div>
-//    </Box>
-
-// Component Usage Examples:
-
-// Layout
-// <Layout className="custom-class">{/* content here */}</Layout>
-
-// Main
-// <Main className="custom-class" id="main-content">
-//   {/* main content here */}
-// </Main>
-
-// Section
-// <Section className="custom-section" id="unique-section">
-//   {/* section content here */}
-// </Section>
-
-// Container
-// <Container className="custom-container" id="container-id">
-//   {/* contained content here */}
-// </Container>
-
-// Article
-// <Article className="custom-article" id="article-id">
-//   {/* article content here */}
-// </Article>
-
-// Box (Flex mode)
-// <Box
-//   direction={{ sm: "col", md: "row" }}
-//   wrap={true}
-//   gap={{ sm: 2, md: 4 }}
-//   className="justify-between items-center"
-// >
-//   <div>Item 1</div>
-//   <div>Item 2</div>
-// </Box>
-
-// Box (Grid mode)
-// <Box
-//   cols={{ sm: 1, md: 2, lg: 3 }}
-//   gap={{ sm: 2, md: 4 }}
-//   className="justify-items-center items-start"
-// >
-//   <div>Item 1</div>
-//   <div>Item 2</div>
-//   <div>Item 3</div>
-// </Box>
-
-// Additional notes for AI:
-// 1. The Box component is versatile and can be used for both flex and grid layouts.
-// 2. Use the 'direction' prop for flex layouts and 'cols' or 'rows' props for grid layouts.
-// 3. All components support responsive design through Tailwind classes.
-// 4. The cn() function is used to merge Tailwind classes efficiently.
-// 5. Remember to use appropriate semantic HTML structure with these components.
-// 6. These components are designed to work with Tailwind CSS, ensure it's properly set up in the project.
-// 7. For typography styles, refer to the Main and Article components which use Tailwind's typography plugin.
