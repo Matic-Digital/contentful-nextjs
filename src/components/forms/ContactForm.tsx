@@ -58,14 +58,14 @@ function FieldInfo({
   >;
 }) {
   return (
-    <>
+    <div data-testid={`${field.name}-field-info`}>
       {field.state.meta.isTouched && field.state.meta.errors.length ? (
         <em className="text-sm text-destructive">{field.state.meta.errors.join(',')}</em>
       ) : null}
       {field.state.meta.isValidating ? (
         <em className="text-sm text-primary">Validating...</em>
       ) : null}
-    </>
+    </div>
   );
 }
 
