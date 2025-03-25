@@ -1,15 +1,79 @@
 // Uncomment when needed
 // import { type Document } from "@contentful/rich-text-types";
 
+export interface Page {
+  sys: {
+    id: string;
+  };
+  name: string;
+  slug: string;
+  description?: string;
+  pageContentCollection?: {
+    items: Hero[];
+  };
+}
+
+export interface PageList {
+  sys: {
+    id: string;
+  };
+  name?: string;
+  slug?: string;
+  pagesCollection?: {
+    items: Array<Page>;
+  };
+  __typename?: string;
+}
+
 export interface Hero {
   sys: {
     id: string;
   };
+  name?: string;
   description?: string;
+  __typename?: string;
 }
 
 export interface HeroResponse {
   items: Hero[];
+  total: number;
+}
+
+export interface PageResponse {
+  items: Page[];
+  total: number;
+}
+
+export interface PageListResponse {
+  items: Array<PageList>;
+  total: number;
+}
+
+export interface Asset {
+  sys: {
+    id: string;
+  };
+  title?: string;
+  description?: string;
+  url?: string;
+  width?: number;
+  height?: number;
+}
+
+export interface NavBar {
+  sys: {
+    id: string;
+  };
+  name?: string;
+  logo?: Asset;
+  navLinksCollection?: {
+    items: Array<Page | PageList>;
+  };
+  __typename?: string;
+}
+
+export interface NavBarResponse {
+  items: Array<NavBar>;
   total: number;
 }
 
@@ -19,12 +83,30 @@ export interface HeroResponse {
  * @property data - Contains the response data if request succeeds
  * @property errors - Contains error details if request fails
  */
-export interface ContentfulResponse<T> {
+export interface GraphQLResponse<T> {
   data?: {
     heroCollection?: {
       items: T[];
       total: number;
     };
+    pageCollection?: {
+      items: T[];
+      total: number;
+    };
+    pageListCollection?: {
+      items: T[];
+      total: number;
+    };
+    navBarCollection?: {
+      items: T[];
+      total: number;
+    };
   };
-  errors?: Array<{ message: string }>;
+  errors?: Array<{
+    message: string;
+    locations: Array<{
+      line: number;
+      column: number;
+    }>;
+  }>;
 }

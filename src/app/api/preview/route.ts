@@ -1,55 +1,62 @@
 import { draftMode } from 'next/headers';
-import { redirect } from 'next/navigation';
-import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 /**
  * Preview API Route
- * Enables draft mode and redirects to the specified path
+ * Enables draft mode and redirects to the appropriate preview page
  * 
  * Query parameters:
- * - secret: The preview secret (must match CONTENTFUL_PREVIEW_SECRET)
+ * - secret: The preview secret to validate
  * - slug: The path to redirect to after enabling preview mode
- * - id: Optional hero ID to include in the redirect
+ * - heroId: Optional hero ID to preview
+ * - pageListSlug: The slug of the page list to preview
+ * - navBarName: The name of the navbar to preview
  */
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  
-  // Check the secret
+  // Parse query parameters
+  const searchParams = request.nextUrl.searchParams;
   const secret = searchParams.get('secret');
-  const previewSecret = process.env.CONTENTFUL_PREVIEW_SECRET;
-  
-  if (!previewSecret) {
-    return new NextResponse('Preview secret is not set', { status: 500 });
+  const slug = searchParams.get('slug');
+  const pageListSlug = searchParams.get('pageListSlug');
+  const navBarName = searchParams.get('navBarName');
+  const heroId = searchParams.get('heroId');
+
+  // Check the secret and slug
+  if (secret !== process.env.CONTENTFUL_PREVIEW_SECRET) {
+    return NextResponse.json(
+      { message: 'Invalid token' },
+      { status: 401 }
+    );
   }
-  
-  if (secret !== previewSecret) {
-    return new NextResponse('Invalid preview secret', { status: 401 });
-  }
-  
-  // Enable draft mode
+
+  // Enable Draft Mode by setting the cookie
   const draft = await draftMode();
   draft.enable();
-  
-  // Get the redirect path and optional hero ID
-  const redirectPath = searchParams.get('slug') ?? '/hero-preview';
-  const heroId = searchParams.get('id');
-  
-  // Build the redirect URL with hero ID if provided
-  let redirectUrl = redirectPath;
-  if (heroId && redirectPath === '/hero-preview') {
-    redirectUrl = `${redirectPath}?id=${heroId}`;
+
+  // Redirect to the correct preview page based on the parameters
+  if (slug) {
+    // Redirect to the page preview with the slug
+    return NextResponse.redirect(
+      new URL(`/page-preview?slug=${slug}`, request.url)
+    );
+  } else if (pageListSlug) {
+    // Redirect to the page list preview with the slug
+    return NextResponse.redirect(
+      new URL(`/page-list-preview?pageListSlug=${pageListSlug}`, request.url)
+    );
+  } else if (navBarName) {
+    // Redirect to the navbar preview with the name
+    return NextResponse.redirect(
+      new URL(`/navbar-preview?navBarName=${navBarName}`, request.url)
+    );
+  } else if (heroId) {
+    // Redirect to the hero preview with the ID
+    return NextResponse.redirect(
+      new URL(`/hero-preview?heroId=${heroId}`, request.url)
+    );
+  } else {
+    // If no specific content is requested, redirect to the home page
+    return NextResponse.redirect(new URL('/', request.url));
   }
-  
-  // Add Contentful preview parameters if they exist
-  const spaceId = searchParams.get('space_id');
-  const previewToken = searchParams.get('preview_access_token');
-  
-  if (spaceId && previewToken) {
-    const separator = redirectUrl.includes('?') ? '&' : '?';
-    redirectUrl = `${redirectUrl}${separator}preview=1&space_id=${spaceId}&preview_access_token=${previewToken}`;
-  }
-  
-  // Redirect to the page
-  redirect(redirectUrl);
 }

@@ -12,9 +12,10 @@ import { Providers } from '@/app/providers';
 import { Layout } from '@/components/global/matic-ds';
 
 import { Main } from '@/components/global/matic-ds';
-import { Header } from '@/components/global/Header';
 import { Footer } from '@/components/global/Footer';
 import { Toaster } from '@/components/ui/toaster';
+import { NavBar } from '@/components/global/NavBar';
+import { getNavBarById } from '@/lib/api';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -42,15 +43,18 @@ export const metadata: Metadata = {
  *
  * @param children - Page content to be rendered
  */
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  // Fetch the NavBar with the specific ID
+  const navBar = await getNavBarById('s4hTJG3prsPBj4LU4WaSp', false);
+  
   return (
     <Layout className={`${inter.variable}`}>
       <body className="flex min-h-screen flex-col">
         <Providers>
-          <Header />
+          {navBar ? <NavBar {...navBar} /> : null}
           <Main className="mt-24">{children}</Main>
-          <Toaster />
           <Footer />
+          <Toaster />
         </Providers>
       </body>
     </Layout>
