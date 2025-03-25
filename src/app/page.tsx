@@ -4,6 +4,8 @@ import type { Metadata } from 'next';
 import { Container } from '@/components/global/matic-ds';
 import { getAllPages, getAllPageLists } from '@/lib/api';
 import type { PageResponse, PageListResponse } from '@/types/contentful';
+import { getAllFooters } from '@/lib/api';
+import type { FooterResponse } from '@/types/contentful';
 
 /**
  * Metadata configuration for SEO
@@ -33,6 +35,14 @@ export default async function HomePage() {
   } catch (error) {
     console.error('Error fetching page lists:', error);
     // Continue with empty pageLists array
+  }
+  
+  let footers: FooterResponse = { items: [], total: 0 };
+  try {
+    footers = await getAllFooters();
+  } catch (error) {
+    console.error('Error fetching footers:', error);
+    // Continue with empty footers array
   }
   
   return (
@@ -71,6 +81,20 @@ export default async function HomePage() {
         <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-yellow-800">
           <h2 className="mb-2 text-lg font-medium">No content found</h2>
           <p>No pages or page lists were found in your Contentful space.</p>
+        </div>
+      )}
+      
+      {footers.items.length > 0 && (
+        <div className="mb-8">
+          <h2 className="mb-4 text-2xl font-semibold">Footers</h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {footers.items.map((footer) => (
+              <div key={footer.sys.id} className="rounded-lg border p-4 shadow-sm">
+                <h3 className="mb-2 text-xl font-medium">{footer.name}</h3>
+                {footer.description && <p className="text-gray-600">{footer.description}</p>}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </Container>

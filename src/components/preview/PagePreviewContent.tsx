@@ -1,57 +1,22 @@
-import { getHero } from '@/lib/api';
-import { Hero } from '@/components/global/Hero';
+'use client';
+
+import React from 'react';
 import { Box } from '@/components/global/matic-ds';
-import { draftMode } from 'next/headers';
-import ContentfulLivePreviewInitializer from '@/components/global/ContentfulLivePreviewInitializer';
+import { Page } from '@/components/global/Page';
+import type { Page as PageType } from '@/types/contentful';
 
-// Force dynamic rendering for this page to ensure live updates work
-export const dynamic = 'force-dynamic';
-
-// Disable caching for this page
-export const fetchCache = 'force-no-store';
-export const revalidate = 0;
-
-// Define the props type for the page component
-interface HeroPreviewPageProps {
-  params: Promise<Record<string, string>>;
-  searchParams: Promise<{
-    id?: string;
-    heroId?: string;
-  }>;
+interface PagePreviewContentProps {
+  pageData: PageType | null;
+  pageSlug: string;
+  error: string | null;
+  isDraftMode: boolean;
 }
 
 /**
- * Hero Preview Page
- * This page is specifically for previewing the Hero component with Contentful Live Preview
+ * Client component for rendering page preview content
+ * This component handles the styling and rendering of the page preview
  */
-export default async function HeroPreviewPage({ params, searchParams }: HeroPreviewPageProps) {
-  // Await the params and searchParams Promises (required in Next.js 15)
-  await params; // We need to await this even if we don't use it
-  const resolvedSearchParams = await searchParams;
-  // Get the hero ID from the query parameters, or use a default ID
-  // Accept either 'id' or 'heroId' parameter for compatibility
-  const heroId = resolvedSearchParams?.heroId ?? resolvedSearchParams?.id ?? process.env.NEXT_PUBLIC_DEFAULT_HERO_ID ?? '';
-  const draftModeData = await draftMode();
-  const isDraftMode = draftModeData.isEnabled;
-  
-  // Always use preview mode for this page
-  const usePreview = true;
-  
-  // Fetch the hero data
-  let heroData = null;
-  let error = null;
-  
-  try {
-    if (heroId) {
-      console.log('Fetching hero with ID:', heroId, 'usePreview:', usePreview);
-      heroData = await getHero(heroId, usePreview);
-      console.log('Hero data received:', heroData);
-    }
-  } catch (err) {
-    console.error('Error fetching hero:', err);
-    error = err instanceof Error ? err.message : 'An unknown error occurred';
-  }
-
+export function PagePreviewContent({ pageData, pageSlug, error, isDraftMode }: PagePreviewContentProps) {
   return (
     <Box direction="col" gap={8} className="min-h-screen py-12">
       {/* Preview Status */}
@@ -64,10 +29,10 @@ export default async function HeroPreviewPage({ params, searchParams }: HeroPrev
               </svg>
             </div>
             <div className="ml-3 flex-1">
-              <h3 className="text-sm font-medium text-blue-800">Hero Preview Mode</h3>
+              <h3 className="text-sm font-medium text-blue-800">Page Preview Mode</h3>
               <div className="mt-2 text-sm text-blue-700">
-                <p>You are viewing the Hero component in preview mode. {isDraftMode ? 'Draft mode is enabled.' : 'Draft mode is disabled.'}</p>
-                {heroId && <p className="mt-1">Hero ID: {heroId}</p>}
+                <p>You are viewing the Page component in preview mode. {isDraftMode ? 'Draft mode is enabled.' : 'Draft mode is disabled.'}</p>
+                {pageSlug && <p className="mt-1">Page Slug: {pageSlug}</p>}
               </div>
             </div>
           </div>
@@ -85,7 +50,7 @@ export default async function HeroPreviewPage({ params, searchParams }: HeroPrev
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">Error Loading Hero</h3>
+                <h3 className="text-sm font-medium text-red-800">Error Loading Page</h3>
                 <div className="mt-2 text-sm text-red-700">
                   <p>{error}</p>
                 </div>
@@ -95,8 +60,8 @@ export default async function HeroPreviewPage({ params, searchParams }: HeroPrev
         </Box>
       )}
 
-      {/* No Hero ID Provided */}
-      {!heroId && !error && (
+      {/* No Page Slug Provided */}
+      {!pageSlug && !error && (
         <Box className="mx-auto max-w-7xl px-4">
           <div className="rounded-md bg-yellow-50 p-4">
             <div className="flex">
@@ -106,27 +71,55 @@ export default async function HeroPreviewPage({ params, searchParams }: HeroPrev
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-yellow-800">No Hero ID Provided</h3>
+                <h3 className="text-sm font-medium text-yellow-800">No Page Slug Provided</h3>
                 <div className="mt-2 text-sm text-yellow-700">
-                  <p>Please provide a hero ID in the URL query parameters (e.g., ?id=your-hero-id).</p>
+                  <p>Please provide a page slug in the URL query parameters (e.g., ?slug=your-page-slug).</p>
                 </div>
               </div>
             </div>
           </div>
         </Box>
       )}
-
-      {/* Contentful Live Preview Initializer */}
-      <ContentfulLivePreviewInitializer />
       
-      {/* Hero Component */}
-      {heroData ? (
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
-          <div className="text-xs text-gray-500 mb-2 text-center">Hero Component Preview</div>
-          <pre className="text-xs text-gray-500 mb-2 overflow-auto max-h-40 bg-gray-100 p-2 rounded">
-            {JSON.stringify(heroData, null, 2)}
-          </pre>
-          <Hero {...heroData} />
+      {/* Page Component */}
+      {pageData ? (
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 page-preview-container">
+          <div className="text-xs text-gray-500 mb-2 text-center">Page Preview</div>
+          <style jsx>{`
+            /* Override layout styles for preview */
+            .page-preview-container {
+              position: relative;
+              z-index: 50;
+            }
+            
+            /* Hide default header and footer in preview mode */
+            :global(body.page-has-header #default-navbar),
+            :global(body.page-has-footer #default-footer) {
+              display: none !important;
+            }
+            
+            /* Style the page-specific header and footer in preview */
+            :global(.page-specific-header),
+            :global(.page-specific-footer) {
+              border: 1px dashed #cbd5e1;
+              margin: 8px 0;
+              padding: 8px;
+              position: relative;
+            }
+            
+            :global(.page-specific-header::before),
+            :global(.page-specific-footer::before) {
+              content: attr(data-component-type);
+              position: absolute;
+              top: -10px;
+              left: 10px;
+              background: #f1f5f9;
+              padding: 0 5px;
+              font-size: 10px;
+              color: #64748b;
+            }
+          `}</style>
+          <Page {...pageData} />
         </div>
       ) : (
         <Box className="mx-auto max-w-7xl px-4">
@@ -138,9 +131,9 @@ export default async function HeroPreviewPage({ params, searchParams }: HeroPrev
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-yellow-800">No Hero Data Found</h3>
+                <h3 className="text-sm font-medium text-yellow-800">No Page Data Found</h3>
                 <div className="mt-2 text-sm text-yellow-700">
-                  <p>No hero data was found for ID: {heroId}. Make sure the ID exists in Contentful.</p>
+                  <p>No page data was found for slug: {pageSlug}. Make sure the slug exists in Contentful.</p>
                 </div>
               </div>
             </div>

@@ -8,9 +8,12 @@ export interface Page {
   name: string;
   slug: string;
   description?: string;
+  header?: NavBar;
+  footer?: Footer;
   pageContentCollection?: {
     items: Hero[];
   };
+  __typename?: string;
 }
 
 export interface PageList {
@@ -21,6 +24,25 @@ export interface PageList {
   slug?: string;
   pagesCollection?: {
     items: Array<Page>;
+  };
+  __typename?: string;
+}
+
+export interface Footer {
+  sys: {
+    id: string;
+  }
+  name: string;
+  description?: string;
+  pageListsCollection?: {
+    items: Array<PageList>;
+  };
+  copyright?: string;
+  logo?: {
+    url: string;
+    title?: string;
+    width?: number;
+    height?: number;
   };
   __typename?: string;
 }
@@ -46,6 +68,11 @@ export interface PageResponse {
 
 export interface PageListResponse {
   items: Array<PageList>;
+  total: number;
+}
+
+export interface FooterResponse {
+  items: Array<Footer>;
   total: number;
 }
 
@@ -98,6 +125,10 @@ export interface GraphQLResponse<T> {
       total: number;
     };
     navBarCollection?: {
+      items: T[];
+      total: number;
+    };
+    footerCollection?: {
       items: T[];
       total: number;
     };

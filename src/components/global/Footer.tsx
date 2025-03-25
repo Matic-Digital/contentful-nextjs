@@ -1,38 +1,17 @@
+// Mark as client component
+'use client';
+
 // Next.js imports
 import Link from 'next/link';
+import Image from 'next/image';
+
+// Contentful Live Preview imports
+import { useContentfulLiveUpdates } from '@contentful/live-preview/react';
+import { useContentfulInspectorMode } from '@contentful/live-preview/react';
 
 import { Container, Box } from '@/components/global/matic-ds';
-
 import { Logo } from '@/components/global/Logo';
-
-/**
- * Footer navigation configuration
- * Organized into sections with titles and links
- * Includes:
- * - Company information and legal pages
- * - Resource links for users
- * - Social media profiles
- */
-const footerLinks = [
-  {
-    title: 'Company',
-    links: [
-      { href: '/', label: 'Home' },
-    ]
-  },
-  {
-    title: 'Resources',
-    links: [{ href: '/articles', label: 'Articles' }]
-  },
-  {
-    title: 'Social',
-    links: [
-      { href: 'https://twitter.com', label: 'Twitter' },
-      { href: 'https://github.com', label: 'GitHub' },
-      { href: 'https://linkedin.com', label: 'LinkedIn' }
-    ]
-  }
-];
+import type { Footer as FooterType } from '@/types/contentful';
 
 /**
  * Footer component
@@ -40,10 +19,28 @@ const footerLinks = [
  * Features:
  * - Responsive grid layout (2 columns on mobile, 4 on desktop)
  * - Company branding and description
- * - Organized link sections
+ * - Organized link sections from Contentful
  * - Copyright notice
  */
-export function Footer() {
+export function Footer({ footerData }: { footerData: FooterType | null }) {
+  // Always call hooks at the top level, regardless of conditions
+  // Use Contentful Live Updates to get real-time updates
+  const liveFooterData = useContentfulLiveUpdates<FooterType>(footerData ?? {} as FooterType);
+  
+  // Use Contentful Inspector Mode for field tagging
+  const inspectorProps = useContentfulInspectorMode();
+  
+  // If no footer data is provided, render a minimal footer
+  if (!footerData) {
+    return (
+      <footer className="mt-24 border-t bg-background py-12">
+        <Container width="full">
+          <p className="text-center text-muted-foreground">Footer data not available</p>
+        </Container>
+      </footer>
+    );
+  }
+
   return (
     <footer className="mt-24 border-t bg-background py-12">
       <Container width="full">
@@ -51,26 +48,38 @@ export function Footer() {
         <Box cols={{ sm: 2 }} gap={12}>
           {/* Company information */}
           <div>
-            <Logo />
-            <p className="max-w-xs text-sm text-muted-foreground">
-              Modern blog platform built with Next.js, Contentful and Mux
+            {liveFooterData.logo ? (
+              <div className="mb-4" {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'logo' })}>
+                <Image 
+                  src={liveFooterData.logo.url} 
+                  alt={liveFooterData.logo.title ?? liveFooterData.name ?? 'Logo'}
+                  width={liveFooterData.logo.width ?? 150}
+                  height={liveFooterData.logo.height ?? 50}
+                  className="h-8 border-none rounded-none"
+                />
+              </div>
+            ) : (
+              <Logo />
+            )}
+            <p className="max-w-xs text-sm text-muted-foreground" {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'description' })}>
+              {liveFooterData.description ?? 'Modern blog platform built with Next.js, Contentful and Mux'}
             </p>
           </div>
 
-          <Box gap={12} className="justify-start lg:justify-between">
-            {/* Footer sections with links */}
-            {footerLinks.map((section) => (
-              <div key={section.title}>
-                <h3 className="text-sm font-medium">{section.title}</h3>
+          <Box gap={12} className="justify-start lg:justify-between" {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'pageListsCollection' })}>
+            {/* Footer sections with links from Contentful */}
+            {liveFooterData.pageListsCollection?.items.map((pageList) => (
+              <div key={pageList.sys.id} {...inspectorProps({ entryId: pageList.sys.id, fieldId: 'name' })}>
+                <h3 className="text-sm font-medium">{pageList.name}</h3>
                 <nav>
-                  <ul className="ml-1 mt-4 space-y-2">
-                    {section.links.map((link) => (
-                      <li key={link.href}>
+                  <ul className="ml-1 mt-4 space-y-2" {...inspectorProps({ entryId: pageList.sys.id, fieldId: 'pagesCollection' })}>
+                    {pageList.pagesCollection?.items.map((page) => (
+                      <li key={page.sys.id} {...inspectorProps({ entryId: page.sys.id, fieldId: 'name' })}>
                         <Link
-                          href={link.href}
+                          href={`/${page.slug}`}
                           className="text-sm text-muted-foreground hover:text-primary"
                         >
-                          {link.label}
+                          {page.name}
                         </Link>
                       </li>
                     ))}
@@ -84,8 +93,8 @@ export function Footer() {
       {/* Copyright section */}
       <div className="mt-8 border-t pt-8">
         <Container width="full">
-          <p className="text-right text-sm text-muted-foreground">
-            {new Date().getFullYear()} Matic. All rights reserved.
+          <p className="text-right text-sm text-muted-foreground" {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'copyright' })}>
+            © {new Date().getFullYear()} {liveFooterData.copyright ?? 'Matic'}. All rights reserved.
           </p>
         </Container>
       </div>

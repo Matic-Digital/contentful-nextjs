@@ -1,0 +1,10 @@
+/* Layout component styling */
+
+/* Hide default layout components when page-specific ones are present */
+.page-has-header #default-navbar {
+  display: none;
+}
+
+.page-has-footer #default-footer {
+  display: none;
+}

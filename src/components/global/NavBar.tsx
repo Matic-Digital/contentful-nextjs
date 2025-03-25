@@ -93,7 +93,7 @@ export function NavBar(props: NavBarProps) {
                   alt={navBar.logo.title ?? navBar.name ?? 'Logo'} 
                   width={navBar.logo.width ?? 150} 
                   height={navBar.logo.height ?? 50}
-                  className="h-10 w-auto"
+                  className="h-6 w-auto rounded-none border-none dark:brightness-0 dark:invert"
                 />
               </Link>
             )}

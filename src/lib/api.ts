@@ -8,6 +8,8 @@ import type {
   Hero,
   HeroResponse,
   Page,
+  Footer,
+  FooterResponse,
   PageResponse,
   PageList,
   PageListResponse,
@@ -29,43 +31,6 @@ const HERO_GRAPHQL_FIELDS = `
   }
   name
   description
-  __typename
-`;
-
-const PAGE_GRAPHQL_FIELDS = `
-  sys {
-    id
-  }
-  name
-  slug
-  description
-  pageContentCollection {
-    items {
-      ${HERO_GRAPHQL_FIELDS}
-    }
-  }
-  __typename
-`;
-
-const PAGE_LIST_GRAPHQL_FIELDS = `
-  sys {
-    id
-  }
-  name
-  slug
-  pagesCollection {
-    items {
-      ... on Page {
-        sys {
-          id
-        }
-        name
-        slug
-        description
-        __typename
-      }
-    }
-  }
   __typename
 `;
 
@@ -106,6 +71,93 @@ const NAVBAR_GRAPHQL_FIELDS = `
   }
   __typename
 `;
+
+const FOOTER_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  name
+  description
+  copyright
+  logo {
+    url
+    title
+    width
+    height
+  }
+  pageListsCollection(limit: 5) {
+    items {
+      ... on PageList {
+        sys {
+          id
+        }
+        name
+        slug
+        pagesCollection(limit: 10) {
+          items {
+            ... on Page {
+              sys {
+                id
+              }
+              name
+              slug
+              __typename
+            }
+          }
+        }
+        __typename
+      }
+    }
+  }
+  __typename
+`;
+
+const PAGE_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  name
+  slug
+  description
+  header {
+    ${NAVBAR_GRAPHQL_FIELDS}
+  }
+  footer {
+    ${FOOTER_GRAPHQL_FIELDS}
+  }
+  pageContentCollection {
+    items {
+      ${HERO_GRAPHQL_FIELDS}
+    }
+  }
+  __typename
+`;
+
+const _PAGE_LIST_GRAPHQL_FIELDS = `
+  sys {
+    id
+  }
+  name
+  slug
+  pagesCollection(limit: 10) {
+    items {
+      ... on Page {
+        sys {
+          id
+        }
+        name
+        slug
+        description
+        __typename
+      }
+    }
+  }
+  __typename
+`;
+
+
+
+
 
 /**
  * Executes GraphQL queries against Contentful's API with caching
@@ -443,17 +495,27 @@ export async function getPageListBySlug(slug: string, preview = false): Promise<
       `query GetPageListBySlug($slug: String!, $preview: Boolean!) {
         pageListCollection(where: { slug: $slug }, limit: 1, preview: $preview) {
           items {
-            sys {
-              id
-            }
-            name
-            slug
-            pagesCollection {
-              items {
-              ${PAGE_LIST_GRAPHQL_FIELDS}
+            ... on PageList {
+              sys {
+                id
               }
+              name
+              slug
+              pagesCollection(limit: 10) {
+                items {
+                  ... on Page {
+                    sys {
+                      id
+                    }
+                    name
+                    slug
+                    description
+                    __typename
+                  }
+                }
+              }
+              __typename
             }
-            __typename
           }
         }
       }`,
@@ -670,5 +732,94 @@ export async function getNavBarById(id: string, preview = false): Promise<NavBar
       throw error;
     }
     throw new ContentfulError('Failed to fetch NavBar by ID', error as Error);
+  }
+}
+
+export async function getAllFooters(preview = true): Promise<FooterResponse> {
+  try {
+    const response = await fetchGraphQL(
+      `query GetAllFooters($preview: Boolean!) {
+        footerCollection(preview: $preview, limit: 3) {
+          items {
+            ${FOOTER_GRAPHQL_FIELDS}
+          }
+          total
+        }
+      }`,
+      { preview },
+      preview,
+      preview ? undefined : { next: { revalidate: 60 } }
+    );
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors
+      );
+    }
+
+    // Safely access the items array
+    const footerCollection = response.data?.footerCollection;
+    if (!footerCollection?.items?.length) {
+      console.warn('No Footers found');
+      return { items: [], total: 0 };
+    }
+
+    return {
+      items: footerCollection.items as Footer[],
+      total: footerCollection.total || footerCollection.items.length
+    };
+  } catch (error: unknown) {
+    console.error('Error fetching all Footers:', error);
+    if (error instanceof GraphQLError) {
+      throw error;
+    }
+    throw new ContentfulError('Failed to fetch all Footers', error as Error);
+  }
+}
+
+export async function getFooterById(id: string, preview = true): Promise<Footer | null> {
+  try {
+    const response = await fetchGraphQL(
+      `query GetFooterById($id: String!, $preview: Boolean!) {
+        footerCollection(
+          where: { sys: { id: $id } },
+          limit: 1,
+          preview: $preview
+        ) {
+          items {
+            ${FOOTER_GRAPHQL_FIELDS}
+          }
+        }
+      }`,
+      { id, preview },
+      preview,
+      preview ? undefined : { next: { revalidate: 60 } }
+    );
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      throw new GraphQLError(
+        'GraphQL query execution error',
+        response.errors
+      );
+    }
+
+    // Safely access the items array
+    const footerCollection = response.data?.footerCollection;
+    if (!footerCollection?.items?.length) {
+      console.warn(`Footer with ID '${id}' not found`);
+      return null;
+    }
+
+    // Return the first (and likely only) item
+    return footerCollection.items[0] as Footer;
+  } catch (error: unknown) {
+    console.error(`Error fetching Footer with ID '${id}':`, error);
+    if (error instanceof GraphQLError) {
+      throw error;
+    }
+    throw new ContentfulError('Failed to fetch Footer by ID', error as Error);
   }
 }

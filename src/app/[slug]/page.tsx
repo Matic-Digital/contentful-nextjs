@@ -19,6 +19,9 @@
 import { notFound } from 'next/navigation';
 import { getPageBySlug } from '@/lib/api';
 import { Hero } from '@/components/global/Hero';
+import { NavBar } from '@/components/global/NavBar';
+import { Footer } from '@/components/global/Footer';
+import { PageLayout } from '@/components/layout/PageLayout';
 import type { Hero as _HeroType } from '@/types/contentful';
 
 // Define the component mapping for pageContent items
@@ -58,37 +61,49 @@ export default async function Page({ params, searchParams }: PageProps) {
     notFound();
   }
   
+  // Get the page-specific header and footer if they exist
+  const pageHeader = page.header;
+  const pageFooter = page.footer;
+  
   return (
-    <main>
-      <h1 className="sr-only">{page.name}</h1>
+    <PageLayout header={pageHeader} footer={pageFooter}>
+      {/* Render the page-specific header if available */}
+      {pageHeader && <NavBar {...pageHeader} />}
       
-      {/* Render the page content components */}
-      {page.pageContentCollection?.items.map((component) => {
-        if (!component) return null;
+      <main>
+        <h1 className="sr-only">{page.name}</h1>
         
-        // Type guard to check if component has __typename
-        if (!('__typename' in component)) {
-          console.warn('Component missing __typename:', component);
+        {/* Render the page content components */}
+        {page.pageContentCollection?.items.map((component) => {
+          if (!component) return null;
+          
+          // Type guard to check if component has __typename
+          if (!('__typename' in component)) {
+            console.warn('Component missing __typename:', component);
+            return null;
+          }
+          
+          const typeName = component.__typename!; // Using non-null assertion as we've checked it exists
+          
+          // Check if we have a component for this type
+          if (typeName && typeName in componentMap) {
+            const ComponentType = componentMap[typeName as keyof typeof componentMap];
+            return (
+              <ComponentType 
+                key={component.sys.id} 
+                {...component} 
+              />
+            );
+          }
+          
+          // Log a warning if we don't have a component for this type
+          console.warn(`No component found for type: ${typeName}`);
           return null;
-        }
-        
-        const typeName = component.__typename!; // Using non-null assertion as we've checked it exists
-        
-        // Check if we have a component for this type
-        if (typeName && typeName in componentMap) {
-          const ComponentType = componentMap[typeName as keyof typeof componentMap];
-          return (
-            <ComponentType 
-              key={component.sys.id} 
-              {...component} 
-            />
-          );
-        }
-        
-        // Log a warning if we don't have a component for this type
-        console.warn(`No component found for type: ${typeName}`);
-        return null;
-      })}
-    </main>
+        })}
+      </main>
+      
+      {/* Render the page-specific footer if available */}
+      {pageFooter && <Footer footerData={pageFooter} />}
+    </PageLayout>
   );
 }
