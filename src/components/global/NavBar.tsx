@@ -81,169 +81,171 @@ export function NavBar(props: NavBarProps) {
   }
   
   return (
-    <Container className="sticky top-0 z-50">
-      <header className="mt-6 w-[95%] rounded-xl border border-b border-slate-400 bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60 max-md:py-1.5 lg:w-full">
-        <Box className="items-center justify-between">
-          {/* Desktop Navigation - Logo */}
-          <div {...inspectorProps({ fieldId: 'logo' })}>
-            {navBar.logo?.url && (
-              <Link href="/" className="flex items-center">
-                <Image 
-                  src={navBar.logo.url} 
-                  alt={navBar.logo.title ?? navBar.name ?? 'Logo'} 
-                  width={navBar.logo.width ?? 150} 
-                  height={navBar.logo.height ?? 50}
-                  className="h-6 w-auto rounded-none border-none dark:brightness-0 dark:invert"
-                />
-              </Link>
-            )}
-          </div>
+    <div className="fixed top-0 left-0 right-0 z-50 w-full">
+      <Container className="mx-auto">
+        <header className="mt-6 w-[95%] rounded-xl border border-b border-slate-400 bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60 max-md:py-1.5 lg:w-full">
+          <Box className="items-center justify-between">
+            {/* Desktop Navigation - Logo */}
+            <div {...inspectorProps({ fieldId: 'logo' })}>
+              {navBar.logo?.url && (
+                <Link href="/" className="flex items-center">
+                  <Image 
+                    src={navBar.logo.url} 
+                    alt={navBar.logo.title ?? navBar.name ?? 'Logo'} 
+                    width={navBar.logo.width ?? 150} 
+                    height={navBar.logo.height ?? 50}
+                    className="h-6 w-auto rounded-none border-none dark:brightness-0 dark:invert"
+                  />
+                </Link>
+              )}
+            </div>
 
-          {/* Desktop Navigation - Links */}
-          <div className="mr-4 hidden md:flex" {...inspectorProps({ fieldId: 'navLinks' })}>
-            <ErrorBoundary>
-              <NavigationMenu>
-                <NavigationMenuList>
-                  {navBar.navLinksCollection?.items?.map((link, index) => {
-                    if (!link) return null;
-                    
-                    // Check if the link is a PageList
-                    if (isPageList(link) && link.pagesCollection?.items?.length) {
-                      return (
-                        <NavigationMenuItem key={link.sys.id ?? `pagelist-${index}`}>
-                          <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
-                            <Link 
-                              href={`/${link.slug ?? ''}`}
-                              className="flex items-center"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {link.name}
-                            </Link>
-                            <ChevronDown className="ml-1 h-4 w-4" />
-                          </NavigationMenuTrigger>
-                          <NavigationMenuContent>
-                            <ul className="grid w-[200px] gap-1 p-2">
-                              {link.pagesCollection?.items.map((page, pageIndex) => (
-                                <li key={page.sys.id ?? `page-${pageIndex}`}>
-                                  <Link 
-                                    href={`/${page.slug}`}
-                                    className={`block w-full rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
-                                      pathname === `/${page.slug}` ? 'font-medium bg-accent/50' : ''
-                                    }`}
-                                  >
-                                    {page.name}
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          </NavigationMenuContent>
-                        </NavigationMenuItem>
-                      );
-                    }
-                    
-                    // Regular Page link
-                    return (
-                      <NavigationMenuItem key={link.sys.id ?? `page-${index}`}>
-                        <Link href={`/${link.slug}`} legacyBehavior passHref>
-                          <NavigationMenuLink
-                            className={navigationMenuTriggerStyle()}
-                            {...(pathname === `/${link.slug}` && { 'data-active': true })}
-                          >
-                            {link.name}
-                          </NavigationMenuLink>
-                        </Link>
-                      </NavigationMenuItem>
-                    );
-                  })}
-                </NavigationMenuList>
-              </NavigationMenu>
-            </ErrorBoundary>
-          </div>
-
-          <Box gap={2}>
-            <ThemeToggle />
-
-            {/* Mobile Navigation */}
-            <div className="md:hidden">
-              {/* Hamburger Menu Sheet */}
-              <Sheet>
-                <SheetTrigger asChild>
-                  <button className="inline-flex h-10 w-10 items-center justify-center rounded-md text-sm font-medium">
-                    <Menu className="size-7" />
-                    <span className="sr-only">Toggle Menu</span>
-                  </button>
-                </SheetTrigger>
-                <SheetContent side="right">
-                  <SheetHeader>
-                    {navBar.logo?.url && (
-                      <Link href="/" className="flex items-center">
-                        <Image 
-                          src={navBar.logo.url} 
-                          alt={navBar.logo.title ?? navBar.name ?? 'Logo'} 
-                          width={navBar.logo.width ?? 150} 
-                          height={navBar.logo.height ?? 50}
-                          className="h-10 w-auto"
-                        />
-                      </Link>
-                    )}
-                  </SheetHeader>
-                  {/* Mobile Menu Items */}
-                  <nav className="mt-8 flex flex-col space-y-4" {...inspectorProps({ fieldId: 'navLinks' })}>
+            {/* Desktop Navigation - Links */}
+            <div className="mr-4 hidden md:flex" {...inspectorProps({ fieldId: 'navLinks' })}>
+              <ErrorBoundary>
+                <NavigationMenu>
+                  <NavigationMenuList>
                     {navBar.navLinksCollection?.items?.map((link, index) => {
                       if (!link) return null;
                       
-                      // Check if the link is a PageList for mobile
+                      // Check if the link is a PageList
                       if (isPageList(link) && link.pagesCollection?.items?.length) {
                         return (
-                          <div key={link.sys.id ?? `mobile-pagelist-${index}`} className="space-y-2">
-                            <Link
-                              href={`/${link.slug ?? ''}`}
-                              className="text-lg font-medium text-foreground hover:text-primary"
-                            >
-                              {link.name}
-                            </Link>
-                            <div className="ml-4 flex flex-col space-y-2">
-                              {link.pagesCollection?.items.map((page, pageIndex) => (
-                                <SheetClose key={page.sys.id ?? `mobile-page-${pageIndex}`} asChild>
-                                  <Link
-                                    href={`/${page.slug}`}
-                                    className={`text-base hover:text-primary ${
-                                      pathname === `/${page.slug}` ? 'text-foreground' : 'text-foreground/60'
-                                    }`}
-                                  >
-                                    {page.name}
-                                  </Link>
-                                </SheetClose>
-                              ))}
-                            </div>
-                            {index < (navBar.navLinksCollection?.items.length ?? 0) - 1 && (
-                              <div className="my-2 h-px w-full bg-border"></div>
-                            )}
-                          </div>
+                          <NavigationMenuItem key={link.sys.id ?? `pagelist-${index}`}>
+                            <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
+                              <Link 
+                                href={`/${link.slug ?? ''}`}
+                                className="flex items-center"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {link.name}
+                              </Link>
+                              <ChevronDown className="ml-1 h-4 w-4" />
+                            </NavigationMenuTrigger>
+                            <NavigationMenuContent>
+                              <ul className="grid w-[200px] gap-1 p-2">
+                                {link.pagesCollection?.items.map((page, pageIndex) => (
+                                  <li key={page.sys.id ?? `page-${pageIndex}`}>
+                                    <Link 
+                                      href={`/${page.slug}`}
+                                      className={`block w-full rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
+                                        pathname === `/${page.slug}` ? 'font-medium bg-accent/50' : ''
+                                      }`}
+                                    >
+                                      {page.name}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </NavigationMenuContent>
+                          </NavigationMenuItem>
                         );
                       }
                       
-                      // Regular Page link for mobile
+                      // Regular Page link
                       return (
-                        <SheetClose key={link.sys.id ?? `mobile-page-${index}`} asChild>
-                          <Link
-                            href={`/${link.slug}`}
-                            className={`text-lg font-medium hover:text-primary ${
-                              pathname === `/${link.slug}` ? 'text-foreground' : 'text-foreground/60'
-                            }`}
-                          >
-                            {link.name}
+                        <NavigationMenuItem key={link.sys.id ?? `page-${index}`}>
+                          <Link href={`/${link.slug}`} legacyBehavior passHref>
+                            <NavigationMenuLink
+                              className={navigationMenuTriggerStyle()}
+                              {...(pathname === `/${link.slug}` && { 'data-active': true })}
+                            >
+                              {link.name}
+                            </NavigationMenuLink>
                           </Link>
-                        </SheetClose>
+                        </NavigationMenuItem>
                       );
                     })}
-                  </nav>
-                </SheetContent>
-              </Sheet>
+                  </NavigationMenuList>
+                </NavigationMenu>
+              </ErrorBoundary>
             </div>
+
+            <Box gap={2}>
+              <ThemeToggle />
+
+              {/* Mobile Navigation */}
+              <div className="md:hidden">
+                {/* Hamburger Menu Sheet */}
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <button className="inline-flex h-10 w-10 items-center justify-center rounded-md text-sm font-medium">
+                      <Menu className="size-7" />
+                      <span className="sr-only">Toggle Menu</span>
+                    </button>
+                  </SheetTrigger>
+                  <SheetContent side="right">
+                    <SheetHeader>
+                      {navBar.logo?.url && (
+                        <Link href="/" className="flex items-center">
+                          <Image 
+                            src={navBar.logo.url} 
+                            alt={navBar.logo.title ?? navBar.name ?? 'Logo'} 
+                            width={navBar.logo.width ?? 150} 
+                            height={navBar.logo.height ?? 50}
+                            className="h-10 w-auto"
+                          />
+                        </Link>
+                      )}
+                    </SheetHeader>
+                    {/* Mobile Menu Items */}
+                    <nav className="mt-8 flex flex-col space-y-4" {...inspectorProps({ fieldId: 'navLinks' })}>
+                      {navBar.navLinksCollection?.items?.map((link, index) => {
+                        if (!link) return null;
+                        
+                        // Check if the link is a PageList for mobile
+                        if (isPageList(link) && link.pagesCollection?.items?.length) {
+                          return (
+                            <div key={link.sys.id ?? `mobile-pagelist-${index}`} className="space-y-2">
+                              <Link
+                                href={`/${link.slug ?? ''}`}
+                                className="text-lg font-medium text-foreground hover:text-primary"
+                              >
+                                {link.name}
+                              </Link>
+                              <div className="ml-4 flex flex-col space-y-2">
+                                {link.pagesCollection?.items.map((page, pageIndex) => (
+                                  <SheetClose key={page.sys.id ?? `mobile-page-${pageIndex}`} asChild>
+                                    <Link
+                                      href={`/${page.slug}`}
+                                      className={`text-base hover:text-primary ${
+                                        pathname === `/${page.slug}` ? 'text-foreground' : 'text-foreground/60'
+                                      }`}
+                                    >
+                                      {page.name}
+                                    </Link>
+                                  </SheetClose>
+                                ))}
+                              </div>
+                              {index < (navBar.navLinksCollection?.items.length ?? 0) - 1 && (
+                                <div className="my-2 h-px w-full bg-border"></div>
+                              )}
+                            </div>
+                          );
+                        }
+                        
+                        // Regular Page link for mobile
+                        return (
+                          <SheetClose key={link.sys.id ?? `mobile-page-${index}`} asChild>
+                            <Link
+                              href={`/${link.slug}`}
+                              className={`text-lg font-medium hover:text-primary ${
+                                pathname === `/${link.slug}` ? 'text-foreground' : 'text-foreground/60'
+                              }`}
+                            >
+                              {link.name}
+                            </Link>
+                          </SheetClose>
+                        );
+                      })}
+                    </nav>
+                  </SheetContent>
+                </Sheet>
+              </div>
+            </Box>
           </Box>
-        </Box>
-      </header>
-    </Container>
+        </header>
+      </Container>
+    </div>
   );
 }
