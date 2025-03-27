@@ -11,6 +11,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
 import { Provider as WrapBalancerProvider } from 'react-wrap-balancer';
 
+// Contentful Live Preview
+import { ContentfulLivePreviewProvider } from '@contentful/live-preview/react';
+
 // Utils
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { DevTools } from 'jotai-devtools';
@@ -31,7 +34,13 @@ export const Providers = ({ children }: { children: ReactNode }) => {
       <JotaiProvider>
         <DevTools theme="dark" />
         <ThemeProvider attribute="class">
-          <WrapBalancerProvider>{children}</WrapBalancerProvider>
+          <ContentfulLivePreviewProvider
+            locale="en-US"
+            enableInspectorMode={true}
+            enableLiveUpdates={true}
+          >
+            <WrapBalancerProvider>{children}</WrapBalancerProvider>
+          </ContentfulLivePreviewProvider>
         </ThemeProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </JotaiProvider>

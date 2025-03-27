@@ -1,3 +1,18 @@
+/**
+ * API Module Tests
+ * 
+ * This test suite verifies the functionality of the API module which handles
+ * interactions with Contentful's GraphQL API. It tests various data fetching
+ * functions to ensure they correctly retrieve content from Contentful and
+ * handle error cases appropriately.
+ * 
+ * Key aspects tested:
+ * - Fetching various content types (Heroes, Pages, NavBars, PageLists)
+ * - Handling of GraphQL errors
+ * - Handling of empty responses
+ * - Proper parameter passing to the GraphQL API
+ */
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as api from '@/lib/api';
 import { ContentfulError, NetworkError, GraphQLError } from '@/lib/errors';
@@ -11,6 +26,11 @@ vi.stubEnv('NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN', 'mock-preview-token');
 const originalFetch = global.fetch;
 
 describe('API Module', () => {
+  /**
+   * Set up mocks before each test
+   * 
+   * This includes resetting all mocks and setting up the global fetch mock.
+   */
   beforeEach(() => {
     // Reset all mocks before each test
     vi.resetAllMocks();
@@ -19,6 +39,11 @@ describe('API Module', () => {
     global.fetch = vi.fn();
   });
 
+  /**
+   * Clean up mocks after each test
+   * 
+   * Restore the original fetch function and clear environment variable stubs.
+   */
   afterEach(() => {
     // Restore original fetch after each test
     global.fetch = originalFetch;
@@ -27,6 +52,12 @@ describe('API Module', () => {
     vi.unstubAllEnvs();
   });
 
+  /**
+   * Tests for fetchGraphQL function
+   * 
+   * This function is the core of the API module, responsible for making
+   * GraphQL requests to Contentful and handling various response scenarios.
+   */
   describe('fetchGraphQL', () => {
     it('makes a request to the correct Contentful endpoint with proper headers', async () => {
       // Mock successful response
@@ -124,6 +155,9 @@ describe('API Module', () => {
       const mockResponse = {
         ok: false,
         statusText: 'Not Found',
+        clone: vi.fn().mockReturnValue({
+          text: vi.fn().mockResolvedValue('Error body')
+        })
       };
       
       (global.fetch as any).mockResolvedValue(mockResponse);
@@ -155,6 +189,877 @@ describe('API Module', () => {
 
       await expect(api.fetchGraphQL('{ test }')).rejects.toThrow(ContentfulError);
       await expect(api.fetchGraphQL('{ test }')).rejects.toThrow('Failed to fetch data from Contentful');
+    });
+  });
+
+  /**
+   * Tests for getAllHeroes function
+   * 
+   * Verifies that the function correctly fetches hero content from Contentful,
+   * handles pagination parameters, and processes the response structure according
+   * to Contentful's GraphQL API conventions.
+   */
+  describe('getAllHeroes', () => {
+    it('fetches heroes with correct query and parameters', async () => {
+      // Mock successful response with heroes
+      const mockHeroesResponse = {
+        data: {
+          heroCollection: {
+            items: [
+              { 
+                sys: { id: 'hero1' },
+                name: 'Hero 1',
+                description: 'Description 1',
+                __typename: 'Hero'
+              },
+              { 
+                sys: { id: 'hero2' },
+                name: 'Hero 2',
+                description: 'Description 2',
+                __typename: 'Hero'
+              }
+            ],
+            total: 2
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockHeroesResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getAllHeroes(false, 10, 0);
+
+      // Verify the result 
+      expect(result?.items).toHaveLength(2);
+      expect(result?.items?.[0]?.name).toBe('Hero 1');
+      expect(result?.items?.[1]?.name).toBe('Hero 2');
+      expect(result?.total).toBe(2);
+
+      // Verify fetch was called with correct query
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          body: expect.stringContaining('heroCollection'),
+        })
+      );
+    });
+
+    it('handles empty hero collection', async () => {
+      // Mock empty response
+      const mockEmptyResponse = {
+        data: {
+          heroCollection: {
+            items: [],
+            total: 0
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getAllHeroes();
+
+      expect(result?.items).toHaveLength(0);
+      expect(result?.total).toBe(0);
+    });
+  });
+
+  /**
+   * Tests for getHero function
+   * 
+   * Ensures the function correctly fetches a single hero by ID,
+   * properly constructs the GraphQL query with the hero ID parameter,
+   * and handles cases where the hero is not found.
+   */
+  describe('getHero', () => {
+    it('fetches a single hero by ID', async () => {
+      const heroId = 'hero123';
+      
+      // Mock successful response with a hero
+      const mockHeroResponse = {
+        data: {
+          heroCollection: {
+            items: [
+              { 
+                sys: { id: heroId },
+                name: 'Test Hero',
+                description: 'Test Description',
+                __typename: 'Hero'
+              }
+            ]
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockHeroResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getHero(heroId);
+
+      // Verify the result
+      expect(result).not.toBeNull();
+      expect(result?.sys?.id).toBe(heroId);
+      expect(result?.name).toBe('Test Hero');
+
+      // Verify fetch was called with correct query and variables
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          body: expect.stringContaining(heroId),
+        })
+      );
+    });
+
+    it('returns null when hero is not found', async () => {
+      // Mock response with no hero
+      const mockEmptyResponse = {
+        data: {
+          heroCollection: {
+            items: []
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getHero('non-existent-id');
+
+      expect(result).toBeNull();
+    });
+  });
+
+  /**
+   * Tests for getPageBySlug function
+   * 
+   * Verifies that the function correctly retrieves a page by its slug,
+   * handles the nested content structure of pages in Contentful,
+   * and returns null when a page is not found.
+   */
+  describe('getPageBySlug', () => {
+    it('fetches a page by slug', async () => {
+      const slug = 'test-page';
+      
+      // Mock successful response with a page
+      const mockPageResponse = {
+        data: {
+          pageCollection: {
+            items: [
+              { 
+                sys: { id: 'page1' },
+                name: 'Test Page',
+                slug: slug,
+                description: 'Test Description',
+                pageContentCollection: {
+                  items: [
+                    {
+                      sys: { id: 'hero1' },
+                      name: 'Hero Component',
+                      description: 'Hero Description',
+                      __typename: 'Hero'
+                    }
+                  ]
+                },
+                __typename: 'Page'
+              }
+            ]
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockPageResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getPageBySlug(slug);
+
+      // Verify the result
+      expect(result).not.toBeNull();
+      expect(result?.slug).toBe(slug);
+      expect(result?.name).toBe('Test Page');
+      expect(result?.pageContentCollection?.items).toHaveLength(1);
+      expect(result?.pageContentCollection?.items?.[0]?.name).toBe('Hero Component');
+
+      // Verify fetch was called with correct query and variables
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          body: expect.stringContaining(slug),
+        })
+      );
+    });
+
+    it('returns null when page is not found', async () => {
+      // Mock response with no page
+      const mockEmptyResponse = {
+        data: {
+          pageCollection: {
+            items: []
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getPageBySlug('non-existent-slug');
+
+      expect(result).toBeNull();
+    });
+  });
+
+  /**
+   * Tests for getNavBarByName function
+   * 
+   * Tests the retrieval of navigation bars by name, ensuring proper
+   * handling of the complex structure of NavBar content type which includes
+   * references to other content types like Page and PageList.
+   */
+  describe('getNavBarByName', () => {
+    it('fetches a navbar by name', async () => {
+      const navbarName = 'Main Navigation';
+      
+      // Mock successful response with a navbar
+      const mockNavBarResponse = {
+        data: {
+          navBarCollection: {
+            items: [
+              { 
+                sys: { id: 'navbar1' },
+                name: navbarName,
+                logo: {
+                  sys: { id: 'logo1' },
+                  title: 'Logo',
+                  description: 'Site Logo',
+                  url: 'https://example.com/logo.png',
+                  width: 200,
+                  height: 100
+                },
+                navLinksCollection: {
+                  items: [
+                    {
+                      sys: { id: 'page1' },
+                      name: 'Home',
+                      slug: 'home',
+                      __typename: 'Page'
+                    },
+                    {
+                      sys: { id: 'pagelist1' },
+                      name: 'Products',
+                      slug: 'products',
+                      __typename: 'PageList'
+                    }
+                  ]
+                },
+                __typename: 'NavBar'
+              }
+            ]
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockNavBarResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getNavBarByName(navbarName);
+
+      // Verify the result
+      expect(result).not.toBeNull();
+      expect(result?.name).toBe(navbarName);
+      expect(result?.logo?.title).toBe('Logo');
+      expect(result?.navLinksCollection?.items).toHaveLength(2);
+      expect(result?.navLinksCollection?.items?.[0]?.name).toBe('Home');
+      expect(result?.navLinksCollection?.items?.[1]?.name).toBe('Products');
+
+      // Verify fetch was called with correct query and variables
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          body: expect.stringContaining(navbarName),
+        })
+      );
+    });
+
+    it('returns null when navbar is not found', async () => {
+      // Mock response with no navbar
+      const mockEmptyResponse = {
+        data: {
+          navBarCollection: {
+            items: []
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getNavBarByName('non-existent-navbar');
+
+      expect(result).toBeNull();
+    });
+  });
+
+  /**
+   * Tests for getAllNavBars function
+   * 
+   * Verifies that the function correctly fetches all navigation bars,
+   * processes the collection structure, and handles empty results
+   * and GraphQL errors appropriately.
+   */
+  describe('getAllNavBars', () => {
+    it('fetches all navbars with correct query', async () => {
+      // Mock successful response with navbars
+      const mockNavBarsResponse = {
+        data: {
+          navBarCollection: {
+            items: [
+              { 
+                sys: { id: 'navbar1' },
+                name: 'Main Navigation',
+                logo: {
+                  url: 'https://example.com/logo1.png',
+                  title: 'Logo 1',
+                  width: 200,
+                  height: 100
+                },
+                navLinksCollection: {
+                  items: [
+                    {
+                      sys: { id: 'page1' },
+                      name: 'Home',
+                      slug: 'home',
+                      __typename: 'Page'
+                    }
+                  ]
+                },
+                __typename: 'NavBar'
+              },
+              { 
+                sys: { id: 'navbar2' },
+                name: 'Footer Navigation',
+                logo: {
+                  url: 'https://example.com/logo2.png',
+                  title: 'Logo 2',
+                  width: 150,
+                  height: 75
+                },
+                navLinksCollection: {
+                  items: [
+                    {
+                      sys: { id: 'page2' },
+                      name: 'About',
+                      slug: 'about',
+                      __typename: 'Page'
+                    }
+                  ]
+                },
+                __typename: 'NavBar'
+              }
+            ],
+            total: 2
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockNavBarsResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getAllNavBars();
+
+      // Verify the result
+      expect(result?.items).toHaveLength(2);
+      expect(result?.items?.[0]?.name).toBe('Main Navigation');
+      expect(result?.items?.[1]?.name).toBe('Footer Navigation');
+      expect(result?.total).toBe(2);
+
+      // Verify fetch was called with correct query
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          body: expect.stringContaining('navBarCollection'),
+        })
+      );
+    });
+
+    it('handles empty navbar collection', async () => {
+      // Mock empty response
+      const mockEmptyResponse = {
+        data: {
+          navBarCollection: {
+            items: [],
+            total: 0
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getAllNavBars();
+
+      expect(result?.items).toHaveLength(0);
+      expect(result?.total).toBe(0);
+    });
+
+    it('handles GraphQL errors', async () => {
+      // Mock response with GraphQL errors
+      const mockErrorResponse = {
+        errors: [{ message: 'Failed to fetch navbars' }]
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockErrorResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      await expect(api.getAllNavBars()).rejects.toThrow(GraphQLError);
+      await expect(api.getAllNavBars()).rejects.toThrow('GraphQL query execution error');
+    });
+  });
+
+  /**
+   * Tests for getNavBarById function
+   * 
+   * Ensures the function correctly fetches a NavBar by its system ID,
+   * handles the complex structure with nested collections and references,
+   * and properly returns null when the NavBar is not found.
+   */
+  describe('getNavBarById', () => {
+    it('fetches a navbar by ID', async () => {
+      const navbarId = 'navbar123';
+      
+      // Mock successful response with a navbar
+      const mockNavBarResponse = {
+        data: {
+          navBarCollection: {
+            items: [
+              { 
+                sys: { id: navbarId },
+                name: 'Test NavBar',
+                logo: {
+                  url: 'https://example.com/logo.png',
+                  title: 'Logo',
+                  width: 200,
+                  height: 100
+                },
+                navLinksCollection: {
+                  items: [
+                    {
+                      sys: { id: 'page1' },
+                      name: 'Home',
+                      slug: 'home',
+                      __typename: 'Page'
+                    },
+                    {
+                      sys: { id: 'pagelist1' },
+                      name: 'Products',
+                      slug: 'products',
+                      pagesCollection: {
+                        items: [
+                          {
+                            sys: { id: 'subpage1' },
+                            name: 'Product 1',
+                            slug: 'product-1',
+                            __typename: 'Page'
+                          }
+                        ]
+                      },
+                      __typename: 'PageList'
+                    }
+                  ]
+                },
+                __typename: 'NavBar'
+              }
+            ]
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockNavBarResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getNavBarById(navbarId);
+
+      // Verify the result
+      expect(result).not.toBeNull();
+      expect(result?.sys?.id).toBe(navbarId);
+      expect(result?.name).toBe('Test NavBar');
+      expect(result?.navLinksCollection?.items).toHaveLength(2);
+      expect((result?.navLinksCollection?.items?.[0] as any)?.__typename).toBe('Page');
+      expect((result?.navLinksCollection?.items?.[1] as any)?.__typename).toBe('PageList');
+
+      // Verify fetch was called with correct query and variables
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          body: expect.stringContaining(navbarId),
+        })
+      );
+    });
+
+    it('returns null when navbar is not found', async () => {
+      // Mock response with no navbar
+      const mockEmptyResponse = {
+        data: {
+          navBarCollection: {
+            items: []
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getNavBarById('non-existent-id');
+
+      expect(result).toBeNull();
+    });
+
+    it('handles GraphQL errors', async () => {
+      // Mock response with GraphQL errors
+      const mockErrorResponse = {
+        errors: [{ message: 'Failed to fetch navbar by ID' }]
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockErrorResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      await expect(api.getNavBarById('test-id')).rejects.toThrow(GraphQLError);
+      await expect(api.getNavBarById('test-id')).rejects.toThrow('GraphQL query execution error');
+    });
+  });
+
+  /**
+   * Tests for getAllPages function
+   * 
+   * Verifies that the function correctly fetches pages with pagination,
+   * processes the collection structure, and handles empty results.
+   */
+  describe('getAllPages', () => {
+    it('fetches pages with correct query and parameters', async () => {
+      // Mock successful response with pages
+      const mockPagesResponse = {
+        data: {
+          pageCollection: {
+            items: [
+              { 
+                sys: { id: 'page1' },
+                name: 'Page 1',
+                slug: 'page-1',
+                description: 'Description 1',
+                pageContentCollection: {
+                  items: []
+                },
+                __typename: 'Page'
+              },
+              { 
+                sys: { id: 'page2' },
+                name: 'Page 2',
+                slug: 'page-2',
+                description: 'Description 2',
+                pageContentCollection: {
+                  items: []
+                },
+                __typename: 'Page'
+              }
+            ],
+            total: 2
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockPagesResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getAllPages(false, 0, 10);
+
+      // Verify the result
+      expect(result?.items).toHaveLength(2);
+      expect(result?.items?.[0]?.name).toBe('Page 1');
+      expect(result?.items?.[1]?.name).toBe('Page 2');
+      expect(result?.total).toBe(2);
+
+      // Verify fetch was called with correct query
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          body: expect.stringContaining('pageCollection'),
+        })
+      );
+    });
+
+    it('handles empty page collection', async () => {
+      // Mock empty response
+      const mockEmptyResponse = {
+        data: {
+          pageCollection: {
+            items: [],
+            total: 0
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getAllPages();
+
+      expect(result?.items).toHaveLength(0);
+      expect(result?.total).toBe(0);
+    });
+  });
+
+  /**
+   * Tests for getAllPageLists function
+   * 
+   * Tests the retrieval of all page lists, ensuring proper handling of
+   * the collection structure and empty results.
+   */
+  describe('getAllPageLists', () => {
+    it('fetches page lists with correct query', async () => {
+      // Mock successful response with page lists
+      const mockPageListsResponse = {
+        data: {
+          pageListCollection: {
+            items: [
+              { 
+                sys: { id: 'pagelist1' },
+                name: 'Products',
+                slug: 'products',
+                pagesCollection: {
+                  items: [
+                    {
+                      sys: { id: 'page1' },
+                      name: 'Product 1',
+                      slug: 'product-1',
+                      __typename: 'Page'
+                    }
+                  ]
+                },
+                __typename: 'PageList'
+              },
+              { 
+                sys: { id: 'pagelist2' },
+                name: 'Services',
+                slug: 'services',
+                pagesCollection: {
+                  items: [
+                    {
+                      sys: { id: 'page2' },
+                      name: 'Service 1',
+                      slug: 'service-1',
+                      __typename: 'Page'
+                    }
+                  ]
+                },
+                __typename: 'PageList'
+              }
+            ],
+            total: 2
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockPageListsResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getAllPageLists();
+
+      // Verify the result
+      expect(result?.items).toHaveLength(2);
+      expect(result?.items?.[0]?.name).toBe('Products');
+      expect(result?.items?.[1]?.name).toBe('Services');
+      expect(result?.total).toBe(2);
+
+      // Verify fetch was called with correct query
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          body: expect.stringContaining('pageListCollection'),
+        })
+      );
+    });
+
+    it('handles empty page list collection', async () => {
+      // Mock empty response
+      const mockEmptyResponse = {
+        data: {
+          pageListCollection: {
+            items: [],
+            total: 0
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getAllPageLists();
+
+      expect(result?.items).toHaveLength(0);
+      expect(result?.total).toBe(0);
+    });
+  });
+
+  /**
+   * Tests for getPageListBySlug function
+   * 
+   * Verifies that the function correctly retrieves a page list by its slug,
+   * handles the nested structure with references to pages, and returns null
+   * when a page list is not found.
+   */
+  describe('getPageListBySlug', () => {
+    it('fetches a page list by slug', async () => {
+      const slug = 'test-pagelist';
+      
+      // Mock successful response with a page list
+      const mockPageListResponse = {
+        data: {
+          pageListCollection: {
+            items: [
+              { 
+                sys: { id: 'pagelist1' },
+                name: 'Test PageList',
+                slug: slug,
+                pagesCollection: {
+                  items: [
+                    {
+                      sys: { id: 'page1' },
+                      name: 'Page 1',
+                      slug: 'page-1',
+                      __typename: 'Page'
+                    },
+                    {
+                      sys: { id: 'page2' },
+                      name: 'Page 2',
+                      slug: 'page-2',
+                      __typename: 'Page'
+                    }
+                  ]
+                },
+                __typename: 'PageList'
+              }
+            ]
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockPageListResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getPageListBySlug(slug);
+
+      // Verify the result
+      expect(result).not.toBeNull();
+      expect(result?.slug).toBe(slug);
+      expect(result?.name).toBe('Test PageList');
+      expect(result?.pagesCollection?.items).toHaveLength(2);
+      expect(result?.pagesCollection?.items?.[0]?.name).toBe('Page 1');
+      expect(result?.pagesCollection?.items?.[1]?.name).toBe('Page 2');
+
+      // Verify fetch was called with correct query and variables
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          body: expect.stringContaining(slug),
+        })
+      );
+    });
+
+    it('returns null when page list is not found', async () => {
+      // Mock response with no page list
+      const mockEmptyResponse = {
+        data: {
+          pageListCollection: {
+            items: []
+          }
+        }
+      };
+
+      const mockResponse = {
+        ok: true,
+        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+      };
+      
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await api.getPageListBySlug('non-existent-slug');
+
+      expect(result).toBeNull();
     });
   });
 });
