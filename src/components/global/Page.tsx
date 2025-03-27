@@ -47,6 +47,11 @@ interface PageProps {
     }>;
   };
   __typename?: string; // Add typename for GraphQL identification
+  // Add optional parentPageList prop to indicate if this page belongs to a PageList
+  parentPageList?: {
+    slug?: string;
+    name?: string;
+  };
 }
 
 /**
@@ -134,8 +139,20 @@ export function Page(props: PageProps) {
             <div className="text-sm text-muted-foreground mb-8">
               <span className="font-medium">Slug: </span>
               <span {...inspectorProps({ fieldId: 'slug' })}>
-                {page.slug}
+                {page.parentPageList?.slug ? `${page.parentPageList.slug}/${page.slug}` : page.slug}
               </span>
+            </div>
+          )}
+          
+          {/* Add a link to the page */}
+          {page.slug && (
+            <div className="mt-4">
+              <a 
+                href={page.parentPageList?.slug ? `/${page.parentPageList.slug}/${page.slug}` : `/${page.slug}`}
+                className="inline-flex items-center rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              >
+                View Page
+              </a>
             </div>
           )}
         </Box>

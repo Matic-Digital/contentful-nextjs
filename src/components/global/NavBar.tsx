@@ -22,6 +22,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, ChevronDown } from 'lucide-react';
 import { ErrorBoundary } from '@/components/global/ErrorBoundary';
+import { PageLinkResolver } from '@/components/global/PageLinkResolver';
 
 import { Container, Box } from '@/components/global/matic-ds';
 import type { NavBar as NavBarType, Page, PageList } from '@/types/contentful';
@@ -30,7 +31,6 @@ import type { NavBar as NavBarType, Page, PageList } from '@/types/contentful';
 import {
   NavigationMenu,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuContent,
   NavigationMenuTrigger,
@@ -127,9 +127,9 @@ export function NavBar(props: NavBarProps) {
                                 {link.pagesCollection?.items.map((page, pageIndex) => (
                                   <li key={page.sys.id ?? `page-${pageIndex}`}>
                                     <Link 
-                                      href={`/${page.slug}`}
+                                      href={`/${link.slug}/${page.slug}`}
                                       className={`block w-full rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
-                                        pathname === `/${page.slug}` ? 'font-medium bg-accent/50' : ''
+                                        pathname === `/${link.slug}/${page.slug}` ? 'font-medium bg-accent/50' : ''
                                       }`}
                                     >
                                       {page.name}
@@ -142,17 +142,14 @@ export function NavBar(props: NavBarProps) {
                         );
                       }
                       
-                      // Regular Page link
+                      // Regular Page link - use PageLinkResolver to handle nested routes
                       return (
                         <NavigationMenuItem key={link.sys.id ?? `page-${index}`}>
-                          <Link href={`/${link.slug}`} legacyBehavior passHref>
-                            <NavigationMenuLink
-                              className={navigationMenuTriggerStyle()}
-                              {...(pathname === `/${link.slug}` && { 'data-active': true })}
-                            >
-                              {link.name}
-                            </NavigationMenuLink>
-                          </Link>
+                          <PageLinkResolver 
+                            slug={link.slug}
+                            name={link.name}
+                            isNavigationLink={true}
+                          />
                         </NavigationMenuItem>
                       );
                     })}
@@ -207,9 +204,9 @@ export function NavBar(props: NavBarProps) {
                                 {link.pagesCollection?.items.map((page, pageIndex) => (
                                   <SheetClose key={page.sys.id ?? `mobile-page-${pageIndex}`} asChild>
                                     <Link
-                                      href={`/${page.slug}`}
+                                      href={`/${link.slug}/${page.slug}`}
                                       className={`text-base hover:text-primary ${
-                                        pathname === `/${page.slug}` ? 'text-foreground' : 'text-foreground/60'
+                                        pathname === `/${link.slug}/${page.slug}` ? 'text-foreground' : 'text-foreground/60'
                                       }`}
                                     >
                                       {page.name}
@@ -224,17 +221,14 @@ export function NavBar(props: NavBarProps) {
                           );
                         }
                         
-                        // Regular Page link for mobile
+                        // Regular Page link for mobile - use PageLinkResolver to handle nested routes
                         return (
                           <SheetClose key={link.sys.id ?? `mobile-page-${index}`} asChild>
-                            <Link
-                              href={`/${link.slug}`}
-                              className={`text-lg font-medium hover:text-primary ${
-                                pathname === `/${link.slug}` ? 'text-foreground' : 'text-foreground/60'
-                              }`}
-                            >
-                              {link.name}
-                            </Link>
+                            <PageLinkResolver
+                              slug={link.slug}
+                              name={link.name}
+                              className="text-lg font-medium hover:text-primary"
+                            />
                           </SheetClose>
                         );
                       })}

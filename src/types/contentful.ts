@@ -25,6 +25,11 @@ export interface PageList {
   pagesCollection?: {
     items: Array<Page>;
   };
+  header?: NavBar;
+  pageContentCollection?: {
+    items: Hero[];
+  };
+  footer?: Footer;
   __typename?: string;
 }
 

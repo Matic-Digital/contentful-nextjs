@@ -2,10 +2,14 @@
 import type { Metadata } from 'next';
 
 import { Container } from '@/components/global/matic-ds';
-import { getAllPages, getAllPageLists } from '@/lib/api';
-import type { PageResponse, PageListResponse } from '@/types/contentful';
+import { getAllPages, getAllPageLists, getPageBySlug } from '@/lib/api';
+import type { PageResponse, PageListResponse, Page } from '@/types/contentful';
 import { getAllFooters } from '@/lib/api';
 import type { FooterResponse } from '@/types/contentful';
+import { NavBar } from '@/components/global/NavBar';
+import { Footer } from '@/components/global/Footer';
+import { PageLayout } from '@/components/layout/PageLayout';
+import { Hero } from '@/components/global/Hero';
 
 /**
  * Metadata configuration for SEO
@@ -15,10 +19,87 @@ export const metadata: Metadata = {
   description: 'Contentful Next.js Starter'
 };
 
+// Define the component mapping for pageContent items
+const componentMap = {
+  Hero: Hero,
+  // Add other component types here as they are created
+};
+
 /**
  * Landing page
+ * 
+ * This component first tries to fetch a page with the slug '/' from Contentful.
+ * If such a page exists, it renders that page as the homepage.
+ * Otherwise, it falls back to the default homepage that displays lists of pages and page lists.
  */
 export default async function HomePage() {
+  // Try to fetch a page with the slug '/' from Contentful
+  const homePage = await getPageBySlug('/', false);
+  
+  // If a page with slug '/' exists, render it as the homepage
+  if (homePage) {
+    return renderContentfulHomePage(homePage);
+  }
+  
+  // Otherwise, fall back to the default homepage
+  return renderDefaultHomePage();
+}
+
+/**
+ * Renders a Contentful page as the homepage
+ */
+async function renderContentfulHomePage(page: Page) {
+  // Get the page-specific header and footer if they exist
+  const pageHeader = page.header;
+  const pageFooter = page.footer;
+  
+  return (
+    <PageLayout header={pageHeader} footer={pageFooter}>
+      {/* Render the page-specific header if available */}
+      {pageHeader && <NavBar {...pageHeader} />}
+      
+      <main>
+        <h1 className="sr-only">{page.name}</h1>
+        
+        {/* Render the page content components */}
+        {page.pageContentCollection?.items.map((component) => {
+          if (!component) return null;
+          
+          // Type guard to check if component has __typename
+          if (!('__typename' in component)) {
+            console.warn('Component missing __typename:', component);
+            return null;
+          }
+          
+          const typeName = component.__typename!; // Using non-null assertion as we've checked it exists
+          
+          // Check if we have a component for this type
+          if (typeName && typeName in componentMap) {
+            const ComponentType = componentMap[typeName as keyof typeof componentMap];
+            return (
+              <ComponentType 
+                key={component.sys.id} 
+                {...component} 
+              />
+            );
+          }
+          
+          // Log a warning if we don't have a component for this type
+          console.warn(`No component found for type: ${typeName}`);
+          return null;
+        })}
+      </main>
+      
+      {/* Render the page-specific footer if available */}
+      {pageFooter && <Footer footerData={pageFooter} />}
+    </PageLayout>
+  );
+}
+
+/**
+ * Renders the default homepage with lists of pages and page lists
+ */
+async function renderDefaultHomePage() {
   // Use try-catch blocks to handle potential API errors
   let pages: PageResponse = { items: [], total: 0 };
   let pageLists: PageListResponse = { items: [], total: 0 };

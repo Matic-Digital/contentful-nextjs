@@ -120,6 +120,35 @@ const PAGELIST_GRAPHQL_FIELDS = `
       }
     }
   }
+  header {
+    ... on NavBar {
+      ${NAVBAR_GRAPHQL_FIELDS}
+    }
+  }
+  footer {
+    ... on Footer {
+      ${FOOTER_GRAPHQL_FIELDS}
+    }
+  }
+  pageContentCollection {
+    items {
+      ... on Hero {
+        ${HERO_GRAPHQL_FIELDS}
+      }
+    }
+  }
+`;
+
+// Simplified PageList fields for listing and reference checks
+const PAGELIST_SIMPLIFIED_FIELDS = `
+  ${PAGELIST_BASIC_FIELDS}
+  pagesCollection(limit: 10) {
+    items {
+      ... on Page {
+        ${PAGE_BASIC_FIELDS}
+      }
+    }
+  }
 `;
 
 // Complete Page fields (with component references)
@@ -191,12 +220,17 @@ export async function fetchGraphQL<T>(
 
     // Check for GraphQL errors - ensure we're checking the array length
     if (json.errors && json.errors.length > 0) {
+      console.error('GraphQL errors:', JSON.stringify(json.errors, null, 2));
       throw new GraphQLError('GraphQL query execution error', json.errors);
     }
 
     return json;
   } catch (error: unknown) {
     console.error('Error in fetchGraphQL:', error);
+    
+    // Log additional information about the query that failed
+    console.error('Failed query:', query);
+    console.error('Variables:', JSON.stringify(variables, null, 2));
     
     // Re-throw NetworkError and GraphQLError as they are already properly formatted
     if (error instanceof NetworkError || error instanceof GraphQLError) {
@@ -373,17 +407,121 @@ export async function getPageBySlug(
 }
 
 /**
+ * Checks if a page belongs to any PageList and returns the first PageList it belongs to
+ * @param pageId - The ID of the page to check
+ * @param preview - Whether to fetch draft content
+ * @returns Promise resolving to the PageList or null if not found
+ */
+export async function checkPageBelongsToPageList(
+  pageId: string,
+  preview = true,
+): Promise<PageList | null> {
+  try {
+    console.log(`Checking if page with ID '${pageId}' belongs to any PageList`);
+    
+    // Fetch all PageLists
+    const pageLists = await getAllPageLists(preview);
+    
+    if (!pageLists.items.length) {
+      console.log('No PageLists found in the system');
+      return null;
+    }
+    
+    console.log(`Found ${pageLists.items.length} PageLists to check`);
+    
+    // Check each PageList to see if the page belongs to it
+    for (const pageList of pageLists.items) {
+      console.log(`Checking PageList: ${pageList.name} (${pageList.slug})`);
+      
+      if (!pageList.pagesCollection?.items.length) {
+        console.log(`PageList ${pageList.name} has no pages`);
+        continue;
+      }
+      
+      console.log(`PageList ${pageList.name} has ${pageList.pagesCollection.items.length} pages`);
+      
+      // Log all page IDs in this PageList for debugging
+      const pageIds = pageList.pagesCollection.items.map(item => item.sys.id);
+      console.log(`Page IDs in PageList ${pageList.name}:`, pageIds);
+      
+      const pageInList = pageList.pagesCollection.items.some(
+        (item) => item.sys.id === pageId
+      );
+      
+      if (pageInList) {
+        console.log(`Page with ID '${pageId}' belongs to PageList '${pageList.name}' (${pageList.slug})`);
+        return pageList;
+      }
+    }
+    
+    console.log(`Page with ID '${pageId}' does not belong to any PageList`);
+    return null;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new NetworkError(`Error checking if page belongs to any PageList: ${error.message}`);
+    }
+    throw new Error("Unknown error checking if page belongs to any PageList");
+  }
+}
+
+/**
+ * Fetches a page by slug within a specific PageList
+ * @param pageListSlug - The slug of the parent PageList
+ * @param pageSlug - The slug of the page to fetch
+ * @param preview - Whether to fetch draft content
+ * @returns Promise resolving to the page and pageList or null if not found
+ */
+export async function getPageBySlugInPageList(
+  pageListSlug: string,
+  pageSlug: string,
+  preview = true,
+): Promise<{ page: Page | null; pageList: PageList | null }> {
+  try {
+    // First, fetch the PageList
+    const pageList = await getPageListBySlug(pageListSlug, preview);
+    
+    if (!pageList?.pagesCollection?.items.length) {
+      return { page: null, pageList };
+    }
+    
+    // Then fetch the page
+    const page = await getPageBySlug(pageSlug, preview);
+    
+    if (!page) {
+      return { page: null, pageList };
+    }
+    
+    // Check if the page is in the PageList
+    const pageInList = pageList.pagesCollection.items.some(
+      (item) => item.sys.id === page.sys.id
+    );
+    
+    if (!pageInList) {
+      return { page: null, pageList };
+    }
+    
+    return { page, pageList };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new NetworkError(`Error fetching page by slug in page list: ${error.message}`);
+    }
+    throw new Error("Unknown error fetching page by slug in page list");
+  }
+}
+
+/**
  * Fetches all page lists from Contentful
  * @param preview - Whether to fetch draft content
  * @returns Promise resolving to page lists response
  */
 export async function getAllPageLists(preview = false): Promise<PageListResponse> {
   try {
+    // Use simplified fields to reduce query complexity
     const response = await fetchGraphQL<PageList>(
       `query GetAllPageLists($preview: Boolean!) {
         pageListCollection(preview: $preview) {
           items {
-            ${PAGELIST_GRAPHQL_FIELDS}
+            ${PAGELIST_SIMPLIFIED_FIELDS}
           }
           total
         }
@@ -422,24 +560,49 @@ export async function getPageListBySlug(
   preview = false,
 ): Promise<PageList | null> {
   try {
-    const response = await fetchGraphQL<PageList>(
-      `query GetPageListBySlug($slug: String!, $preview: Boolean!) {
-        pageListCollection(where: { slug: $slug }, limit: 1, preview: $preview) {
-          items {
-            ${PAGELIST_GRAPHQL_FIELDS}
-          }
+    // Log the request for debugging
+    console.log(`Fetching PageList with slug: ${slug}, preview: ${preview}`);
+    
+    // Use the full fields to get header, footer, and page content
+    const query = `query GetPageListBySlug($slug: String!, $preview: Boolean!) {
+      pageListCollection(where: { slug: $slug }, limit: 1, preview: $preview) {
+        items {
+          ${PAGELIST_GRAPHQL_FIELDS}
         }
-      }`,
+      }
+    }`;
+    
+    // Execute the query
+    const response = await fetchGraphQL(
+      query,
       { slug, preview },
       preview,
     );
 
+    // Check if we have any results
     if (!response.data?.pageListCollection?.items?.length) {
+      console.log(`No PageList found with slug: ${slug}`);
       return null;
     }
 
-    return response.data.pageListCollection.items[0]!;
+    console.log(`Successfully fetched PageList with slug: ${slug}`);
+    
+    // Get the first item from the collection
+    const pageList = response.data.pageListCollection.items[0] as PageList;
+    
+    // Debug the PageList structure
+    console.log('PageList structure:', {
+      name: pageList.name,
+      slug: pageList.slug,
+      hasHeader: !!pageList.header,
+      hasFooter: !!pageList.footer,
+      hasPageContent: !!pageList.pageContentCollection,
+      pagesCount: pageList.pagesCollection?.items?.length ?? 0
+    });
+    
+    return pageList;
   } catch (error) {
+    console.error(`Error handling slug: ${slug}`, error);
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching page list by slug: ${error.message}`);
     }

@@ -69,8 +69,15 @@ export function Footer({ footerData }: { footerData: FooterType | null }) {
           <Box gap={12} className="justify-start lg:justify-between" {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'pageListsCollection' })}>
             {/* Footer sections with links from Contentful */}
             {liveFooterData.pageListsCollection?.items.map((pageList) => (
-              <div key={pageList.sys.id} {...inspectorProps({ entryId: pageList.sys.id, fieldId: 'name' })}>
-                <h3 className="text-sm font-medium">{pageList.name}</h3>
+              <div key={pageList.sys.id}>
+                <h3 className="text-sm font-medium" {...inspectorProps({ entryId: pageList.sys.id, fieldId: 'name' })}>
+                  <Link 
+                    href={`/${pageList.slug}`}
+                    className="hover:text-primary"
+                  >
+                    {pageList.name}
+                  </Link>
+                </h3>
                 <nav>
                   <ul className="ml-1 mt-4 space-y-2" {...inspectorProps({ entryId: pageList.sys.id, fieldId: 'pagesCollection' })}>
                     {pageList.pagesCollection?.items.map((page) => (

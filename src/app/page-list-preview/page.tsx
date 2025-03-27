@@ -23,6 +23,10 @@ import { Box } from '@/components/global/matic-ds';
 import ContentfulLivePreviewInitializer from '@/components/global/ContentfulLivePreviewInitializer';
 import { getPageListBySlug } from '@/lib/api';
 import { PageList } from '@/components/global/PageList';
+import { NavBar } from '@/components/global/NavBar';
+import { Footer } from '@/components/global/Footer';
+import { Hero } from '@/components/global/Hero';
+import { PageLayout } from '@/components/layout/PageLayout';
 
 // Force dynamic rendering for this page to ensure live updates work
 export const dynamic = 'force-dynamic';
@@ -138,11 +142,33 @@ export default async function PageListPreviewPage({ params, searchParams }: Page
       {/* Contentful Live Preview Initializer */}
       <ContentfulLivePreviewInitializer />
       
-      {/* PageList Component */}
+      {/* PageList Component with Header and Footer */}
       {pageListData ? (
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
           <div className="text-xs text-gray-500 mb-2 text-center">Page List Preview</div>
-          <PageList {...pageListData} />
+          
+          <PageLayout header={pageListData.header} footer={pageListData.footer}>
+            {/* Render the page-specific header if available */}
+            {pageListData.header && <NavBar {...pageListData.header} />}
+            
+            <main className="min-h-screen py-12">
+              {/* Render any Hero components from pageContentCollection */}
+              {pageListData.pageContentCollection?.items?.map((item, index) => {
+                if (item.__typename === 'Hero') {
+                  return <Hero key={item.sys?.id || `hero-${index}`} {...item} />;
+                }
+                return null;
+              })}
+              
+              <div className="mx-auto max-w-7xl px-4">
+                {/* Render the PageList component */}
+                <PageList {...pageListData} />
+              </div>
+            </main>
+            
+            {/* Render the page-specific footer if available */}
+            {pageListData.footer && <Footer footerData={pageListData.footer} />}
+          </PageLayout>
         </div>
       ) : (
         <Box className="mx-auto max-w-7xl px-4">

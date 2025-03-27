@@ -96,9 +96,17 @@ export function PageList(props: PageListProps) {
           <div className="page-list-content">
             {pageList.pagesCollection.items.map((content, index) => {
               if (content.__typename === 'Page') {
+                // Pass the parent PageList slug to the Page component
                 return (
                   <div key={content.sys.id || index} className="mb-12">
-                    <Page {...content} />
+                    <Page 
+                      {...content} 
+                      // Add a custom prop to indicate this page belongs to a PageList
+                      parentPageList={{
+                        slug: pageList.slug,
+                        name: pageList.name
+                      }}
+                    />
                   </div>
                 );
               }
