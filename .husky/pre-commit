@@ -1,8 +1,10 @@
-# Try local check first
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Try local check first (linting and type checking)
 echo "\033[33mRunning local checks...\033[0m"
 if OUTPUT=$(npm run check 2>&1); then
     echo "\033[32m✓ Local checks passed\033[0m"
-    exit 0
 else
     # Check if the error is due to missing command/dependency
     if echo "$OUTPUT" | grep -q "command not found"; then
@@ -14,3 +16,26 @@ else
         exit 1
     fi
 fi
+
+# Run tests
+echo "\033[33mRunning tests...\033[0m"
+if OUTPUT=$(npm run test 2>&1); then
+    echo "\033[32m✓ Tests passed\033[0m"
+else
+    echo "\033[31m✗ Tests failed\033[0m"
+    echo "$OUTPUT"
+    exit 1
+fi
+
+# Run build
+echo "\033[33mRunning build...\033[0m"
+if OUTPUT=$(npm run build 2>&1); then
+    echo "\033[32m✓ Build passed\033[0m"
+else
+    echo "\033[31m✗ Build failed\033[0m"
+    echo "$OUTPUT"
+    exit 1
+fi
+
+echo "\033[32m✓ All checks passed! Proceeding with commit...\033[0m"
+exit 0
