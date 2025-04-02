@@ -36,14 +36,12 @@ describe('cn utility function', () => {
   it('handles complex combinations', () => {
     const isActive = true;
     const isDisabled = false;
-    
+
     expect(
-      cn(
-        'base-class',
-        isActive && 'active',
-        isDisabled && 'disabled',
-        { 'is-loading': false, 'is-focused': true }
-      )
+      cn('base-class', isActive && 'active', isDisabled && 'disabled', {
+        'is-loading': false,
+        'is-focused': true
+      })
     ).toBe('base-class active is-focused');
   });
 });

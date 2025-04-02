@@ -11,9 +11,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import { type FieldApi, type Validator, useForm } from '@tanstack/react-form';
-import { zodValidator } from '@tanstack/zod-form-adapter';
-import { z, type ZodType, type ZodTypeDef } from 'zod';
+import { useForm, type AnyFieldApi } from '@tanstack/react-form';
+import { z } from 'zod';
 
 import { useToast } from '@/hooks/use-toast';
 
@@ -46,17 +45,7 @@ interface FormFieldProps {
 }
 
 /** Displays validation state and error messages for a form field */
-function FieldInfo({
-  field
-}: {
-  field: FieldApi<
-    { email: string; firstName: string; lastName: string; message: string },
-    keyof ContactFormData,
-    undefined,
-    Validator<unknown, ZodType<unknown, ZodTypeDef, unknown>>,
-    string
-  >;
-}) {
+function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
     <div data-testid={`${field.name}-field-info`}>
       {field.state.meta.isTouched && field.state.meta.errors.length ? (
@@ -105,15 +94,15 @@ export function ContactForm() {
   const { toast } = useToast();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { theme } = useTheme();
 
-  /** Initialize form with validation and submission handling */
   const form = useForm({
     defaultValues: {
       firstName: '',
       lastName: '',
       email: '',
       message: ''
-    } as ContactFormData,
+    },
     onSubmit: async ({ value }) => {
       console.log('Form submitted:', value);
       if (isSubmitting) return;
@@ -132,22 +121,42 @@ export function ContactForm() {
       } finally {
         setIsSubmitting(false);
       }
-    },
-    validatorAdapter: zodValidator(),
-    validators: {
-      onChange: contactSchema
     }
   });
 
   /**
    * Renders a form field with label, input/textarea, and validation feedback
-   * Handles both text inputs and textareas with shared validation logic
    */
   function FormField({ label, name, placeholder, component = 'input' }: FormFieldProps) {
     return (
       <div className="space-y-2">
         <Label htmlFor={name}>{label}</Label>
-        <form.Field name={name}>
+        <form.Field
+          name={name}
+          validators={{
+            onChange: ({ value }) => {
+              try {
+                // Use the appropriate schema validator based on the field name
+                if (name === 'firstName') {
+                  contactSchema.shape.firstName.parse(value);
+                } else if (name === 'lastName') {
+                  contactSchema.shape.lastName.parse(value);
+                } else if (name === 'email') {
+                  contactSchema.shape.email.parse(value);
+                } else if (name === 'message') {
+                  contactSchema.shape.message.parse(value);
+                }
+                return undefined;
+              } catch (error) {
+                if (error instanceof z.ZodError && error.errors && error.errors.length > 0) {
+                  const firstError = error.errors[0];
+                  return firstError ? firstError.message : 'Validation error';
+                }
+                return 'Invalid input';
+              }
+            }
+          }}
+        >
           {(field) => (
             <>
               {component === 'input' ? (
@@ -182,14 +191,12 @@ export function ContactForm() {
     );
   }
 
-  const { theme } = useTheme();
-
   return (
     <form
-      onSubmit={async (e) => {
+      onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        await form.handleSubmit();
+        void form.handleSubmit();
       }}
       className="space-y-6"
     >

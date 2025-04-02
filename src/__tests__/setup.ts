@@ -22,10 +22,10 @@ vi.mock('next/navigation', () => ({
     replace: vi.fn(),
     prefetch: vi.fn(),
     back: vi.fn(),
-    forward: vi.fn(),
+    forward: vi.fn()
   }),
   usePathname: () => '/mock-path',
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => new URLSearchParams()
 }));
 
 // Mock environment variables

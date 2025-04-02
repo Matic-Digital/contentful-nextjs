@@ -4,10 +4,10 @@ import { NextResponse } from 'next/server';
 
 /**
  * Footer Preview API Route
- * 
+ *
  * This route enables draft mode and redirects to the footer preview page
  * with the provided footerId.
- * 
+ *
  * Required parameters:
  * - secret: The preview secret that matches CONTENTFUL_PREVIEW_SECRET
  * - footerId: The ID of the footer to preview

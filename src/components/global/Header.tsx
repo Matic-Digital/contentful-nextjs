@@ -28,9 +28,7 @@ import { ThemeToggle } from '@/components/global/ThemeToggle';
  * Navigation menu items configuration
  * Each item has a URL and display label
  */
-const menuItems = [
-  { href: '/', label: 'Home' },
-];
+const menuItems = [{ href: '/', label: 'Home' }];
 
 /**
  * Header component with responsive navigation

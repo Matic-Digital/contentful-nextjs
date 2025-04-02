@@ -6,7 +6,7 @@ describe('Skeleton component', () => {
   it('renders correctly with default props', () => {
     render(<Skeleton data-testid="skeleton" />);
     const skeleton = screen.getByTestId('skeleton');
-    
+
     expect(skeleton).toBeDefined();
     expect(skeleton.className).toContain('animate-pulse');
     expect(skeleton.className).toContain('rounded-md');
@@ -16,7 +16,7 @@ describe('Skeleton component', () => {
   it('applies custom className correctly', () => {
     render(<Skeleton className="custom-class" data-testid="skeleton" />);
     const skeleton = screen.getByTestId('skeleton');
-    
+
     expect(skeleton.className).toContain('custom-class');
     expect(skeleton.className).toContain('animate-pulse');
   });
@@ -24,7 +24,7 @@ describe('Skeleton component', () => {
   it('passes additional props correctly', () => {
     render(<Skeleton data-testid="skeleton" aria-label="Loading" />);
     const skeleton = screen.getByTestId('skeleton');
-    
+
     expect(skeleton).toHaveAttribute('aria-label', 'Loading');
   });
 });

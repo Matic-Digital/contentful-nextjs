@@ -115,7 +115,7 @@ describe('DropdownMenu components', () => {
         </DropdownMenuContent>
       </DropdownMenu>
     );
-    
+
     expect(screen.getByTestId('dropdown-root')).toBeDefined();
     expect(screen.getByTestId('dropdown-trigger')).toBeDefined();
     expect(screen.getByTestId('dropdown-content')).toBeDefined();
@@ -135,7 +135,7 @@ describe('DropdownMenu components', () => {
         </DropdownMenuContent>
       </DropdownMenu>
     );
-    
+
     expect(screen.getAllByTestId('dropdown-checkbox-item').length).toBe(2);
     expect(screen.getByText('Option 1')).toBeDefined();
     expect(screen.getByText('Option 2')).toBeDefined();
@@ -153,7 +153,7 @@ describe('DropdownMenu components', () => {
         </DropdownMenuContent>
       </DropdownMenu>
     );
-    
+
     expect(screen.getByTestId('dropdown-radio-group')).toBeDefined();
     expect(screen.getAllByTestId('dropdown-radio-item').length).toBe(2);
     expect(screen.getByText('Radio 1')).toBeDefined();
@@ -172,7 +172,7 @@ describe('DropdownMenu components', () => {
         </DropdownMenuContent>
       </DropdownMenu>
     );
-    
+
     expect(screen.getByTestId('dropdown-label')).toBeDefined();
     expect(screen.getByTestId('dropdown-separator')).toBeDefined();
     expect(screen.getByText('Menu Label')).toBeDefined();
@@ -194,7 +194,7 @@ describe('DropdownMenu components', () => {
         </DropdownMenuContent>
       </DropdownMenu>
     );
-    
+
     expect(screen.getByText('⌘C')).toBeDefined();
     expect(screen.getByText('⌘V')).toBeDefined();
   });
@@ -215,7 +215,7 @@ describe('DropdownMenu components', () => {
         </DropdownMenuContent>
       </DropdownMenu>
     );
-    
+
     expect(screen.getByTestId('dropdown-sub')).toBeDefined();
     expect(screen.getByTestId('dropdown-sub-trigger')).toBeDefined();
     expect(screen.getByTestId('dropdown-sub-content')).toBeDefined();
@@ -227,25 +227,37 @@ describe('DropdownMenu components', () => {
   it('renders dropdown menu with inset components', () => {
     // For this test, we need to directly test the components with inset prop
     // Since our mock implementation doesn't handle the inset class properly
-    
+
     // Test DropdownMenuLabel with inset
-    const { unmount: unmountLabel } = render(<DropdownMenuLabel inset data-testid="inset-label">Inset Label</DropdownMenuLabel>);
+    const { unmount: unmountLabel } = render(
+      <DropdownMenuLabel inset data-testid="inset-label">
+        Inset Label
+      </DropdownMenuLabel>
+    );
     const labelElement = screen.getByTestId('inset-label');
     expect(labelElement.className).toContain('pl-8');
-    
+
     // Clean up
     unmountLabel();
-    
+
     // Test DropdownMenuItem with inset
-    const { unmount: unmountItem } = render(<DropdownMenuItem inset data-testid="inset-item">Inset Item</DropdownMenuItem>);
+    const { unmount: unmountItem } = render(
+      <DropdownMenuItem inset data-testid="inset-item">
+        Inset Item
+      </DropdownMenuItem>
+    );
     const itemElement = screen.getByTestId('inset-item');
     expect(itemElement.className).toContain('pl-8');
-    
+
     // Clean up
     unmountItem();
-    
+
     // Test DropdownMenuSubTrigger with inset
-    render(<DropdownMenuSubTrigger inset data-testid="inset-trigger">Inset Trigger</DropdownMenuSubTrigger>);
+    render(
+      <DropdownMenuSubTrigger inset data-testid="inset-trigger">
+        Inset Trigger
+      </DropdownMenuSubTrigger>
+    );
     const triggerElement = screen.getByTestId('inset-trigger');
     expect(triggerElement.className).toContain('pl-8');
   });
@@ -269,7 +281,7 @@ describe('DropdownMenu components', () => {
         </DropdownMenuContent>
       </DropdownMenu>
     );
-    
+
     expect(screen.getAllByTestId('dropdown-group').length).toBe(2);
     expect(screen.getAllByTestId('dropdown-label').length).toBe(2);
     expect(screen.getByText('Group 1')).toBeDefined();
@@ -287,7 +299,7 @@ describe('DropdownMenu components', () => {
         </DropdownMenuContent>
       </DropdownMenu>
     );
-    
+
     expect(screen.getByTestId('dropdown-trigger').className).toBe('custom-trigger');
     expect(screen.getByTestId('dropdown-content').className).toContain('custom-content');
     expect(screen.getByTestId('dropdown-item').className).toContain('custom-item');

@@ -7,7 +7,7 @@ describe('Input component', () => {
   it('renders correctly with default props', () => {
     render(<Input placeholder="Enter text" />);
     const input = screen.getByPlaceholderText('Enter text');
-    
+
     expect(input).toBeDefined();
     expect(input.tagName).toBe('INPUT');
   });
@@ -15,7 +15,7 @@ describe('Input component', () => {
   it('applies custom className correctly', () => {
     render(<Input className="custom-class" data-testid="test-input" />);
     const input = screen.getByTestId('test-input');
-    
+
     expect(input.className).toContain('custom-class');
   });
 
@@ -23,7 +23,7 @@ describe('Input component', () => {
     const user = userEvent.setup();
     render(<Input data-testid="test-input" />);
     const input = screen.getByTestId('test-input');
-    
+
     await user.type(input, 'Hello, world!');
     expect(input).toHaveValue('Hello, world!');
   });
@@ -31,7 +31,7 @@ describe('Input component', () => {
   it('passes type attribute correctly', () => {
     render(<Input type="password" data-testid="test-input" />);
     const input = screen.getByTestId('test-input');
-    
+
     expect(input).toHaveAttribute('type', 'password');
   });
 });

@@ -36,7 +36,7 @@ export interface PageList {
 export interface Footer {
   sys: {
     id: string;
-  }
+  };
   name: string;
   description?: string;
   pageListsCollection?: {

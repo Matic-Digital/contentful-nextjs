@@ -15,7 +15,7 @@ export function ContentfulLivePreviewInitializer() {
         // Check if already initialized to avoid duplicate initialization
         if (!ContentfulLivePreview.initialized) {
           console.log('Initializing Contentful Live Preview SDK');
-          
+
           // Use an async IIFE to avoid unbound method issues
           void (async () => {
             try {
