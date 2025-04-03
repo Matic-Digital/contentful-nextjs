@@ -22,14 +22,14 @@ vi.mock('@radix-ui/react-slot', () => ({
     <div data-testid="breadcrumb-link-slot" className={className} {...props}>
       {children}
     </div>
-  ),
+  )
 }));
 
 describe('Breadcrumb components', () => {
   it('renders Breadcrumb correctly', () => {
     render(<Breadcrumb data-testid="breadcrumb">Breadcrumb content</Breadcrumb>);
     const breadcrumb = screen.getByTestId('breadcrumb');
-    
+
     expect(breadcrumb).toBeDefined();
     expect(breadcrumb.getAttribute('aria-label')).toBe('breadcrumb');
     expect(breadcrumb.textContent).toBe('Breadcrumb content');
@@ -38,7 +38,7 @@ describe('Breadcrumb components', () => {
   it('renders BreadcrumbList correctly', () => {
     render(<BreadcrumbList data-testid="breadcrumb-list">List content</BreadcrumbList>);
     const list = screen.getByTestId('breadcrumb-list');
-    
+
     expect(list).toBeDefined();
     expect(list.tagName).toBe('OL');
     expect(list.className).toContain('flex');
@@ -49,7 +49,7 @@ describe('Breadcrumb components', () => {
   it('renders BreadcrumbItem correctly', () => {
     render(<BreadcrumbItem data-testid="breadcrumb-item">Item content</BreadcrumbItem>);
     const item = screen.getByTestId('breadcrumb-item');
-    
+
     expect(item).toBeDefined();
     expect(item.tagName).toBe('LI');
     expect(item.className).toContain('inline-flex');
@@ -57,9 +57,13 @@ describe('Breadcrumb components', () => {
   });
 
   it('renders BreadcrumbLink correctly', () => {
-    render(<BreadcrumbLink href="#" data-testid="breadcrumb-link">Link content</BreadcrumbLink>);
+    render(
+      <BreadcrumbLink href="#" data-testid="breadcrumb-link">
+        Link content
+      </BreadcrumbLink>
+    );
     const link = screen.getByTestId('breadcrumb-link');
-    
+
     expect(link).toBeDefined();
     expect(link.tagName).toBe('A');
     expect(link.className).toContain('hover:text-foreground');
@@ -69,7 +73,7 @@ describe('Breadcrumb components', () => {
 
   it('renders BreadcrumbLink with asChild prop', () => {
     render(<BreadcrumbLink asChild>Slot content</BreadcrumbLink>);
-    
+
     // When asChild is true, the component renders using the mocked Slot component
     const linkSlot = screen.getByTestId('breadcrumb-link-slot');
     expect(linkSlot).toBeDefined();
@@ -80,7 +84,7 @@ describe('Breadcrumb components', () => {
   it('renders BreadcrumbPage correctly', () => {
     render(<BreadcrumbPage data-testid="breadcrumb-page">Page content</BreadcrumbPage>);
     const page = screen.getByTestId('breadcrumb-page');
-    
+
     expect(page).toBeDefined();
     expect(page.tagName).toBe('SPAN');
     expect(page.getAttribute('aria-current')).toBe('page');
@@ -93,7 +97,7 @@ describe('Breadcrumb components', () => {
     render(<BreadcrumbSeparator data-testid="breadcrumb-separator" />);
     const separator = screen.getByTestId('breadcrumb-separator');
     const chevron = screen.getByTestId('chevron-icon');
-    
+
     expect(separator).toBeDefined();
     expect(separator.tagName).toBe('LI');
     expect(separator.getAttribute('aria-hidden')).toBe('true');
@@ -103,7 +107,7 @@ describe('Breadcrumb components', () => {
   it('renders BreadcrumbSeparator with custom children', () => {
     render(<BreadcrumbSeparator data-testid="breadcrumb-separator">-</BreadcrumbSeparator>);
     const separator = screen.getByTestId('breadcrumb-separator');
-    
+
     expect(separator).toBeDefined();
     expect(separator.textContent).toBe('-');
     expect(screen.queryByTestId('chevron-icon')).toBeNull();
@@ -113,7 +117,7 @@ describe('Breadcrumb components', () => {
     render(<BreadcrumbEllipsis data-testid="breadcrumb-ellipsis" />);
     const ellipsis = screen.getByTestId('breadcrumb-ellipsis');
     const moreIcon = screen.getByTestId('more-icon');
-    
+
     expect(ellipsis).toBeDefined();
     expect(ellipsis.tagName).toBe('SPAN');
     expect(ellipsis.getAttribute('aria-hidden')).toBe('true');
@@ -144,7 +148,7 @@ describe('Breadcrumb components', () => {
         </BreadcrumbList>
       </Breadcrumb>
     );
-    
+
     expect(screen.getByRole('navigation')).toBeDefined();
     expect(screen.getByText('Home')).toBeDefined();
     expect(screen.getByText('Products')).toBeDefined();
@@ -158,17 +162,21 @@ describe('Breadcrumb components', () => {
       <Breadcrumb data-testid="breadcrumb" className="custom-breadcrumb">
         <BreadcrumbList data-testid="list" className="custom-list">
           <BreadcrumbItem data-testid="item" className="custom-item">
-            <BreadcrumbLink data-testid="link" className="custom-link" href="#">Link</BreadcrumbLink>
+            <BreadcrumbLink data-testid="link" className="custom-link" href="#">
+              Link
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator data-testid="separator" className="custom-separator" />
           <BreadcrumbItem>
-            <BreadcrumbPage data-testid="page" className="custom-page">Page</BreadcrumbPage>
+            <BreadcrumbPage data-testid="page" className="custom-page">
+              Page
+            </BreadcrumbPage>
           </BreadcrumbItem>
           <BreadcrumbEllipsis data-testid="ellipsis" className="custom-ellipsis" />
         </BreadcrumbList>
       </Breadcrumb>
     );
-    
+
     expect(screen.getByTestId('breadcrumb').className).toContain('custom-breadcrumb');
     expect(screen.getByTestId('list').className).toContain('custom-list');
     expect(screen.getByTestId('item').className).toContain('custom-item');

@@ -1,11 +1,11 @@
 /**
  * NavBar Component
- * 
+ *
  * This component renders a responsive navigation bar based on content from Contentful.
  * It displays a logo and navigation links, with support for nested dropdown menus for
  * PageList content types. The component is integrated with Contentful's Live Preview
  * functionality for real-time content updates in the preview environment.
- * 
+ *
  * Features:
  * - Responsive design with different layouts for desktop and mobile
  * - Support for nested navigation with dropdowns for PageList items
@@ -16,7 +16,10 @@
 
 'use client';
 
-import { useContentfulLiveUpdates, useContentfulInspectorMode } from '@contentful/live-preview/react';
+import {
+  useContentfulLiveUpdates,
+  useContentfulInspectorMode
+} from '@contentful/live-preview/react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -65,23 +68,23 @@ function isPageList(link: Page | PageList): link is PageList {
 export function NavBar(props: NavBarProps) {
   // Use the Contentful Live Updates hook to get real-time updates
   const navBar = useContentfulLiveUpdates<NavBarProps>(props);
-  
+
   // Use the Contentful Inspector Mode hook for field tagging
-  const inspectorProps = useContentfulInspectorMode({ 
-    entryId: navBar?.sys?.id ?? '' 
+  const inspectorProps = useContentfulInspectorMode({
+    entryId: navBar?.sys?.id ?? ''
   });
-  
+
   // Get the current pathname
   const pathname = usePathname();
-  
+
   // Add a check to ensure props has the required structure
   if (!navBar?.sys?.id) {
     console.error('NavBar component received invalid props:', props);
     return null;
   }
-  
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 w-full">
+    <div className="fixed left-0 right-0 top-0 z-50 w-full">
       <Container className="mx-auto">
         <header className="mt-6 w-[95%] rounded-xl border border-b border-slate-400 bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60 max-md:py-1.5 lg:w-full">
           <Box className="items-center justify-between">
@@ -89,10 +92,10 @@ export function NavBar(props: NavBarProps) {
             <div {...inspectorProps({ fieldId: 'logo' })}>
               {navBar.logo?.url && (
                 <Link href="/" className="flex items-center">
-                  <Image 
-                    src={navBar.logo.url} 
-                    alt={navBar.logo.title ?? navBar.name ?? 'Logo'} 
-                    width={navBar.logo.width ?? 150} 
+                  <Image
+                    src={navBar.logo.url}
+                    alt={navBar.logo.title ?? navBar.name ?? 'Logo'}
+                    width={navBar.logo.width ?? 150}
                     height={navBar.logo.height ?? 50}
                     className="h-6 w-auto rounded-none border-none dark:brightness-0 dark:invert"
                   />
@@ -107,13 +110,13 @@ export function NavBar(props: NavBarProps) {
                   <NavigationMenuList>
                     {navBar.navLinksCollection?.items?.map((link, index) => {
                       if (!link) return null;
-                      
+
                       // Check if the link is a PageList
                       if (isPageList(link) && link.pagesCollection?.items?.length) {
                         return (
                           <NavigationMenuItem key={link.sys.id ?? `pagelist-${index}`}>
                             <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
-                              <Link 
+                              <Link
                                 href={`/${link.slug ?? ''}`}
                                 className="flex items-center"
                                 onClick={(e) => e.stopPropagation()}
@@ -126,10 +129,12 @@ export function NavBar(props: NavBarProps) {
                               <ul className="grid w-[200px] gap-1 p-2">
                                 {link.pagesCollection?.items.map((page, pageIndex) => (
                                   <li key={page.sys.id ?? `page-${pageIndex}`}>
-                                    <Link 
+                                    <Link
                                       href={`/${link.slug}/${page.slug}`}
                                       className={`block w-full rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${
-                                        pathname === `/${link.slug}/${page.slug}` ? 'font-medium bg-accent/50' : ''
+                                        pathname === `/${link.slug}/${page.slug}`
+                                          ? 'bg-accent/50 font-medium'
+                                          : ''
                                       }`}
                                     >
                                       {page.name}
@@ -141,11 +146,11 @@ export function NavBar(props: NavBarProps) {
                           </NavigationMenuItem>
                         );
                       }
-                      
+
                       // Regular Page link - use PageLinkResolver to handle nested routes
                       return (
                         <NavigationMenuItem key={link.sys.id ?? `page-${index}`}>
-                          <PageLinkResolver 
+                          <PageLinkResolver
                             slug={link.slug}
                             name={link.name}
                             isNavigationLink={true}
@@ -175,10 +180,10 @@ export function NavBar(props: NavBarProps) {
                     <SheetHeader>
                       {navBar.logo?.url && (
                         <Link href="/" className="flex items-center">
-                          <Image 
-                            src={navBar.logo.url} 
-                            alt={navBar.logo.title ?? navBar.name ?? 'Logo'} 
-                            width={navBar.logo.width ?? 150} 
+                          <Image
+                            src={navBar.logo.url}
+                            alt={navBar.logo.title ?? navBar.name ?? 'Logo'}
+                            width={navBar.logo.width ?? 150}
                             height={navBar.logo.height ?? 50}
                             className="h-10 w-auto"
                           />
@@ -186,14 +191,20 @@ export function NavBar(props: NavBarProps) {
                       )}
                     </SheetHeader>
                     {/* Mobile Menu Items */}
-                    <nav className="mt-8 flex flex-col space-y-4" {...inspectorProps({ fieldId: 'navLinks' })}>
+                    <nav
+                      className="mt-8 flex flex-col space-y-4"
+                      {...inspectorProps({ fieldId: 'navLinks' })}
+                    >
                       {navBar.navLinksCollection?.items?.map((link, index) => {
                         if (!link) return null;
-                        
+
                         // Check if the link is a PageList for mobile
                         if (isPageList(link) && link.pagesCollection?.items?.length) {
                           return (
-                            <div key={link.sys.id ?? `mobile-pagelist-${index}`} className="space-y-2">
+                            <div
+                              key={link.sys.id ?? `mobile-pagelist-${index}`}
+                              className="space-y-2"
+                            >
                               <Link
                                 href={`/${link.slug ?? ''}`}
                                 className="text-lg font-medium text-foreground hover:text-primary"
@@ -202,11 +213,16 @@ export function NavBar(props: NavBarProps) {
                               </Link>
                               <div className="ml-4 flex flex-col space-y-2">
                                 {link.pagesCollection?.items.map((page, pageIndex) => (
-                                  <SheetClose key={page.sys.id ?? `mobile-page-${pageIndex}`} asChild>
+                                  <SheetClose
+                                    key={page.sys.id ?? `mobile-page-${pageIndex}`}
+                                    asChild
+                                  >
                                     <Link
                                       href={`/${link.slug}/${page.slug}`}
                                       className={`text-base hover:text-primary ${
-                                        pathname === `/${link.slug}/${page.slug}` ? 'text-foreground' : 'text-foreground/60'
+                                        pathname === `/${link.slug}/${page.slug}`
+                                          ? 'text-foreground'
+                                          : 'text-foreground/60'
                                       }`}
                                     >
                                       {page.name}
@@ -220,7 +236,7 @@ export function NavBar(props: NavBarProps) {
                             </div>
                           );
                         }
-                        
+
                         // Regular Page link for mobile - use PageLinkResolver to handle nested routes
                         return (
                           <SheetClose key={link.sys.id ?? `mobile-page-${index}`} asChild>

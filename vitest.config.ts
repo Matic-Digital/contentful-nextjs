@@ -36,8 +36,8 @@ export default defineConfig({
         '**/src/app/page.tsx',
         '**/src/app/error.tsx',
         '**/src/app/not-found.tsx',
-        '**/src/app/providers.tsx',
-      ],
+        '**/src/app/providers.tsx'
+      ]
     },
     reporters: ['default'],
     outputFile: {
@@ -47,13 +47,13 @@ export default defineConfig({
     slowTestThreshold: 500, // Mark tests as slow if they take more than 500ms
     sequence: {
       shuffle: false,
-      concurrent: false, // Run tests sequentially for more predictable output
+      concurrent: false // Run tests sequentially for more predictable output
     },
-    testTimeout: 10000, // 10 seconds timeout for tests
+    testTimeout: 10000 // 10 seconds timeout for tests
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src'),
-    },
-  },
+      '@': resolve(__dirname, './src')
+    }
+  }
 });

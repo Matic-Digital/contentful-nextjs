@@ -99,43 +99,49 @@ describe('Sheet components', () => {
 
   it('renders sheet with different side variants', () => {
     const { rerender } = render(
-      <SheetContent side="right" data-testid="right-sheet">Content</SheetContent>
+      <SheetContent side="right" data-testid="right-sheet">
+        Content
+      </SheetContent>
     );
-    
+
     expect(screen.getByTestId('right-sheet').className).toContain('right-0');
-    
+
     rerender(
-      <SheetContent side="left" data-testid="left-sheet">Content</SheetContent>
+      <SheetContent side="left" data-testid="left-sheet">
+        Content
+      </SheetContent>
     );
-    
+
     expect(screen.getByTestId('left-sheet').className).toContain('left-0');
-    
+
     rerender(
-      <SheetContent side="top" data-testid="top-sheet">Content</SheetContent>
+      <SheetContent side="top" data-testid="top-sheet">
+        Content
+      </SheetContent>
     );
-    
+
     expect(screen.getByTestId('top-sheet').className).toContain('top-0');
-    
+
     rerender(
-      <SheetContent side="bottom" data-testid="bottom-sheet">Content</SheetContent>
+      <SheetContent side="bottom" data-testid="bottom-sheet">
+        Content
+      </SheetContent>
     );
-    
+
     expect(screen.getByTestId('bottom-sheet').className).toContain('bottom-0');
   });
 
   it('renders SheetOverlay correctly', () => {
     render(<SheetOverlay data-testid="custom-overlay" />);
-    
+
     const overlay = screen.getByTestId('custom-overlay');
     expect(overlay).toBeInTheDocument();
     expect(overlay.className).toContain('fixed inset-0');
   });
 
   it('renders SheetHeader with correct classes', () => {
-    render(
-      <SheetHeader data-testid="sheet-header">Header Content</SheetHeader>
-    );
-    
+    render(<SheetHeader data-testid="sheet-header">Header Content</SheetHeader>);
+
     const header = screen.getByTestId('sheet-header');
     expect(header).toBeInTheDocument();
     expect(header.className).toContain('flex flex-col space-y-2');
@@ -143,10 +149,8 @@ describe('Sheet components', () => {
   });
 
   it('renders SheetFooter with correct classes', () => {
-    render(
-      <SheetFooter data-testid="sheet-footer">Footer Content</SheetFooter>
-    );
-    
+    render(<SheetFooter data-testid="sheet-footer">Footer Content</SheetFooter>);
+
     const footer = screen.getByTestId('sheet-footer');
     expect(footer).toBeInTheDocument();
     expect(footer.className).toContain('flex flex-col-reverse');
@@ -154,10 +158,8 @@ describe('Sheet components', () => {
   });
 
   it('renders SheetTitle with correct classes', () => {
-    render(
-      <SheetTitle data-testid="custom-title">Custom Title</SheetTitle>
-    );
-    
+    render(<SheetTitle data-testid="custom-title">Custom Title</SheetTitle>);
+
     const title = screen.getByTestId('custom-title');
     expect(title).toBeInTheDocument();
     expect(title.className).toContain('text-lg font-semibold');
@@ -168,7 +170,7 @@ describe('Sheet components', () => {
     render(
       <SheetDescription data-testid="custom-description">Custom Description</SheetDescription>
     );
-    
+
     const description = screen.getByTestId('custom-description');
     expect(description).toBeInTheDocument();
     expect(description.className).toContain('text-sm text-muted-foreground');
@@ -176,10 +178,8 @@ describe('Sheet components', () => {
   });
 
   it('renders SheetContent with close button', () => {
-    render(
-      <SheetContent>Content</SheetContent>
-    );
-    
+    render(<SheetContent>Content</SheetContent>);
+
     // The X button is automatically added by the SheetContent component
     expect(screen.getAllByTestId('sheet-close')).toHaveLength(1);
     expect(screen.getByTestId('x-icon')).toBeInTheDocument();
@@ -188,9 +188,11 @@ describe('Sheet components', () => {
 
   it('renders SheetContent with custom className', () => {
     render(
-      <SheetContent className="custom-class" data-testid="custom-content">Content</SheetContent>
+      <SheetContent className="custom-class" data-testid="custom-content">
+        Content
+      </SheetContent>
     );
-    
+
     const content = screen.getByTestId('custom-content');
     expect(content).toBeInTheDocument();
     expect(content.className).toContain('custom-class');

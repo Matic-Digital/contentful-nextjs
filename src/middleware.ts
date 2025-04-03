@@ -14,7 +14,7 @@ function createApiUrl(baseUrl: string, path: string): string {
 
 /**
  * Middleware for handling page redirections
- * 
+ *
  * This middleware runs before a page is rendered and handles redirections
  * for pages that belong to a PageList. It checks if a requested page
  * belongs to a PageList and redirects to the nested URL structure if needed.
@@ -28,11 +28,11 @@ export async function middleware(request: NextRequest) {
   // Extract the path from the URL
   const url = request.nextUrl.clone();
   const path = url.pathname;
-  
+
   // Skip processing for special paths
   if (
-    path.startsWith('/_next') || 
-    path.startsWith('/api') || 
+    path.startsWith('/_next') ||
+    path.startsWith('/api') ||
     path.startsWith('/page-preview') ||
     path.startsWith('/page-list-preview') ||
     path === '/favicon.ico' ||
@@ -44,7 +44,7 @@ export async function middleware(request: NextRequest) {
   ) {
     return NextResponse.next();
   }
-  
+
   // Skip paths that already have a nested structure (but not the root path)
   // We're looking for paths like /resources/templates, which have more than one segment
   const segments = path.split('/').filter(Boolean);
@@ -52,36 +52,40 @@ export async function middleware(request: NextRequest) {
     console.log(`Middleware: Skipping path with multiple segments: ${path}`);
     return NextResponse.next();
   }
-  
+
   // Extract the slug from the path (remove leading slash)
   const slug = path.substring(1);
-  
+
   // Skip processing for empty slugs (homepage)
   if (!slug) {
     return NextResponse.next();
   }
-  
+
   try {
     // Make a request to our API to check if this page belongs to a PageList
     // We need to use the full URL including protocol, hostname, and port
     const apiUrl = createApiUrl(request.url, slug);
     console.log(`Middleware: Checking if ${slug} belongs to a PageList via ${apiUrl}`);
-    
+
     const response = await fetch(apiUrl, {
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
-    
+
     if (response.ok) {
-      const result = await response.json() as { parentSlug: string | null; pageId?: string; pageName?: string };
+      const result = (await response.json()) as {
+        parentSlug: string | null;
+        pageId?: string;
+        pageName?: string;
+      };
       console.log(`Middleware: API response for ${slug}:`, result);
-      
+
       if (result.parentSlug) {
         // If it belongs to a PageList, redirect to the nested URL
         const redirectUrl = `/${result.parentSlug}/${slug}`;
         console.log(`Middleware: Redirecting ${slug} to ${redirectUrl}`);
-        
+
         // Create a new URL for the redirect
         const newUrl = new URL(redirectUrl, request.url);
         return NextResponse.redirect(newUrl);
@@ -92,7 +96,7 @@ export async function middleware(request: NextRequest) {
   } catch (error) {
     console.error('Middleware error checking page parent:', error);
   }
-  
+
   // Continue with the request if no redirection is needed
   return NextResponse.next();
 }
@@ -104,6 +108,6 @@ export const config = {
     // - _next (Next.js internal files)
     // - api (API routes)
     // - static files (images, favicon, etc.)
-    '/((?!_next|api|favicon.ico|.*\\.).*)',
-  ],
+    '/((?!_next|api|favicon.ico|.*\\.).*)'
+  ]
 };

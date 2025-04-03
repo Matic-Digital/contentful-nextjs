@@ -1,16 +1,87 @@
-# Try local check first
-echo "\033[33mRunning local checks...\033[0m"
-if OUTPUT=$(npm run check 2>&1); then
-    echo "\033[32m✓ Local checks passed\033[0m"
-    exit 0
+# Define color codes for output
+GREEN="\033[32m"
+YELLOW="\033[33m"
+RED="\033[31m"
+NC="\033[0m" # No Color
+
+# Function to check if a dependency is installed
+check_dependency() {
+    if ! command -v $1 &> /dev/null; then
+        return 1
+    fi
+    return 0
+}
+
+# Function to check if node_modules exists and has required packages
+check_node_modules() {
+    if [ ! -d "node_modules" ] || [ ! -d "node_modules/next" ] || [ ! -d "node_modules/vitest" ]; then
+        return 1
+    fi
+    return 0
+}
+
+# Check if we can run locally or need to use Docker
+if check_node_modules; then
+    echo "${YELLOW}Local dependencies found. Running checks locally...${NC}"
+    RUN_LOCALLY=true
 else
-    # Check if the error is due to missing command/dependency
-    if echo "$OUTPUT" | grep -q "command not found"; then
-        echo "\033[33mDependencies not found locally, trying in Docker...\033[0m"
-        npm run docker:check
+    echo "${YELLOW}Local dependencies not found. Will use Docker instead...${NC}"
+    RUN_LOCALLY=false
+fi
+
+if [ "$RUN_LOCALLY" = true ]; then
+    # Run linting locally
+    echo "${YELLOW}Running linting...${NC}"
+    if OUTPUT=$(npm run lint 2>&1); then
+        echo "${GREEN}✓ Linting passed${NC}"
     else
-        # If it's a linting/type error, show the output and exit with error
+        echo "${RED}✗ Linting failed${NC}"
         echo "$OUTPUT"
         exit 1
     fi
+
+    # Run tests locally with formatted output
+    echo "${YELLOW}Running tests...${NC}"
+    if OUTPUT=$(npm run test:formatted 2>&1); then
+        echo "${GREEN}✓ Tests passed${NC}"
+    else
+        echo "${RED}✗ Tests failed${NC}"
+        echo "$OUTPUT"
+        exit 1
+    fi
+
+    # Run build locally
+    echo "${YELLOW}Running build...${NC}"
+    if OUTPUT=$(npm run build 2>&1); then
+        echo "${GREEN}✓ Build passed${NC}"
+    else
+        echo "${RED}✗ Build failed${NC}"
+        echo "$OUTPUT"
+        exit 1
+    fi
+else
+    # Check if Docker environment already exists
+    DOCKER_EXISTS=false
+    if docker ps -a | grep -q "Matic-Docker-App"; then
+        DOCKER_EXISTS=true
+    fi
+    
+    # Run all checks in Docker with real-time output
+    echo "${YELLOW}Running all checks in Docker (showing real-time logs)...${NC}"
+    if npm run docker:ci; then
+        echo "${GREEN}✓ All Docker checks passed${NC}"
+        
+        # If Docker environment didn't exist before, purge it now to keep space clean
+        if [ "$DOCKER_EXISTS" = false ]; then
+            echo "${YELLOW}Cleaning up Docker environment...${NC}"
+            npm run docker:purge
+            echo "${GREEN}✓ Docker environment purged${NC}"
+        fi
+    else
+        echo "${RED}✗ Docker checks failed${NC}"
+        exit 1
+    fi
 fi
+
+echo "${GREEN}✓ All checks passed! Proceeding with commit...${NC}"
+exit 0

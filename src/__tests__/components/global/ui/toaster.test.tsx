@@ -38,13 +38,13 @@ vi.mock('@/components/ui/toast', () => ({
 describe('Toaster component', () => {
   it('renders correctly with mocked toasts', () => {
     render(<Toaster />);
-    
+
     // Check if the provider is rendered
     expect(screen.getByTestId('toast-provider')).toBeDefined();
-    
+
     // Check if the viewport is rendered
     expect(screen.getByTestId('toast-viewport')).toBeDefined();
-    
+
     // Check if toasts are rendered with all their parts
     const toasts = screen.getAllByTestId('toast');
     expect(toasts.length).toBe(2);
@@ -52,7 +52,7 @@ describe('Toaster component', () => {
     expect(screen.getByText('Test Toast Description')).toBeDefined();
     expect(screen.getByText('Action')).toBeDefined();
     expect(screen.getByText('Another Toast')).toBeDefined();
-    
+
     // Check if close buttons are rendered for both toasts
     const closeButtons = screen.getAllByTestId('toast-close');
     expect(closeButtons.length).toBe(2);

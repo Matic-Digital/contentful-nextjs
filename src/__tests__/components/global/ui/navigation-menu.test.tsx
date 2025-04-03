@@ -68,7 +68,7 @@ describe('NavigationMenu components', () => {
         </NavigationMenuList>
       </NavigationMenu>
     );
-    
+
     expect(screen.getByTestId('navigation-root')).toBeDefined();
     expect(screen.getByTestId('navigation-list')).toBeDefined();
     expect(screen.getByTestId('navigation-item')).toBeDefined();
@@ -77,10 +77,8 @@ describe('NavigationMenu components', () => {
   });
 
   it('renders NavigationMenuTrigger correctly', () => {
-    render(
-      <NavigationMenuTrigger>Trigger</NavigationMenuTrigger>
-    );
-    
+    render(<NavigationMenuTrigger>Trigger</NavigationMenuTrigger>);
+
     const trigger = screen.getByTestId('navigation-trigger');
     expect(trigger).toBeDefined();
     expect(trigger.textContent).toContain('Trigger');
@@ -88,20 +86,16 @@ describe('NavigationMenu components', () => {
   });
 
   it('renders NavigationMenuContent correctly', () => {
-    render(
-      <NavigationMenuContent>Content</NavigationMenuContent>
-    );
-    
+    render(<NavigationMenuContent>Content</NavigationMenuContent>);
+
     const content = screen.getByTestId('navigation-content');
     expect(content).toBeDefined();
     expect(content.textContent).toBe('Content');
   });
 
   it('renders NavigationMenuLink correctly', () => {
-    render(
-      <NavigationMenuLink href="#">Link</NavigationMenuLink>
-    );
-    
+    render(<NavigationMenuLink href="#">Link</NavigationMenuLink>);
+
     const link = screen.getByTestId('navigation-link');
     expect(link).toBeDefined();
     expect(link.textContent).toBe('Link');
@@ -110,7 +104,7 @@ describe('NavigationMenu components', () => {
 
   it('renders NavigationMenuIndicator correctly', () => {
     render(<NavigationMenuIndicator />);
-    
+
     expect(screen.getByTestId('navigation-indicator')).toBeDefined();
   });
 
@@ -131,7 +125,7 @@ describe('NavigationMenu components', () => {
         <NavigationMenuIndicator />
       </NavigationMenu>
     );
-    
+
     // Check all components are rendered
     expect(screen.getByTestId('navigation-root')).toBeDefined();
     expect(screen.getByTestId('navigation-list')).toBeDefined();
@@ -141,7 +135,7 @@ describe('NavigationMenu components', () => {
     expect(screen.getAllByTestId('navigation-link').length).toBe(2);
     expect(screen.getByTestId('navigation-indicator')).toBeDefined();
     expect(screen.getByTestId('navigation-viewport')).toBeDefined();
-    
+
     // Check text content
     expect(screen.getByText('Item 1')).toBeDefined();
     expect(screen.getByText('Item 1 Link')).toBeDefined();
@@ -157,14 +151,16 @@ describe('NavigationMenu components', () => {
             <NavigationMenuContent className="custom-content">Content</NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink className="custom-link" href="#">Link</NavigationMenuLink>
+            <NavigationMenuLink className="custom-link" href="#">
+              Link
+            </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
         <NavigationMenuIndicator className="custom-indicator" />
         <NavigationMenuViewport className="custom-viewport" />
       </NavigationMenu>
     );
-    
+
     expect(screen.getByTestId('navigation-root').className).toContain('custom-menu');
     expect(screen.getByTestId('navigation-list').className).toContain('custom-list');
     expect(screen.getByTestId('navigation-trigger').className).toContain('custom-trigger');
@@ -173,6 +169,6 @@ describe('NavigationMenu components', () => {
     expect(screen.getByTestId('navigation-indicator').className).toContain('custom-indicator');
     // Use queryAllByTestId to handle multiple elements with the same data-testid
     const viewports = screen.queryAllByTestId('navigation-viewport');
-    expect(viewports.some(viewport => viewport.className.includes('custom-viewport'))).toBe(true);
+    expect(viewports.some((viewport) => viewport.className.includes('custom-viewport'))).toBe(true);
   });
 });

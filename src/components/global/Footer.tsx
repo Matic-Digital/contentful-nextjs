@@ -25,11 +25,11 @@ import type { Footer as FooterType } from '@/types/contentful';
 export function Footer({ footerData }: { footerData: FooterType | null }) {
   // Always call hooks at the top level, regardless of conditions
   // Use Contentful Live Updates to get real-time updates
-  const liveFooterData = useContentfulLiveUpdates<FooterType>(footerData ?? {} as FooterType);
-  
+  const liveFooterData = useContentfulLiveUpdates<FooterType>(footerData ?? ({} as FooterType));
+
   // Use Contentful Inspector Mode for field tagging
   const inspectorProps = useContentfulInspectorMode();
-  
+
   // If no footer data is provided, render a minimal footer
   if (!footerData) {
     return (
@@ -49,39 +49,56 @@ export function Footer({ footerData }: { footerData: FooterType | null }) {
           {/* Company information */}
           <div>
             {liveFooterData.logo ? (
-              <div className="mb-4" {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'logo' })}>
-                <Image 
-                  src={liveFooterData.logo.url} 
+              <div
+                className="mb-4"
+                {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'logo' })}
+              >
+                <Image
+                  src={liveFooterData.logo.url}
                   alt={liveFooterData.logo.title ?? liveFooterData.name ?? 'Logo'}
                   width={liveFooterData.logo.width ?? 150}
                   height={liveFooterData.logo.height ?? 50}
-                  className="h-8 border-none rounded-none"
+                  className="h-8 rounded-none border-none"
                 />
               </div>
             ) : (
               <Logo />
             )}
-            <p className="max-w-xs text-sm text-muted-foreground" {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'description' })}>
-              {liveFooterData.description ?? 'Modern blog platform built with Next.js, Contentful and Mux'}
+            <p
+              className="max-w-xs text-sm text-muted-foreground"
+              {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'description' })}
+            >
+              {liveFooterData.description ??
+                'Modern blog platform built with Next.js, Contentful and Mux'}
             </p>
           </div>
 
-          <Box gap={12} className="justify-start lg:justify-between" {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'pageListsCollection' })}>
+          <Box
+            gap={12}
+            className="justify-start lg:justify-between"
+            {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'pageListsCollection' })}
+          >
             {/* Footer sections with links from Contentful */}
             {liveFooterData.pageListsCollection?.items.map((pageList) => (
               <div key={pageList.sys.id}>
-                <h3 className="text-sm font-medium" {...inspectorProps({ entryId: pageList.sys.id, fieldId: 'name' })}>
-                  <Link 
-                    href={`/${pageList.slug}`}
-                    className="hover:text-primary"
-                  >
+                <h3
+                  className="text-sm font-medium"
+                  {...inspectorProps({ entryId: pageList.sys.id, fieldId: 'name' })}
+                >
+                  <Link href={`/${pageList.slug}`} className="hover:text-primary">
                     {pageList.name}
                   </Link>
                 </h3>
                 <nav>
-                  <ul className="ml-1 mt-4 space-y-2" {...inspectorProps({ entryId: pageList.sys.id, fieldId: 'pagesCollection' })}>
+                  <ul
+                    className="ml-1 mt-4 space-y-2"
+                    {...inspectorProps({ entryId: pageList.sys.id, fieldId: 'pagesCollection' })}
+                  >
                     {pageList.pagesCollection?.items.map((page) => (
-                      <li key={page.sys.id} {...inspectorProps({ entryId: page.sys.id, fieldId: 'name' })}>
+                      <li
+                        key={page.sys.id}
+                        {...inspectorProps({ entryId: page.sys.id, fieldId: 'name' })}
+                      >
                         <Link
                           href={`/${page.slug}`}
                           className="text-sm text-muted-foreground hover:text-primary"
@@ -100,8 +117,12 @@ export function Footer({ footerData }: { footerData: FooterType | null }) {
       {/* Copyright section */}
       <div className="mt-8 border-t pt-8">
         <Container width="full">
-          <p className="text-right text-sm text-muted-foreground" {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'copyright' })}>
-            © {new Date().getFullYear()} {liveFooterData.copyright ?? 'Matic'}. All rights reserved.
+          <p
+            className="text-right text-sm text-muted-foreground"
+            {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'copyright' })}
+          >
+            © {new Date().getFullYear()} {liveFooterData.copyright ?? 'Matic'}. All rights
+            reserved.
           </p>
         </Container>
       </div>

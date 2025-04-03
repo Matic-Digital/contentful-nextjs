@@ -26,7 +26,9 @@ export async function GET(request: NextRequest) {
   if (slug) {
     return NextResponse.redirect(new URL(`/page-preview?slug=${slug}`, request.url));
   } else if (pageListSlug) {
-    return NextResponse.redirect(new URL(`/page-list-preview?pageListSlug=${pageListSlug}`, request.url));
+    return NextResponse.redirect(
+      new URL(`/page-list-preview?pageListSlug=${pageListSlug}`, request.url)
+    );
   } else if (navBarName) {
     return NextResponse.redirect(new URL(`/navbar-preview?navBarName=${navBarName}`, request.url));
   } else if (heroId) {

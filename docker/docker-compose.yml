@@ -34,15 +34,22 @@ services:
     
     # Load environment variables
     env_file:
-      - ../.env.development
+      - ../.env
     
     # Set development environment variables
     environment:
       - NODE_ENV=development
       - HOSTNAME=0.0.0.0
       - PORT=3000
+      # Explicitly set DOCKER=true for Docker-specific configuration
+      - DOCKER=true
+      # Set Node.js memory limit to avoid OOM issues
+      - NODE_OPTIONS=--max_old_space_size=3072
       # Disable Next.js telemetry
       - NEXT_TELEMETRY_DISABLED=1
+      # Disable HTML import error for Docker builds
+      - NEXT_DISABLE_DOCUMENT_IMPORT_ERROR=true
+      - NEXT_DISABLE_HTML_IMPORT_ERROR=true
       # Node.js debugging is now optional
     
     # Health check to ensure container is running properly
@@ -61,6 +68,14 @@ services:
     tty: true        # Allocate a pseudo-TTY
     # Add init to handle signals properly
     init: true
+    
+    # Resource limits to prevent out of memory errors
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+        reservations:
+          memory: 3G
 
 # Named volumes for caching
 volumes:

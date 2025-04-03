@@ -2,6 +2,34 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { Footer } from '@/components/global/Footer';
 
+// Mock Next.js Image component
+vi.mock('next/image', () => ({
+  __esModule: true,
+  default: ({
+    src,
+    alt,
+    width,
+    height,
+    className
+  }: {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+    className?: string;
+  }) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      className={className}
+      data-testid="mock-image"
+    />
+  )
+}));
+
 // Create a mock function for inspectorProps that we can reference
 const mockInspectorProps = vi.fn(() => ({}));
 
@@ -23,7 +51,7 @@ describe('Footer Component', () => {
     sys: { id: 'footer-1' },
     name: 'Test Footer',
     logo: {
-      url: 'https://example.com/logo.png',
+      url: 'https://images.ctfassets.net/test-logo.png',
       title: 'Test Logo',
       width: 150,
       height: 50
@@ -100,7 +128,9 @@ describe('Footer Component', () => {
   it('renders copyright information with current year', () => {
     render(<Footer footerData={mockFooterData} />);
     const currentYear = new Date().getFullYear();
-    expect(screen.getByText(`© ${currentYear} Test Company. All rights reserved.`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`© ${currentYear} Test Company. All rights reserved.`)
+    ).toBeInTheDocument();
   });
 
   it('renders default content when footerData is null', () => {

@@ -10,8 +10,6 @@ import { type Metadata } from 'next';
 // Components
 import { Providers } from '@/app/providers';
 
-import { Layout } from '@/components/global/matic-ds';
-
 import { Main } from '@/components/global/matic-ds';
 import { Footer } from '@/components/global/Footer';
 import { Toaster } from '@/components/ui/toaster';
@@ -47,7 +45,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   // Fetch the default NavBar with the specific ID
   const defaultNavBar = await getNavBarById('7jJj6nfURdP2fNPBphcgQH', false);
-  
+
   // Fetch the default Footer with the specific ID
   let defaultFooter = null;
   try {
@@ -55,9 +53,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   } catch (error) {
     console.error('Error fetching footer data:', error);
   }
-  
+
+  // Get the class names from the Layout component to maintain consistent styling
+  const layoutClasses = 'scroll-smooth antialiased focus:scroll-auto';
+
   return (
-    <Layout className={`${inter.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${layoutClasses} ${inter.variable}`}>
       <body className="flex min-h-screen flex-col">
         <Providers>
           {/* 
@@ -68,16 +69,16 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <div id="default-navbar" className="default-layout-component">
             {defaultNavBar && <NavBar {...defaultNavBar} />}
           </div>
-          
+
           <Main className="pt-32">{children}</Main>
-          
+
           <div id="default-footer" className="default-layout-component">
             {defaultFooter && <Footer footerData={defaultFooter} />}
           </div>
-          
+
           <Toaster />
         </Providers>
       </body>
-    </Layout>
+    </html>
   );
 }

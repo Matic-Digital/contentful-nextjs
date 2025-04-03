@@ -27,7 +27,9 @@ describe('Pagination components', () => {
             <PaginationPrevious href="#" data-testid="pagination-previous" />
           </PaginationItem>
           <PaginationItem>
-            <PaginationLink href="#" data-testid="pagination-link">1</PaginationLink>
+            <PaginationLink href="#" data-testid="pagination-link">
+              1
+            </PaginationLink>
           </PaginationItem>
           <PaginationItem>
             <PaginationEllipsis data-testid="pagination-ellipsis" />
@@ -52,7 +54,9 @@ describe('Pagination components', () => {
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationLink href="#" isActive data-testid="active-link">1</PaginationLink>
+            <PaginationLink href="#" isActive data-testid="active-link">
+              1
+            </PaginationLink>
           </PaginationItem>
         </PaginationContent>
       </Pagination>
@@ -67,7 +71,9 @@ describe('Pagination components', () => {
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationLink href="#" disabled data-testid="disabled-link">1</PaginationLink>
+            <PaginationLink href="#" disabled data-testid="disabled-link">
+              1
+            </PaginationLink>
           </PaginationItem>
         </PaginationContent>
       </Pagination>
@@ -83,7 +89,9 @@ describe('Pagination components', () => {
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationLink href="#" size="default" data-testid="default-size-link">1</PaginationLink>
+            <PaginationLink href="#" size="default" data-testid="default-size-link">
+              1
+            </PaginationLink>
           </PaginationItem>
         </PaginationContent>
       </Pagination>
@@ -160,10 +168,10 @@ describe('Pagination components', () => {
 
     const disabledPrevious = screen.getByTestId('disabled-previous');
     const disabledNext = screen.getByTestId('disabled-next');
-    
+
     expect(disabledPrevious).toHaveAttribute('aria-disabled', 'true');
     expect(disabledPrevious.className).toContain('opacity-50');
-    
+
     expect(disabledNext).toHaveAttribute('aria-disabled', 'true');
     expect(disabledNext.className).toContain('opacity-50');
   });

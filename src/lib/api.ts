@@ -15,14 +15,10 @@ import type {
   PageListResponse,
   NavBar,
   NavBarResponse,
-  GraphQLResponse,
-} from "@/types";
+  GraphQLResponse
+} from '@/types';
 
-import {
-  ContentfulError,
-  NetworkError,
-  GraphQLError,
-} from './errors';
+import { ContentfulError, NetworkError, GraphQLError } from './errors';
 
 // Base fields for all content types
 const SYS_FIELDS = `
@@ -181,24 +177,24 @@ export async function fetchGraphQL<T>(
   query: string,
   variables: Record<string, unknown> = {},
   preview = false,
-  cacheConfig?: { next: { revalidate: number } },
+  cacheConfig?: { next: { revalidate: number } }
 ): Promise<GraphQLResponse<T>> {
   try {
     const response = await fetch(
       `https://graphql.contentful.com/content/v1/spaces/${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${
             preview
               ? process.env.NEXT_PUBLIC_CONTENTFUL_PREVIEW_ACCESS_TOKEN
               : process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN
-          }`,
+          }`
         },
         body: JSON.stringify({ query, variables }),
-        next: cacheConfig?.next,
-      },
+        next: cacheConfig?.next
+      }
     );
 
     if (!response.ok) {
@@ -211,12 +207,12 @@ export async function fetchGraphQL<T>(
         // If cloning fails, just log the error and continue
         console.error('Error cloning response:', cloneError);
       }
-      
+
       // This matches the test expectation
       throw new NetworkError(`Network error: ${response.statusText}`, response);
     }
 
-    const json = await response.json() as GraphQLResponse<T>;
+    const json = (await response.json()) as GraphQLResponse<T>;
 
     // Check for GraphQL errors - ensure we're checking the array length
     if (json.errors && json.errors.length > 0) {
@@ -227,16 +223,16 @@ export async function fetchGraphQL<T>(
     return json;
   } catch (error: unknown) {
     console.error('Error in fetchGraphQL:', error);
-    
+
     // Log additional information about the query that failed
     console.error('Failed query:', query);
     console.error('Variables:', JSON.stringify(variables, null, 2));
-    
+
     // Re-throw NetworkError and GraphQLError as they are already properly formatted
     if (error instanceof NetworkError || error instanceof GraphQLError) {
       throw error;
     }
-    
+
     // For any other errors, wrap in ContentfulError
     throw new ContentfulError('Failed to fetch data from Contentful', error as Error);
   }
@@ -254,7 +250,7 @@ export const HEROES_PER_PAGE = 10;
 export async function getAllHeroes(
   preview = false,
   limit = HEROES_PER_PAGE,
-  skip = 0,
+  skip = 0
 ): Promise<HeroResponse> {
   try {
     const response = await fetchGraphQL<Hero>(
@@ -267,16 +263,16 @@ export async function getAllHeroes(
         }
       }`,
       { preview, limit, skip },
-      preview,
+      preview
     );
 
     if (!response.data?.heroCollection) {
-      throw new ContentfulError("Failed to fetch heroes from Contentful");
+      throw new ContentfulError('Failed to fetch heroes from Contentful');
     }
 
     return {
       items: response.data.heroCollection.items,
-      total: response.data.heroCollection.total,
+      total: response.data.heroCollection.total
     };
   } catch (error) {
     if (error instanceof ContentfulError) {
@@ -285,7 +281,7 @@ export async function getAllHeroes(
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching heroes: ${error.message}`);
     }
-    throw new Error("Unknown error fetching heroes");
+    throw new Error('Unknown error fetching heroes');
   }
 }
 
@@ -295,10 +291,7 @@ export async function getAllHeroes(
  * @param preview - Whether to fetch draft content
  * @returns Promise resolving to the hero or null if not found
  */
-export async function getHero(
-  id: string,
-  preview = true,
-): Promise<Hero | null> {
+export async function getHero(id: string, preview = true): Promise<Hero | null> {
   try {
     const response = await fetchGraphQL<Hero>(
       `query GetHeroById($id: String!, $preview: Boolean!) {
@@ -309,7 +302,7 @@ export async function getHero(
         }
       }`,
       { id, preview },
-      preview,
+      preview
     );
 
     if (!response.data?.heroCollection?.items?.length) {
@@ -321,7 +314,7 @@ export async function getHero(
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching hero: ${error.message}`);
     }
-    throw new Error("Unknown error fetching hero");
+    throw new Error('Unknown error fetching hero');
   }
 }
 
@@ -332,11 +325,7 @@ export async function getHero(
  * @param limit - Maximum number of pages to fetch
  * @returns Promise resolving to pages response with pagination info
  */
-export async function getAllPages(
-  preview = false,
-  skip = 0,
-  limit = 10,
-): Promise<PageResponse> {
+export async function getAllPages(preview = false, skip = 0, limit = 10): Promise<PageResponse> {
   try {
     const response = await fetchGraphQL<Page>(
       `query GetAllPages($preview: Boolean!, $skip: Int!, $limit: Int!) {
@@ -348,16 +337,16 @@ export async function getAllPages(
         }
       }`,
       { preview, skip, limit },
-      preview,
+      preview
     );
 
     if (!response.data?.pageCollection) {
-      throw new ContentfulError("Failed to fetch pages from Contentful");
+      throw new ContentfulError('Failed to fetch pages from Contentful');
     }
 
     return {
       items: response.data.pageCollection.items,
-      total: response.data.pageCollection.total,
+      total: response.data.pageCollection.total
     };
   } catch (error) {
     if (error instanceof ContentfulError) {
@@ -366,7 +355,7 @@ export async function getAllPages(
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching pages: ${error.message}`);
     }
-    throw new Error("Unknown error fetching pages");
+    throw new Error('Unknown error fetching pages');
   }
 }
 
@@ -376,10 +365,7 @@ export async function getAllPages(
  * @param preview - Whether to fetch draft content
  * @returns Promise resolving to the page or null if not found
  */
-export async function getPageBySlug(
-  slug: string,
-  preview = true,
-): Promise<Page | null> {
+export async function getPageBySlug(slug: string, preview = true): Promise<Page | null> {
   try {
     const response = await fetchGraphQL<Page>(
       `query GetPageBySlug($slug: String!, $preview: Boolean!) {
@@ -390,7 +376,7 @@ export async function getPageBySlug(
         }
       }`,
       { slug, preview },
-      preview,
+      preview
     );
 
     if (!response.data?.pageCollection?.items?.length) {
@@ -402,7 +388,7 @@ export async function getPageBySlug(
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching page by slug: ${error.message}`);
     }
-    throw new Error("Unknown error fetching page by slug");
+    throw new Error('Unknown error fetching page by slug');
   }
 }
 
@@ -414,53 +400,53 @@ export async function getPageBySlug(
  */
 export async function checkPageBelongsToPageList(
   pageId: string,
-  preview = true,
+  preview = true
 ): Promise<PageList | null> {
   try {
     console.log(`Checking if page with ID '${pageId}' belongs to any PageList`);
-    
+
     // Fetch all PageLists
     const pageLists = await getAllPageLists(preview);
-    
+
     if (!pageLists.items.length) {
       console.log('No PageLists found in the system');
       return null;
     }
-    
+
     console.log(`Found ${pageLists.items.length} PageLists to check`);
-    
+
     // Check each PageList to see if the page belongs to it
     for (const pageList of pageLists.items) {
       console.log(`Checking PageList: ${pageList.name} (${pageList.slug})`);
-      
+
       if (!pageList.pagesCollection?.items.length) {
         console.log(`PageList ${pageList.name} has no pages`);
         continue;
       }
-      
+
       console.log(`PageList ${pageList.name} has ${pageList.pagesCollection.items.length} pages`);
-      
+
       // Log all page IDs in this PageList for debugging
-      const pageIds = pageList.pagesCollection.items.map(item => item.sys.id);
+      const pageIds = pageList.pagesCollection.items.map((item) => item.sys.id);
       console.log(`Page IDs in PageList ${pageList.name}:`, pageIds);
-      
-      const pageInList = pageList.pagesCollection.items.some(
-        (item) => item.sys.id === pageId
-      );
-      
+
+      const pageInList = pageList.pagesCollection.items.some((item) => item.sys.id === pageId);
+
       if (pageInList) {
-        console.log(`Page with ID '${pageId}' belongs to PageList '${pageList.name}' (${pageList.slug})`);
+        console.log(
+          `Page with ID '${pageId}' belongs to PageList '${pageList.name}' (${pageList.slug})`
+        );
         return pageList;
       }
     }
-    
+
     console.log(`Page with ID '${pageId}' does not belong to any PageList`);
     return null;
   } catch (error) {
     if (error instanceof Error) {
       throw new NetworkError(`Error checking if page belongs to any PageList: ${error.message}`);
     }
-    throw new Error("Unknown error checking if page belongs to any PageList");
+    throw new Error('Unknown error checking if page belongs to any PageList');
   }
 }
 
@@ -474,38 +460,36 @@ export async function checkPageBelongsToPageList(
 export async function getPageBySlugInPageList(
   pageListSlug: string,
   pageSlug: string,
-  preview = true,
+  preview = true
 ): Promise<{ page: Page | null; pageList: PageList | null }> {
   try {
     // First, fetch the PageList
     const pageList = await getPageListBySlug(pageListSlug, preview);
-    
+
     if (!pageList?.pagesCollection?.items.length) {
       return { page: null, pageList };
     }
-    
+
     // Then fetch the page
     const page = await getPageBySlug(pageSlug, preview);
-    
+
     if (!page) {
       return { page: null, pageList };
     }
-    
+
     // Check if the page is in the PageList
-    const pageInList = pageList.pagesCollection.items.some(
-      (item) => item.sys.id === page.sys.id
-    );
-    
+    const pageInList = pageList.pagesCollection.items.some((item) => item.sys.id === page.sys.id);
+
     if (!pageInList) {
       return { page: null, pageList };
     }
-    
+
     return { page, pageList };
   } catch (error) {
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching page by slug in page list: ${error.message}`);
     }
-    throw new Error("Unknown error fetching page by slug in page list");
+    throw new Error('Unknown error fetching page by slug in page list');
   }
 }
 
@@ -527,16 +511,16 @@ export async function getAllPageLists(preview = false): Promise<PageListResponse
         }
       }`,
       { preview },
-      preview,
+      preview
     );
 
     if (!response.data?.pageListCollection) {
-      throw new ContentfulError("Failed to fetch page lists from Contentful");
+      throw new ContentfulError('Failed to fetch page lists from Contentful');
     }
 
     return {
       items: response.data.pageListCollection.items,
-      total: response.data.pageListCollection.total,
+      total: response.data.pageListCollection.total
     };
   } catch (error) {
     if (error instanceof ContentfulError) {
@@ -545,7 +529,7 @@ export async function getAllPageLists(preview = false): Promise<PageListResponse
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching page lists: ${error.message}`);
     }
-    throw new Error("Unknown error fetching page lists");
+    throw new Error('Unknown error fetching page lists');
   }
 }
 
@@ -555,14 +539,11 @@ export async function getAllPageLists(preview = false): Promise<PageListResponse
  * @param preview - Whether to fetch draft content
  * @returns Promise resolving to the page list or null if not found
  */
-export async function getPageListBySlug(
-  slug: string,
-  preview = false,
-): Promise<PageList | null> {
+export async function getPageListBySlug(slug: string, preview = false): Promise<PageList | null> {
   try {
     // Log the request for debugging
     console.log(`Fetching PageList with slug: ${slug}, preview: ${preview}`);
-    
+
     // Use the full fields to get header, footer, and page content
     const query = `query GetPageListBySlug($slug: String!, $preview: Boolean!) {
       pageListCollection(where: { slug: $slug }, limit: 1, preview: $preview) {
@@ -571,13 +552,9 @@ export async function getPageListBySlug(
         }
       }
     }`;
-    
+
     // Execute the query
-    const response = await fetchGraphQL(
-      query,
-      { slug, preview },
-      preview,
-    );
+    const response = await fetchGraphQL(query, { slug, preview }, preview);
 
     // Check if we have any results
     if (!response.data?.pageListCollection?.items?.length) {
@@ -586,10 +563,10 @@ export async function getPageListBySlug(
     }
 
     console.log(`Successfully fetched PageList with slug: ${slug}`);
-    
+
     // Get the first item from the collection
     const pageList = response.data.pageListCollection.items[0] as PageList;
-    
+
     // Debug the PageList structure
     console.log('PageList structure:', {
       name: pageList.name,
@@ -599,14 +576,14 @@ export async function getPageListBySlug(
       hasPageContent: !!pageList.pageContentCollection,
       pagesCount: pageList.pagesCollection?.items?.length ?? 0
     });
-    
+
     return pageList;
   } catch (error) {
     console.error(`Error handling slug: ${slug}`, error);
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching page list by slug: ${error.message}`);
     }
-    throw new Error("Unknown error fetching page list by slug");
+    throw new Error('Unknown error fetching page list by slug');
   }
 }
 
@@ -627,16 +604,16 @@ export async function getAllNavBars(preview = false): Promise<NavBarResponse> {
         }
       }`,
       { preview },
-      preview,
+      preview
     );
 
     if (!response.data?.navBarCollection) {
-      throw new ContentfulError("Failed to fetch NavBars from Contentful");
+      throw new ContentfulError('Failed to fetch NavBars from Contentful');
     }
 
     return {
       items: response.data.navBarCollection.items,
-      total: response.data.navBarCollection.total,
+      total: response.data.navBarCollection.total
     };
   } catch (error) {
     if (error instanceof ContentfulError) {
@@ -648,7 +625,7 @@ export async function getAllNavBars(preview = false): Promise<NavBarResponse> {
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching NavBars: ${error.message}`);
     }
-    throw new Error("Unknown error fetching NavBars");
+    throw new Error('Unknown error fetching NavBars');
   }
 }
 
@@ -658,10 +635,7 @@ export async function getAllNavBars(preview = false): Promise<NavBarResponse> {
  * @param preview - Whether to fetch draft content
  * @returns Promise resolving to the NavBar or null if not found
  */
-export async function getNavBarByName(
-  name: string,
-  preview = false,
-): Promise<NavBar | null> {
+export async function getNavBarByName(name: string, preview = false): Promise<NavBar | null> {
   try {
     const response = await fetchGraphQL<NavBar>(
       `query GetNavBarByName($name: String!, $preview: Boolean!) {
@@ -672,7 +646,7 @@ export async function getNavBarByName(
         }
       }`,
       { name, preview },
-      preview,
+      preview
     );
 
     if (!response.data?.navBarCollection?.items?.length) {
@@ -684,7 +658,7 @@ export async function getNavBarByName(
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching NavBar by name: ${error.message}`);
     }
-    throw new Error("Unknown error fetching NavBar by name");
+    throw new Error('Unknown error fetching NavBar by name');
   }
 }
 
@@ -705,7 +679,7 @@ export async function getNavBarById(id: string, preview = false): Promise<NavBar
         }
       }`,
       { id, preview },
-      preview,
+      preview
     );
 
     if (!response.data?.navBarCollection?.items?.length) {
@@ -723,7 +697,7 @@ export async function getNavBarById(id: string, preview = false): Promise<NavBar
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching NavBar by ID: ${error.message}`);
     }
-    throw new Error("Unknown error fetching NavBar by ID");
+    throw new Error('Unknown error fetching NavBar by ID');
   }
 }
 
@@ -744,16 +718,16 @@ export async function getAllFooters(preview = true): Promise<FooterResponse> {
         }
       }`,
       { preview },
-      preview,
+      preview
     );
 
     if (!response.data?.footerCollection) {
-      throw new ContentfulError("Failed to fetch Footers from Contentful");
+      throw new ContentfulError('Failed to fetch Footers from Contentful');
     }
 
     return {
       items: response.data.footerCollection.items,
-      total: response.data.footerCollection.total,
+      total: response.data.footerCollection.total
     };
   } catch (error) {
     if (error instanceof ContentfulError) {
@@ -762,7 +736,7 @@ export async function getAllFooters(preview = true): Promise<FooterResponse> {
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching Footers: ${error.message}`);
     }
-    throw new Error("Unknown error fetching Footers");
+    throw new Error('Unknown error fetching Footers');
   }
 }
 
@@ -783,7 +757,7 @@ export async function getFooterById(id: string, preview = true): Promise<Footer 
         }
       }`,
       { id, preview },
-      preview,
+      preview
     );
 
     if (!response.data?.footerCollection?.items?.length) {
@@ -795,6 +769,6 @@ export async function getFooterById(id: string, preview = true): Promise<Footer 
     if (error instanceof Error) {
       throw new NetworkError(`Error fetching Footer by ID: ${error.message}`);
     }
-    throw new Error("Unknown error fetching Footer by ID");
+    throw new Error('Unknown error fetching Footer by ID');
   }
 }

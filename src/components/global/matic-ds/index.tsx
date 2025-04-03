@@ -99,18 +99,25 @@ type BoxProps = {
 // This component sets up the basic HTML structure and applies global styles
 
 /**
- * Layout component that sets up the basic HTML structure and applies global styles
+ * Layout component that wraps content with global styles
+ * Note: This component no longer uses the <html> tag to avoid Next.js App Router conflicts
+ * Instead, use this component to wrap content within the body tag in your app/layout.tsx
+ *
  * @example
  * ```tsx
- * <Layout>
- *   <Main>
- *     <Section>
- *       <Container>Content</Container>
- *     </Section>
- *   </Main>
- * </Layout>
+ * <html lang="en">
+ *   <body>
+ *     <Layout>
+ *       <Main>
+ *         <Section>
+ *           <Container>Content</Container>
+ *         </Section>
+ *       </Main>
+ *     </Layout>
+ *   </body>
+ * </html>
  * ```
- * 
+ *
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - Content to be rendered within the layout
  * @param {string} [props.className] - Additional CSS classes
@@ -118,13 +125,7 @@ type BoxProps = {
  */
 export const Layout = ({ children, className }: LayoutProps) => {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={cn('scroll-smooth antialiased focus:scroll-auto', className)}
-    >
-      {children}
-    </html>
+    <div className={cn('scroll-smooth antialiased focus:scroll-auto', className)}>{children}</div>
   );
 };
 
@@ -144,7 +145,7 @@ export const Layout = ({ children, className }: LayoutProps) => {
  *   </Section>
  * </Main>
  * ```
- * 
+ *
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - Main content
  * @param {string} [props.className] - Additional CSS classes
@@ -173,7 +174,7 @@ export const Main = ({ children, className, id }: MainProps) => {
  *   </Container>
  * </Section>
  * ```
- * 
+ *
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - Section content
  * @param {string} [props.className] - Additional CSS classes
@@ -230,11 +231,11 @@ export const Container = ({ children, className, id, width }: ContainerProps) =>
  *   <h1>Article Title</h1>
  *   <p>Article content</p>
  * </Article>
- * 
+ *
  * // With HTML content
  * <Article html={{ __html: htmlContent }} />
  * ```
- * 
+ *
  * @param {Object} props - Component props
  * @param {React.ReactNode} [props.children] - Article content
  * @param {string} [props.className] - Additional CSS classes
@@ -266,11 +267,11 @@ export const Article = ({ children, className, id, html }: ArticleProps) => {
  *     <li>List item 2</li>
  *   </ul>
  * </Prose>
- * 
+ *
  * // With HTML content
  * <Prose html={{ __html: htmlContent }} />
  * ```
- * 
+ *
  * @param {Object} props - Component props
  * @param {React.ReactNode} [props.children] - Content to be styled
  * @param {string} [props.className] - Additional CSS classes

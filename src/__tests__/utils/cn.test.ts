@@ -14,7 +14,14 @@ describe('cn utility function', () => {
   });
 
   it('filters out falsy values', () => {
-    const result = cn('base-class', false && 'should-not-appear', null, undefined, 0, 'should-appear');
+    const result = cn(
+      'base-class',
+      false && 'should-not-appear',
+      null,
+      undefined,
+      0,
+      'should-appear'
+    );
     expect(result).toBe('base-class should-appear');
   });
 });

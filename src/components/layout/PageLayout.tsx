@@ -14,7 +14,7 @@ interface PageLayoutProps {
 
 /**
  * PageLayout component
- * 
+ *
  * This client component handles adding CSS classes to the body element
  * when page-specific header and footer are present, which helps hide
  * the default header and footer in the root layout.

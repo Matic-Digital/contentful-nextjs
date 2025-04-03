@@ -1,18 +1,18 @@
 /**
  * NavBar Preview Page
- * 
+ *
  * This page enables content editors to preview NavBar components directly from Contentful's
  * preview environment. It fetches NavBar content by name from the query parameters and
  * renders it within the Contentful Live Preview context, allowing real-time updates as
  * content is edited in Contentful.
- * 
+ *
  * Key features:
  * - Dynamic fetching of NavBar content based on query parameters
  * - Integration with Contentful's Live Preview for real-time content updates
  * - Error handling for missing or invalid NavBar names
  * - Loading states with Suspense for improved user experience
  * - Automatic re-fetching when content changes in Contentful
- * 
+ *
  * This page is typically accessed from Contentful's entry editor via the preview URL
  * configuration, allowing editors to see their changes immediately without publishing.
  */
@@ -104,24 +104,25 @@ function NavBarPreviewContent() {
       </Container>
     );
   }
-  
+
   return (
     <>
       {/* NavBar is the primary navigation component */}
       <NavBar {...navBar} />
-      
+
       <Container className="mt-24">
         <Box className="py-12">
-          <h1 className="text-2xl font-bold mb-4">NavBar Preview</h1>
+          <h1 className="mb-4 text-2xl font-bold">NavBar Preview</h1>
           <p className="mb-2">
             <strong>Name:</strong> {navBar.name}
           </p>
           <p className="mb-2">
             <strong>Links:</strong> {navBar.navLinksCollection?.items.length ?? 0}
           </p>
-          <div className="mt-8 p-4 bg-gray-100 rounded">
+          <div className="mt-8 rounded bg-gray-100 p-4">
             <p className="text-sm text-gray-600">
-              This is a preview of the NavBar. You can edit it in Contentful and see the changes in real-time.
+              This is a preview of the NavBar. You can edit it in Contentful and see the changes in
+              real-time.
             </p>
           </div>
         </Box>

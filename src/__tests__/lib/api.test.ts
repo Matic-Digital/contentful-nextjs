@@ -1,11 +1,11 @@
 /**
  * API Module Tests
- * 
+ *
  * This test suite verifies the functionality of the API module which handles
  * interactions with Contentful's GraphQL API. It tests various data fetching
  * functions to ensure they correctly retrieve content from Contentful and
  * handle error cases appropriately.
- * 
+ *
  * Key aspects tested:
  * - Fetching various content types (Heroes, Pages, NavBars, PageLists)
  * - Handling of GraphQL errors
@@ -28,33 +28,33 @@ const originalFetch = global.fetch;
 describe('API Module', () => {
   /**
    * Set up mocks before each test
-   * 
+   *
    * This includes resetting all mocks and setting up the global fetch mock.
    */
   beforeEach(() => {
     // Reset all mocks before each test
     vi.resetAllMocks();
-    
+
     // Mock fetch
     global.fetch = vi.fn();
   });
 
   /**
    * Clean up mocks after each test
-   * 
+   *
    * Restore the original fetch function and clear environment variable stubs.
    */
   afterEach(() => {
     // Restore original fetch after each test
     global.fetch = originalFetch;
-    
+
     // Clear environment variable stubs
     vi.unstubAllEnvs();
   });
 
   /**
    * Tests for fetchGraphQL function
-   * 
+   *
    * This function is the core of the API module, responsible for making
    * GraphQL requests to Contentful and handling various response scenarios.
    */
@@ -63,14 +63,14 @@ describe('API Module', () => {
       // Mock successful response
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue({ data: { test: 'data' } }),
+        json: vi.fn().mockResolvedValue({ data: { test: 'data' } })
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const query = '{ test { field } }';
       const variables = { id: '123' };
-      
+
       await api.fetchGraphQL(query, variables);
 
       // Verify fetch was called with correct arguments
@@ -80,10 +80,10 @@ describe('API Module', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer mock-access-token',
+            Authorization: 'Bearer mock-access-token'
           },
           body: JSON.stringify({ query, variables }),
-          next: undefined,
+          next: undefined
         }
       );
     });
@@ -92,9 +92,9 @@ describe('API Module', () => {
       // Mock successful response
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue({ data: { test: 'data' } }),
+        json: vi.fn().mockResolvedValue({ data: { test: 'data' } })
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const query = '{ test { field } }';
@@ -105,8 +105,8 @@ describe('API Module', () => {
         expect.any(String),
         expect.objectContaining({
           headers: expect.objectContaining({
-            'Authorization': 'Bearer mock-preview-token',
-          }),
+            Authorization: 'Bearer mock-preview-token'
+          })
         })
       );
     });
@@ -115,38 +115,38 @@ describe('API Module', () => {
       // Mock successful response
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue({ data: { test: 'data' } }),
+        json: vi.fn().mockResolvedValue({ data: { test: 'data' } })
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const query = '{ test { field } }';
       const cacheConfig = { next: { revalidate: 60 } };
-      
+
       await api.fetchGraphQL(query, {}, false, cacheConfig);
 
       // Verify cache config was included
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          next: cacheConfig.next,
+          next: cacheConfig.next
         })
       );
     });
 
     it('returns data when request is successful', async () => {
       const expectedData = { data: { test: 'successful data' } };
-      
+
       // Mock successful response
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(expectedData),
+        json: vi.fn().mockResolvedValue(expectedData)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.fetchGraphQL('{ test }');
-      
+
       expect(result).toEqual(expectedData);
     });
 
@@ -159,7 +159,7 @@ describe('API Module', () => {
           text: vi.fn().mockResolvedValue('Error body')
         })
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       await expect(api.fetchGraphQL('{ test }')).rejects.toThrow(NetworkError);
@@ -168,15 +168,15 @@ describe('API Module', () => {
 
     it('throws GraphQLError when response contains GraphQL errors', async () => {
       const graphqlErrors = [{ message: 'Invalid field' }];
-      
+
       // Mock response with GraphQL errors
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue({ 
+        json: vi.fn().mockResolvedValue({
           errors: graphqlErrors
-        }),
+        })
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       await expect(api.fetchGraphQL('{ test }')).rejects.toThrow(GraphQLError);
@@ -188,13 +188,15 @@ describe('API Module', () => {
       (global.fetch as any).mockRejectedValue(new Error('Random error'));
 
       await expect(api.fetchGraphQL('{ test }')).rejects.toThrow(ContentfulError);
-      await expect(api.fetchGraphQL('{ test }')).rejects.toThrow('Failed to fetch data from Contentful');
+      await expect(api.fetchGraphQL('{ test }')).rejects.toThrow(
+        'Failed to fetch data from Contentful'
+      );
     });
   });
 
   /**
    * Tests for getAllHeroes function
-   * 
+   *
    * Verifies that the function correctly fetches hero content from Contentful,
    * handles pagination parameters, and processes the response structure according
    * to Contentful's GraphQL API conventions.
@@ -206,13 +208,13 @@ describe('API Module', () => {
         data: {
           heroCollection: {
             items: [
-              { 
+              {
                 sys: { id: 'hero1' },
                 name: 'Hero 1',
                 description: 'Description 1',
                 __typename: 'Hero'
               },
-              { 
+              {
                 sys: { id: 'hero2' },
                 name: 'Hero 2',
                 description: 'Description 2',
@@ -226,14 +228,14 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockHeroesResponse),
+        json: vi.fn().mockResolvedValue(mockHeroesResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getAllHeroes(false, 10, 0);
 
-      // Verify the result 
+      // Verify the result
       expect(result?.items).toHaveLength(2);
       expect(result?.items?.[0]?.name).toBe('Hero 1');
       expect(result?.items?.[1]?.name).toBe('Hero 2');
@@ -243,7 +245,7 @@ describe('API Module', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          body: expect.stringContaining('heroCollection'),
+          body: expect.stringContaining('heroCollection')
         })
       );
     });
@@ -261,9 +263,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+        json: vi.fn().mockResolvedValue(mockEmptyResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getAllHeroes();
@@ -275,7 +277,7 @@ describe('API Module', () => {
 
   /**
    * Tests for getHero function
-   * 
+   *
    * Ensures the function correctly fetches a single hero by ID,
    * properly constructs the GraphQL query with the hero ID parameter,
    * and handles cases where the hero is not found.
@@ -283,13 +285,13 @@ describe('API Module', () => {
   describe('getHero', () => {
     it('fetches a single hero by ID', async () => {
       const heroId = 'hero123';
-      
+
       // Mock successful response with a hero
       const mockHeroResponse = {
         data: {
           heroCollection: {
             items: [
-              { 
+              {
                 sys: { id: heroId },
                 name: 'Test Hero',
                 description: 'Test Description',
@@ -302,9 +304,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockHeroResponse),
+        json: vi.fn().mockResolvedValue(mockHeroResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getHero(heroId);
@@ -318,7 +320,7 @@ describe('API Module', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          body: expect.stringContaining(heroId),
+          body: expect.stringContaining(heroId)
         })
       );
     });
@@ -335,9 +337,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+        json: vi.fn().mockResolvedValue(mockEmptyResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getHero('non-existent-id');
@@ -348,7 +350,7 @@ describe('API Module', () => {
 
   /**
    * Tests for getPageBySlug function
-   * 
+   *
    * Verifies that the function correctly retrieves a page by its slug,
    * handles the nested content structure of pages in Contentful,
    * and returns null when a page is not found.
@@ -356,13 +358,13 @@ describe('API Module', () => {
   describe('getPageBySlug', () => {
     it('fetches a page by slug', async () => {
       const slug = 'test-page';
-      
+
       // Mock successful response with a page
       const mockPageResponse = {
         data: {
           pageCollection: {
             items: [
-              { 
+              {
                 sys: { id: 'page1' },
                 name: 'Test Page',
                 slug: slug,
@@ -386,9 +388,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockPageResponse),
+        json: vi.fn().mockResolvedValue(mockPageResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getPageBySlug(slug);
@@ -404,7 +406,7 @@ describe('API Module', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          body: expect.stringContaining(slug),
+          body: expect.stringContaining(slug)
         })
       );
     });
@@ -421,9 +423,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+        json: vi.fn().mockResolvedValue(mockEmptyResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getPageBySlug('non-existent-slug');
@@ -434,7 +436,7 @@ describe('API Module', () => {
 
   /**
    * Tests for getNavBarByName function
-   * 
+   *
    * Tests the retrieval of navigation bars by name, ensuring proper
    * handling of the complex structure of NavBar content type which includes
    * references to other content types like Page and PageList.
@@ -442,13 +444,13 @@ describe('API Module', () => {
   describe('getNavBarByName', () => {
     it('fetches a navbar by name', async () => {
       const navbarName = 'Main Navigation';
-      
+
       // Mock successful response with a navbar
       const mockNavBarResponse = {
         data: {
           navBarCollection: {
             items: [
-              { 
+              {
                 sys: { id: 'navbar1' },
                 name: navbarName,
                 logo: {
@@ -484,9 +486,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockNavBarResponse),
+        json: vi.fn().mockResolvedValue(mockNavBarResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getNavBarByName(navbarName);
@@ -503,7 +505,7 @@ describe('API Module', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          body: expect.stringContaining(navbarName),
+          body: expect.stringContaining(navbarName)
         })
       );
     });
@@ -520,9 +522,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+        json: vi.fn().mockResolvedValue(mockEmptyResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getNavBarByName('non-existent-navbar');
@@ -533,7 +535,7 @@ describe('API Module', () => {
 
   /**
    * Tests for getAllNavBars function
-   * 
+   *
    * Verifies that the function correctly fetches all navigation bars,
    * processes the collection structure, and handles empty results
    * and GraphQL errors appropriately.
@@ -545,7 +547,7 @@ describe('API Module', () => {
         data: {
           navBarCollection: {
             items: [
-              { 
+              {
                 sys: { id: 'navbar1' },
                 name: 'Main Navigation',
                 logo: {
@@ -566,7 +568,7 @@ describe('API Module', () => {
                 },
                 __typename: 'NavBar'
               },
-              { 
+              {
                 sys: { id: 'navbar2' },
                 name: 'Footer Navigation',
                 logo: {
@@ -595,9 +597,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockNavBarsResponse),
+        json: vi.fn().mockResolvedValue(mockNavBarsResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getAllNavBars();
@@ -612,7 +614,7 @@ describe('API Module', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          body: expect.stringContaining('navBarCollection'),
+          body: expect.stringContaining('navBarCollection')
         })
       );
     });
@@ -630,9 +632,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+        json: vi.fn().mockResolvedValue(mockEmptyResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getAllNavBars();
@@ -649,9 +651,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockErrorResponse),
+        json: vi.fn().mockResolvedValue(mockErrorResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       await expect(api.getAllNavBars()).rejects.toThrow(GraphQLError);
@@ -661,7 +663,7 @@ describe('API Module', () => {
 
   /**
    * Tests for getNavBarById function
-   * 
+   *
    * Ensures the function correctly fetches a NavBar by its system ID,
    * handles the complex structure with nested collections and references,
    * and properly returns null when the NavBar is not found.
@@ -669,13 +671,13 @@ describe('API Module', () => {
   describe('getNavBarById', () => {
     it('fetches a navbar by ID', async () => {
       const navbarId = 'navbar123';
-      
+
       // Mock successful response with a navbar
       const mockNavBarResponse = {
         data: {
           navBarCollection: {
             items: [
-              { 
+              {
                 sys: { id: navbarId },
                 name: 'Test NavBar',
                 logo: {
@@ -719,9 +721,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockNavBarResponse),
+        json: vi.fn().mockResolvedValue(mockNavBarResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getNavBarById(navbarId);
@@ -738,7 +740,7 @@ describe('API Module', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          body: expect.stringContaining(navbarId),
+          body: expect.stringContaining(navbarId)
         })
       );
     });
@@ -755,9 +757,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+        json: vi.fn().mockResolvedValue(mockEmptyResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getNavBarById('non-existent-id');
@@ -773,9 +775,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockErrorResponse),
+        json: vi.fn().mockResolvedValue(mockErrorResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       await expect(api.getNavBarById('test-id')).rejects.toThrow(GraphQLError);
@@ -785,7 +787,7 @@ describe('API Module', () => {
 
   /**
    * Tests for getAllPages function
-   * 
+   *
    * Verifies that the function correctly fetches pages with pagination,
    * processes the collection structure, and handles empty results.
    */
@@ -796,7 +798,7 @@ describe('API Module', () => {
         data: {
           pageCollection: {
             items: [
-              { 
+              {
                 sys: { id: 'page1' },
                 name: 'Page 1',
                 slug: 'page-1',
@@ -806,7 +808,7 @@ describe('API Module', () => {
                 },
                 __typename: 'Page'
               },
-              { 
+              {
                 sys: { id: 'page2' },
                 name: 'Page 2',
                 slug: 'page-2',
@@ -824,9 +826,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockPagesResponse),
+        json: vi.fn().mockResolvedValue(mockPagesResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getAllPages(false, 0, 10);
@@ -841,7 +843,7 @@ describe('API Module', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          body: expect.stringContaining('pageCollection'),
+          body: expect.stringContaining('pageCollection')
         })
       );
     });
@@ -859,9 +861,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+        json: vi.fn().mockResolvedValue(mockEmptyResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getAllPages();
@@ -873,7 +875,7 @@ describe('API Module', () => {
 
   /**
    * Tests for getAllPageLists function
-   * 
+   *
    * Tests the retrieval of all page lists, ensuring proper handling of
    * the collection structure and empty results.
    */
@@ -884,7 +886,7 @@ describe('API Module', () => {
         data: {
           pageListCollection: {
             items: [
-              { 
+              {
                 sys: { id: 'pagelist1' },
                 name: 'Products',
                 slug: 'products',
@@ -900,7 +902,7 @@ describe('API Module', () => {
                 },
                 __typename: 'PageList'
               },
-              { 
+              {
                 sys: { id: 'pagelist2' },
                 name: 'Services',
                 slug: 'services',
@@ -924,9 +926,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockPageListsResponse),
+        json: vi.fn().mockResolvedValue(mockPageListsResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getAllPageLists();
@@ -941,7 +943,7 @@ describe('API Module', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          body: expect.stringContaining('pageListCollection'),
+          body: expect.stringContaining('pageListCollection')
         })
       );
     });
@@ -959,9 +961,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+        json: vi.fn().mockResolvedValue(mockEmptyResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getAllPageLists();
@@ -973,7 +975,7 @@ describe('API Module', () => {
 
   /**
    * Tests for getPageListBySlug function
-   * 
+   *
    * Verifies that the function correctly retrieves a page list by its slug,
    * handles the nested structure with references to pages, and returns null
    * when a page list is not found.
@@ -981,13 +983,13 @@ describe('API Module', () => {
   describe('getPageListBySlug', () => {
     it('fetches a page list by slug', async () => {
       const slug = 'test-pagelist';
-      
+
       // Mock successful response with a page list
       const mockPageListResponse = {
         data: {
           pageListCollection: {
             items: [
-              { 
+              {
                 sys: { id: 'pagelist1' },
                 name: 'Test PageList',
                 slug: slug,
@@ -1016,9 +1018,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockPageListResponse),
+        json: vi.fn().mockResolvedValue(mockPageListResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getPageListBySlug(slug);
@@ -1035,7 +1037,7 @@ describe('API Module', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          body: expect.stringContaining(slug),
+          body: expect.stringContaining(slug)
         })
       );
     });
@@ -1052,9 +1054,9 @@ describe('API Module', () => {
 
       const mockResponse = {
         ok: true,
-        json: vi.fn().mockResolvedValue(mockEmptyResponse),
+        json: vi.fn().mockResolvedValue(mockEmptyResponse)
       };
-      
+
       (global.fetch as any).mockResolvedValue(mockResponse);
 
       const result = await api.getPageListBySlug('non-existent-slug');
