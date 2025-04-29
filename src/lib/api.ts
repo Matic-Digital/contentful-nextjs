@@ -13,8 +13,8 @@ import type {
   PageResponse,
   PageList,
   PageListResponse,
-  NavBar,
-  NavBarResponse,
+  Header,
+  HeaderResponse,
   GraphQLResponse
 } from '@/types';
 
@@ -44,6 +44,7 @@ const ASSET_FIELDS = `
 const HERO_GRAPHQL_FIELDS = `
   ${SYS_FIELDS}
   name
+  heroHeader
   description
 `;
 
@@ -62,8 +63,8 @@ const PAGELIST_BASIC_FIELDS = `
   slug
 `;
 
-// NavBar fields
-const NAVBAR_GRAPHQL_FIELDS = `
+// Header fields
+const HEADER_GRAPHQL_FIELDS = `
   ${SYS_FIELDS}
   name
   logo {
@@ -117,8 +118,8 @@ const PAGELIST_GRAPHQL_FIELDS = `
     }
   }
   header {
-    ... on NavBar {
-      ${NAVBAR_GRAPHQL_FIELDS}
+    ... on Header {
+      ${HEADER_GRAPHQL_FIELDS}
     }
   }
   footer {
@@ -151,7 +152,7 @@ const PAGELIST_SIMPLIFIED_FIELDS = `
 const PAGE_GRAPHQL_FIELDS = `
   ${PAGE_BASIC_FIELDS}
   header {
-    ${NAVBAR_GRAPHQL_FIELDS}
+    ${HEADER_GRAPHQL_FIELDS}
   }
   footer {
     ${FOOTER_GRAPHQL_FIELDS}
@@ -588,17 +589,17 @@ export async function getPageListBySlug(slug: string, preview = false): Promise<
 }
 
 /**
- * Fetches all NavBars from Contentful
+ * Fetches all Headers from Contentful
  * @param preview - Whether to fetch draft content
- * @returns Promise resolving to the NavBar response
+ * @returns Promise resolving to the Header response
  */
-export async function getAllNavBars(preview = false): Promise<NavBarResponse> {
+export async function getAllHeaders(preview = false): Promise<HeaderResponse> {
   try {
-    const response = await fetchGraphQL<NavBar>(
-      `query GetAllNavBars($preview: Boolean!) {
-        navBarCollection(preview: $preview) {
+    const response = await fetchGraphQL<Header>(
+      `query GetAllHeaders($preview: Boolean!) {
+        headerCollection(preview: $preview) {
           items {
-            ${NAVBAR_GRAPHQL_FIELDS}
+            ${HEADER_GRAPHQL_FIELDS}
           }
           total
         }
@@ -607,13 +608,13 @@ export async function getAllNavBars(preview = false): Promise<NavBarResponse> {
       preview
     );
 
-    if (!response.data?.navBarCollection) {
-      throw new ContentfulError('Failed to fetch NavBars from Contentful');
+    if (!response.data?.headerCollection) {
+      throw new ContentfulError('Failed to fetch Headers from Contentful');
     }
 
     return {
-      items: response.data.navBarCollection.items,
-      total: response.data.navBarCollection.total
+      items: response.data.headerCollection.items,
+      total: response.data.headerCollection.total
     };
   } catch (error) {
     if (error instanceof ContentfulError) {
@@ -623,25 +624,25 @@ export async function getAllNavBars(preview = false): Promise<NavBarResponse> {
       throw error;
     }
     if (error instanceof Error) {
-      throw new NetworkError(`Error fetching NavBars: ${error.message}`);
+      throw new NetworkError(`Error fetching Headers: ${error.message}`);
     }
-    throw new Error('Unknown error fetching NavBars');
+    throw new Error('Unknown error fetching Headers');
   }
 }
 
 /**
- * Fetches a single NavBar by name
- * @param name - The name of the NavBar to fetch
+ * Fetches a single Header by name
+ * @param name - The name of the Header to fetch
  * @param preview - Whether to fetch draft content
- * @returns Promise resolving to the NavBar or null if not found
+ * @returns Promise resolving to the Header or null if not found
  */
-export async function getNavBarByName(name: string, preview = false): Promise<NavBar | null> {
+export async function getHeaderByName(name: string, preview = false): Promise<Header | null> {
   try {
-    const response = await fetchGraphQL<NavBar>(
-      `query GetNavBarByName($name: String!, $preview: Boolean!) {
-        navBarCollection(where: { name: $name }, limit: 1, preview: $preview) {
+    const response = await fetchGraphQL<Header>(
+      `query GetHeaderByName($name: String!, $preview: Boolean!) {
+        headerCollection(where: { name: $name }, limit: 1, preview: $preview) {
           items {
-            ${NAVBAR_GRAPHQL_FIELDS}
+            ${HEADER_GRAPHQL_FIELDS}
           }
         }
       }`,
@@ -649,32 +650,32 @@ export async function getNavBarByName(name: string, preview = false): Promise<Na
       preview
     );
 
-    if (!response.data?.navBarCollection?.items?.length) {
+    if (!response.data?.headerCollection?.items?.length) {
       return null;
     }
 
-    return response.data.navBarCollection.items[0]!;
+    return response.data.headerCollection.items[0]!;
   } catch (error) {
     if (error instanceof Error) {
-      throw new NetworkError(`Error fetching NavBar by name: ${error.message}`);
+      throw new NetworkError(`Error fetching Header by name: ${error.message}`);
     }
-    throw new Error('Unknown error fetching NavBar by name');
+    throw new Error('Unknown error fetching Header by name');
   }
 }
 
 /**
- * Fetches a NavBar by its ID
- * @param id - The ID of the NavBar to fetch
+ * Fetches a Header by its ID
+ * @param id - The ID of the Header to fetch
  * @param preview - Whether to fetch draft content
- * @returns Promise resolving to the NavBar or null if not found
+ * @returns Promise resolving to the Header or null if not found
  */
-export async function getNavBarById(id: string, preview = false): Promise<NavBar | null> {
+export async function getHeaderById(id: string, preview = false): Promise<Header | null> {
   try {
-    const response = await fetchGraphQL<NavBar>(
-      `query GetNavBarById($id: String!, $preview: Boolean!) {
-        navBarCollection(where: { sys: { id: $id } }, limit: 1, preview: $preview) {
+    const response = await fetchGraphQL<Header>(
+      `query GetHeaderById($id: String!, $preview: Boolean!) {
+        headerCollection(where: { sys: { id: $id } }, limit: 1, preview: $preview) {
           items {
-            ${NAVBAR_GRAPHQL_FIELDS}
+            ${HEADER_GRAPHQL_FIELDS}
           }
         }
       }`,
@@ -682,11 +683,13 @@ export async function getNavBarById(id: string, preview = false): Promise<NavBar
       preview
     );
 
-    if (!response.data?.navBarCollection?.items?.length) {
+    if (!response.data?.headerCollection?.items?.length) {
       return null;
     }
 
-    return response.data.navBarCollection.items[0]!;
+    // Handle the case where items might be empty
+    const header = response.data.headerCollection?.items[0];
+    return header ?? null;
   } catch (error) {
     if (error instanceof ContentfulError) {
       throw error;
@@ -695,9 +698,9 @@ export async function getNavBarById(id: string, preview = false): Promise<NavBar
       throw error;
     }
     if (error instanceof Error) {
-      throw new NetworkError(`Error fetching NavBar by ID: ${error.message}`);
+      throw new NetworkError(`Error fetching Header by ID: ${error.message}`);
     }
-    throw new Error('Unknown error fetching NavBar by ID');
+    throw new Error('Unknown error fetching Header by ID');
   }
 }
 

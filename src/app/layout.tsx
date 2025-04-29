@@ -13,8 +13,8 @@ import { Providers } from '@/app/providers';
 import { Main } from '@/components/global/matic-ds';
 import { Footer } from '@/components/global/Footer';
 import { Toaster } from '@/components/ui/toaster';
-import { NavBar } from '@/components/global/NavBar';
-import { getNavBarById, getFooterById } from '@/lib/api';
+import { Header } from '@/components/global/Header';
+import { getHeaderById, getFooterById } from '@/lib/api';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -43,13 +43,13 @@ export const metadata: Metadata = {
  * @param children - Page content to be rendered
  */
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  // Fetch the default NavBar with the specific ID
-  const defaultNavBar = await getNavBarById('7jJj6nfURdP2fNPBphcgQH', false);
+  // Fetch the default Header with the specific ID
+  const defaultHeader = await getHeaderById('2M7Meoj7QefWD7Y8EhliGU', false);
 
   // Fetch the default Footer with the specific ID
   let defaultFooter = null;
   try {
-    defaultFooter = await getFooterById('3s9oXyZvx4Gd0YjdS5exKx', false);
+    defaultFooter = await getFooterById('5kECu6nUbEquZVRCuEU9Ev', false);
   } catch (error) {
     console.error('Error fetching footer data:', error);
   }
@@ -62,12 +62,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body className="flex min-h-screen flex-col">
         <Providers>
           {/* 
-            The NavBar and Footer components are conditionally rendered in the page component 
-            if they are specified in the page content model. Otherwise, we use the default ones here.
-            The page component will only render its own NavBar and Footer, not these default ones.
+            Create a sticky header container that will always be present.
+            The content will be either the default header or replaced by the page-specific header.
           */}
-          <div id="default-navbar" className="default-layout-component">
-            {defaultNavBar && <NavBar {...defaultNavBar} />}
+          <div id="header-container" className="sticky top-0 z-50">
+            {defaultHeader && <Header {...defaultHeader} />}
           </div>
 
           <Main className="pt-32">{children}</Main>

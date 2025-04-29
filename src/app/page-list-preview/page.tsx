@@ -23,7 +23,7 @@ import { Box } from '@/components/global/matic-ds';
 import ContentfulLivePreviewInitializer from '@/components/global/ContentfulLivePreviewInitializer';
 import { getPageListBySlug } from '@/lib/api';
 import { PageList } from '@/components/global/PageList';
-import { NavBar } from '@/components/global/NavBar';
+import { Header } from '@/components/global/Header';
 import { Footer } from '@/components/global/Footer';
 import { Hero } from '@/components/global/Hero';
 import { PageLayout } from '@/components/layout/PageLayout';
@@ -184,9 +184,6 @@ export default async function PageListPreviewPage({
           <div className="mb-2 text-center text-xs text-gray-500">Page List Preview</div>
 
           <PageLayout header={pageListData.header} footer={pageListData.footer}>
-            {/* Render the page-specific header if available */}
-            {pageListData.header && <NavBar {...pageListData.header} />}
-
             <main className="min-h-screen py-12">
               {/* Render any Hero components from pageContentCollection */}
               {pageListData.pageContentCollection?.items?.map((item, index) => {

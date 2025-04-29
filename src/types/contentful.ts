@@ -8,7 +8,7 @@ export interface Page {
   name: string;
   slug: string;
   description?: string;
-  header?: NavBar;
+  header?: Header;
   footer?: Footer;
   pageContentCollection?: {
     items: Hero[];
@@ -25,7 +25,7 @@ export interface PageList {
   pagesCollection?: {
     items: Array<Page>;
   };
-  header?: NavBar;
+  header?: Header;
   pageContentCollection?: {
     items: Hero[];
   };
@@ -57,6 +57,7 @@ export interface Hero {
     id: string;
   };
   name?: string;
+  heroHeader?: string;
   description?: string;
   __typename?: string;
 }
@@ -92,7 +93,7 @@ export interface Asset {
   height?: number;
 }
 
-export interface NavBar {
+export interface Header {
   sys: {
     id: string;
   };
@@ -104,8 +105,8 @@ export interface NavBar {
   __typename?: string;
 }
 
-export interface NavBarResponse {
-  items: Array<NavBar>;
+export interface HeaderResponse {
+  items: Array<Header>;
   total: number;
 }
 
@@ -129,7 +130,7 @@ export interface GraphQLResponse<T> {
       items: T[];
       total: number;
     };
-    navBarCollection?: {
+    headerCollection?: {
       items: T[];
       total: number;
     };

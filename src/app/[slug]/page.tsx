@@ -21,7 +21,7 @@
 import { notFound } from 'next/navigation';
 import { getPageBySlug, getPageListBySlug } from '@/lib/api';
 import { Hero } from '@/components/global/Hero';
-import { NavBar } from '@/components/global/NavBar';
+import { Header } from '@/components/global/Header';
 import { Footer } from '@/components/global/Footer';
 import { PageList } from '@/components/global/PageList';
 import { PageLayout } from '@/components/layout/PageLayout';
@@ -105,9 +105,6 @@ function renderPage(page: Page) {
 
   return (
     <PageLayout header={pageHeader} footer={pageFooter}>
-      {/* Render the page-specific header if available */}
-      {pageHeader && <NavBar {...pageHeader} />}
-
       <main>
         <h1 className="sr-only">{page.name}</h1>
 
@@ -152,9 +149,6 @@ function renderPageList(pageList: PageListType) {
 
   return (
     <PageLayout header={pageHeader} footer={pageFooter}>
-      {/* Render the page-specific header if available, otherwise use the default */}
-      {pageHeader && <NavBar {...pageHeader} />}
-
       <main className="min-h-screen py-12">
         {/* Render any Hero components from pageContentCollection */}
         {pageContentItems.map((item, index) => {

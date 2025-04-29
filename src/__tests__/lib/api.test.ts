@@ -435,24 +435,24 @@ describe('API Module', () => {
   });
 
   /**
-   * Tests for getNavBarByName function
+   * Tests for getHeaderByName function
    *
    * Tests the retrieval of navigation bars by name, ensuring proper
    * handling of the complex structure of NavBar content type which includes
    * references to other content types like Page and PageList.
    */
-  describe('getNavBarByName', () => {
-    it('fetches a navbar by name', async () => {
-      const navbarName = 'Main Navigation';
+  describe('getHeaderByName', () => {
+    it('fetches a header by name', async () => {
+      const headerName = 'Main Navigation';
 
-      // Mock successful response with a navbar
+      // Mock successful response with a header
       const mockNavBarResponse = {
         data: {
-          navBarCollection: {
+          headerCollection: {
             items: [
               {
-                sys: { id: 'navbar1' },
-                name: navbarName,
+                sys: { id: 'header1' },
+                name: headerName,
                 logo: {
                   sys: { id: 'logo1' },
                   title: 'Logo',
@@ -477,7 +477,7 @@ describe('API Module', () => {
                     }
                   ]
                 },
-                __typename: 'NavBar'
+                __typename: 'Header'
               }
             ]
           }
@@ -491,11 +491,11 @@ describe('API Module', () => {
 
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      const result = await api.getNavBarByName(navbarName);
+      const result = await api.getHeaderByName(headerName);
 
       // Verify the result
       expect(result).not.toBeNull();
-      expect(result?.name).toBe(navbarName);
+      expect(result?.name).toBe(headerName);
       expect(result?.logo?.title).toBe('Logo');
       expect(result?.navLinksCollection?.items).toHaveLength(2);
       expect(result?.navLinksCollection?.items?.[0]?.name).toBe('Home');
@@ -505,16 +505,16 @@ describe('API Module', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          body: expect.stringContaining(navbarName)
+          body: expect.stringContaining(headerName)
         })
       );
     });
 
-    it('returns null when navbar is not found', async () => {
-      // Mock response with no navbar
+    it('returns null when header is not found', async () => {
+      // Mock response with no header
       const mockEmptyResponse = {
         data: {
-          navBarCollection: {
+          headerCollection: {
             items: []
           }
         }
@@ -527,28 +527,28 @@ describe('API Module', () => {
 
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      const result = await api.getNavBarByName('non-existent-navbar');
+      const result = await api.getHeaderByName('non-existent-header');
 
       expect(result).toBeNull();
     });
   });
 
   /**
-   * Tests for getAllNavBars function
+   * Tests for getAllHeaders function
    *
    * Verifies that the function correctly fetches all navigation bars,
    * processes the collection structure, and handles empty results
    * and GraphQL errors appropriately.
    */
-  describe('getAllNavBars', () => {
-    it('fetches all navbars with correct query', async () => {
-      // Mock successful response with navbars
+  describe('getAllHeaders', () => {
+    it('fetches all headers with correct query', async () => {
+      // Mock successful response with headers
       const mockNavBarsResponse = {
         data: {
-          navBarCollection: {
+          headerCollection: {
             items: [
               {
-                sys: { id: 'navbar1' },
+                sys: { id: 'header1' },
                 name: 'Main Navigation',
                 logo: {
                   url: 'https://example.com/logo1.png',
@@ -566,10 +566,10 @@ describe('API Module', () => {
                     }
                   ]
                 },
-                __typename: 'NavBar'
+                __typename: 'Header'
               },
               {
-                sys: { id: 'navbar2' },
+                sys: { id: 'header2' },
                 name: 'Footer Navigation',
                 logo: {
                   url: 'https://example.com/logo2.png',
@@ -587,7 +587,7 @@ describe('API Module', () => {
                     }
                   ]
                 },
-                __typename: 'NavBar'
+                __typename: 'Header'
               }
             ],
             total: 2
@@ -602,7 +602,7 @@ describe('API Module', () => {
 
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      const result = await api.getAllNavBars();
+      const result = await api.getAllHeaders();
 
       // Verify the result
       expect(result?.items).toHaveLength(2);
@@ -614,16 +614,16 @@ describe('API Module', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          body: expect.stringContaining('navBarCollection')
+          body: expect.stringContaining('headerCollection')
         })
       );
     });
 
-    it('handles empty navbar collection', async () => {
+    it('handles empty header collection', async () => {
       // Mock empty response
       const mockEmptyResponse = {
         data: {
-          navBarCollection: {
+          headerCollection: {
             items: [],
             total: 0
           }
@@ -637,7 +637,7 @@ describe('API Module', () => {
 
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      const result = await api.getAllNavBars();
+      const result = await api.getAllHeaders();
 
       expect(result?.items).toHaveLength(0);
       expect(result?.total).toBe(0);
@@ -646,7 +646,7 @@ describe('API Module', () => {
     it('handles GraphQL errors', async () => {
       // Mock response with GraphQL errors
       const mockErrorResponse = {
-        errors: [{ message: 'Failed to fetch navbars' }]
+        errors: [{ message: 'Failed to fetch headers' }]
       };
 
       const mockResponse = {
@@ -656,29 +656,29 @@ describe('API Module', () => {
 
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      await expect(api.getAllNavBars()).rejects.toThrow(GraphQLError);
-      await expect(api.getAllNavBars()).rejects.toThrow('GraphQL query execution error');
+      await expect(api.getAllHeaders()).rejects.toThrow(GraphQLError);
+      await expect(api.getAllHeaders()).rejects.toThrow('GraphQL query execution error');
     });
   });
 
   /**
-   * Tests for getNavBarById function
+   * Tests for getHeaderById function
    *
    * Ensures the function correctly fetches a NavBar by its system ID,
    * handles the complex structure with nested collections and references,
    * and properly returns null when the NavBar is not found.
    */
-  describe('getNavBarById', () => {
-    it('fetches a navbar by ID', async () => {
-      const navbarId = 'navbar123';
+  describe('getHeaderById', () => {
+    it('fetches a header by ID', async () => {
+      const headerId = 'header123';
 
-      // Mock successful response with a navbar
+      // Mock successful response with a header
       const mockNavBarResponse = {
         data: {
-          navBarCollection: {
+          headerCollection: {
             items: [
               {
-                sys: { id: navbarId },
+                sys: { id: headerId },
                 name: 'Test NavBar',
                 logo: {
                   url: 'https://example.com/logo.png',
@@ -712,7 +712,7 @@ describe('API Module', () => {
                     }
                   ]
                 },
-                __typename: 'NavBar'
+                __typename: 'Header'
               }
             ]
           }
@@ -726,11 +726,11 @@ describe('API Module', () => {
 
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      const result = await api.getNavBarById(navbarId);
+      const result = await api.getHeaderById(headerId);
 
       // Verify the result
       expect(result).not.toBeNull();
-      expect(result?.sys?.id).toBe(navbarId);
+      expect(result?.sys?.id).toBe(headerId);
       expect(result?.name).toBe('Test NavBar');
       expect(result?.navLinksCollection?.items).toHaveLength(2);
       expect((result?.navLinksCollection?.items?.[0] as any)?.__typename).toBe('Page');
@@ -740,16 +740,16 @@ describe('API Module', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          body: expect.stringContaining(navbarId)
+          body: expect.stringContaining(headerId)
         })
       );
     });
 
-    it('returns null when navbar is not found', async () => {
-      // Mock response with no navbar
+    it('returns null when header is not found', async () => {
+      // Mock response with no header
       const mockEmptyResponse = {
         data: {
-          navBarCollection: {
+          headerCollection: {
             items: []
           }
         }
@@ -762,7 +762,7 @@ describe('API Module', () => {
 
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      const result = await api.getNavBarById('non-existent-id');
+      const result = await api.getHeaderById('non-existent-id');
 
       expect(result).toBeNull();
     });
@@ -770,7 +770,7 @@ describe('API Module', () => {
     it('handles GraphQL errors', async () => {
       // Mock response with GraphQL errors
       const mockErrorResponse = {
-        errors: [{ message: 'Failed to fetch navbar by ID' }]
+        errors: [{ message: 'Failed to fetch header by ID' }]
       };
 
       const mockResponse = {
@@ -780,8 +780,8 @@ describe('API Module', () => {
 
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      await expect(api.getNavBarById('test-id')).rejects.toThrow(GraphQLError);
-      await expect(api.getNavBarById('test-id')).rejects.toThrow('GraphQL query execution error');
+      await expect(api.getHeaderById('test-id')).rejects.toThrow(GraphQLError);
+      await expect(api.getHeaderById('test-id')).rejects.toThrow('GraphQL query execution error');
     });
   });
 

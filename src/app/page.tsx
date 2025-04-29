@@ -6,7 +6,7 @@ import { getAllPages, getAllPageLists, getPageBySlug } from '@/lib/api';
 import type { PageResponse, PageListResponse, Page } from '@/types/contentful';
 import { getAllFooters } from '@/lib/api';
 import type { FooterResponse } from '@/types/contentful';
-import { NavBar } from '@/components/global/NavBar';
+import { Header } from '@/components/global/Header';
 import { Footer } from '@/components/global/Footer';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Hero } from '@/components/global/Hero';
@@ -55,9 +55,6 @@ async function renderContentfulHomePage(page: Page) {
 
   return (
     <PageLayout header={pageHeader} footer={pageFooter}>
-      {/* Render the page-specific header if available */}
-      {pageHeader && <NavBar {...pageHeader} />}
-
       <main>
         <h1 className="sr-only">{page.name}</h1>
 

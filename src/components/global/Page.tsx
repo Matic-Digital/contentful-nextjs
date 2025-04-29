@@ -26,9 +26,9 @@ import {
 } from '@contentful/live-preview/react';
 import { Container, Box } from '@/components/global/matic-ds';
 import { Hero } from './Hero';
-import { NavBar } from './NavBar';
+import { Header } from './Header';
 import { Footer } from './Footer';
-import type { NavBar as NavBarType, Footer as FooterType } from '@/types/contentful';
+import type { Header as HeaderType, Footer as FooterType } from '@/types/contentful';
 
 interface PageProps {
   sys: {
@@ -37,7 +37,7 @@ interface PageProps {
   name?: string;
   slug?: string;
   description?: string;
-  header?: NavBarType | null;
+  header?: HeaderType | null;
   footer?: FooterType | null;
   pageContentCollection?: {
     items: Array<{
@@ -114,7 +114,7 @@ export function Page(props: PageProps) {
           className="page-specific-header"
           data-component-type="Page Header"
         >
-          <NavBar {...page.header} />
+          <Header {...page.header} />
         </div>
       )}
 
