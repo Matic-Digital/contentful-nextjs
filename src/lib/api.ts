@@ -77,6 +77,14 @@ const HEADER_GRAPHQL_FIELDS = `
       }
       ... on PageList {
         ${PAGELIST_BASIC_FIELDS}
+        pagesCollection {
+          items {
+            ${SYS_FIELDS}
+            name
+            slug
+            description
+          }
+        }
       }
     }
   }

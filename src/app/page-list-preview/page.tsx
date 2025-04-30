@@ -23,7 +23,6 @@ import { Box } from '@/components/global/matic-ds';
 import ContentfulLivePreviewInitializer from '@/components/global/ContentfulLivePreviewInitializer';
 import { getPageListBySlug } from '@/lib/api';
 import { PageList } from '@/components/global/PageList';
-import { Header } from '@/components/global/Header';
 import { Footer } from '@/components/global/Footer';
 import { Hero } from '@/components/global/Hero';
 import { PageLayout } from '@/components/layout/PageLayout';

@@ -6,7 +6,6 @@ import { getAllPages, getAllPageLists, getPageBySlug } from '@/lib/api';
 import type { PageResponse, PageListResponse, Page } from '@/types/contentful';
 import { getAllFooters } from '@/lib/api';
 import type { FooterResponse } from '@/types/contentful';
-import { Header } from '@/components/global/Header';
 import { Footer } from '@/components/global/Footer';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Hero } from '@/components/global/Hero';

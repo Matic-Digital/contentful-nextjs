@@ -69,7 +69,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             {defaultHeader && <Header {...defaultHeader} />}
           </div>
 
-          <Main className="pt-32">{children}</Main>
+          <Main className="pt-4">{children}</Main>
 
           <div id="default-footer" className="default-layout-component">
             {defaultFooter && <Footer footerData={defaultFooter} />}

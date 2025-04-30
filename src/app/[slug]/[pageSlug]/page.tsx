@@ -18,7 +18,6 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getPageBySlugInPageList } from '@/lib/api';
 import { Hero } from '@/components/global/Hero';
-import { Header } from '@/components/global/Header';
 import { Footer } from '@/components/global/Footer';
 import { PageLayout } from '@/components/layout/PageLayout';
 import type { Hero as _HeroType, Page, PageList } from '@/types/contentful';

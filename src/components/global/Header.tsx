@@ -16,6 +16,7 @@
 
 'use client';
 
+import * as React from 'react';
 import {
   useContentfulLiveUpdates,
   useContentfulInspectorMode
@@ -34,8 +35,6 @@ import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
-  NavigationMenuContent,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle
 } from '@/components/ui/navigation-menu';
 
@@ -64,10 +63,24 @@ export function Header(props: HeaderProps) {
   // Add inspector mode for Contentful editing
   const inspectorProps = useContentfulInspectorMode({ entryId: header?.sys?.id });
 
+  // State to track which dropdown is open
+  const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
+
   // Function to check if a link is active
   const isActive = (href: string) => {
     if (!pathname) return false;
     return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
+  // Handle mouse enter for PageList button or dropdown
+  const handleMouseEnter = (id: string) => {
+    setOpenDropdown(id);
+  };
+
+  // Handle mouse leave for the entire header navigation area
+  const handleNavMouseLeave = () => {
+    // Close all dropdowns when leaving the entire navigation area
+    setOpenDropdown(null);
   };
 
   return (
@@ -96,7 +109,7 @@ export function Header(props: HeaderProps) {
             )}
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex">
+            <div className="hidden items-center md:flex" onMouseLeave={handleNavMouseLeave}>
               <NavigationMenu className="mr-4">
                 <NavigationMenuList>
                   {header?.navLinksCollection?.items.map((item) => {
@@ -120,35 +133,47 @@ export function Header(props: HeaderProps) {
                     else if (item.__typename === 'PageList') {
                       const pageList = item as PageList;
                       return (
-                        <NavigationMenuItem key={pageList.sys.id}>
-                          <NavigationMenuTrigger
-                            className={isActive(`/${pageList.slug}`) ? 'bg-accent' : ''}
-                            onClick={() => (window.location.href = `/${pageList.slug}`)}
+                        <div
+                          key={pageList.sys.id}
+                          className="relative"
+                          onMouseEnter={() => handleMouseEnter(pageList.sys.id)}
+                        >
+                          <Link
+                            href={`/${pageList.slug}`}
+                            className={`${navigationMenuTriggerStyle()} ${isActive(`/${pageList.slug}`) || openDropdown === pageList.sys.id ? 'bg-accent' : ''}`}
                           >
                             {pageList.name}
-                          </NavigationMenuTrigger>
-                          <NavigationMenuContent>
-                            <div className="absolute left-0 top-[calc(100%+4px)] z-[100] overflow-visible rounded-md border bg-background p-2 shadow-lg animate-in fade-in-0 zoom-in-95 md:w-[600px]">
-                              <ul className="grid max-h-[80vh] w-full gap-3 overflow-y-auto bg-background p-4 md:grid-cols-2">
-                                {pageList.pagesCollection?.items.map((page) => (
-                                  <li key={page.sys.id}>
-                                    <Link
-                                      href={`/${pageList.slug}/${page.slug}`}
-                                      className="block select-none space-y-1 rounded-md border border-gray-100 p-3 leading-none no-underline shadow-sm outline-none transition-colors hover:border-gray-300 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                                    >
-                                      <div className="text-sm font-medium leading-none">
-                                        {page.name}
-                                      </div>
-                                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                        {page.description}
-                                      </p>
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
+                          </Link>
+                          {/* Custom dropdown that appears when state is set */}
+                          <div
+                            className={`absolute left-0 top-full z-50 mt-1 rounded-md border bg-background shadow-md ${openDropdown === pageList.sys.id ? 'block' : 'hidden'}`}
+                            onMouseEnter={() => handleMouseEnter(pageList.sys.id)}
+                          >
+                            <div className="m-0 max-h-[60vh] w-[220px] overflow-auto p-0">
+                              <div className="m-0 bg-background p-0 text-foreground">
+                                {pageList.pagesCollection?.items &&
+                                pageList.pagesCollection.items.length > 0 ? (
+                                  <ul className="m-0 w-full list-none p-0">
+                                    {pageList.pagesCollection.items.map((page) => (
+                                      <li key={page.sys.id} className="m-0 w-full p-0">
+                                        <Link
+                                          href={`/${pageList.slug}/${page.slug}`}
+                                          className={`block w-full select-none px-4 py-2 text-sm font-medium no-underline outline-none transition-colors ${isActive(`/${pageList.slug}/${page.slug}`) ? 'bg-accent text-accent-foreground' : 'text-foreground hover:bg-accent hover:text-accent-foreground'} focus:bg-accent focus:text-accent-foreground`}
+                                        >
+                                          {page.name}
+                                        </Link>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                ) : (
+                                  <p className="p-3 text-sm text-muted-foreground">
+                                    No pages available
+                                  </p>
+                                )}
+                              </div>
                             </div>
-                          </NavigationMenuContent>
-                        </NavigationMenuItem>
+                          </div>
+                        </div>
                       );
                     }
                     return null;
