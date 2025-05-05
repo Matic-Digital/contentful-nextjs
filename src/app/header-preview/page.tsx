@@ -110,23 +110,10 @@ function HeaderPreviewContent() {
       {/* Header is the primary navigation component */}
       <Header {...header} />
 
-      <Container className="mt-24">
-        <Box className="py-12">
-          <h1 className="mb-4 text-2xl font-bold">Header Preview</h1>
-          <p className="mb-2">
-            <strong>Name:</strong> {header.name}
-          </p>
-          <p className="mb-2">
-            <strong>Links:</strong> {header.navLinksCollection?.items.length ?? 0}
-          </p>
-          <div className="mt-8 rounded bg-gray-100 p-4">
-            <p className="text-sm text-gray-600">
-              This is a preview of the Header. You can edit it in Contentful and see the changes in
-              real-time.
-            </p>
-          </div>
-        </Box>
-      </Container>
+      {/* Small indicator that this is a preview - positioned to not interfere with the header */}
+      <div className="fixed bottom-4 right-4 rounded bg-blue-100 p-2 text-xs text-blue-800 shadow-md">
+        <p>Header Preview: {header.name}</p>
+      </div>
     </>
   );
 }

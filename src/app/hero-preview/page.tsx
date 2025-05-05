@@ -1,3 +1,20 @@
+/**
+ * Hero Preview Component
+ *
+ * This page enables content editors to preview Hero components directly from Contentful's
+ * preview environment. It fetches Hero content by ID from the query parameters and
+ * renders it within the Contentful Live Preview context, allowing real-time updates as
+ * content is edited in Contentful.
+ *
+ * Key features:
+ * - Server-side rendering with Next.js draft mode for preview content
+ * - Dynamic fetching of Hero content based on ID parameter
+ * - Integration with Contentful's Live Preview for real-time content updates
+ * - Error handling for missing or invalid Hero IDs
+ * - Forced dynamic rendering to ensure preview content is always fresh
+ * - Disabled caching to ensure latest draft content is always displayed
+ */
+
 import { getHero } from '@/lib/api';
 import { Hero } from '@/components/global/Hero';
 import { Box } from '@/components/global/matic-ds';
@@ -28,6 +45,7 @@ export default async function HeroPreviewPage({ params, searchParams }: HeroPrev
   // Await the params and searchParams Promises (required in Next.js 15)
   await params; // We need to await this even if we don't use it
   const resolvedSearchParams = await searchParams;
+
   // Get the hero ID from the query parameters, or use a default ID
   // Accept either 'id' or 'heroId' parameter for compatibility
   const heroId =
@@ -35,19 +53,21 @@ export default async function HeroPreviewPage({ params, searchParams }: HeroPrev
     resolvedSearchParams?.id ??
     process.env.NEXT_PUBLIC_DEFAULT_HERO_ID ??
     '';
+
   const draftModeData = await draftMode();
   const isDraftMode = draftModeData.isEnabled;
 
   // Always use preview mode for this page
   const usePreview = true;
 
-  // Fetch the hero data
+  // Fetch the hero data directly using the ID
   let heroData = null;
   let error = null;
 
   try {
     if (heroId) {
       console.log('Fetching hero with ID:', heroId, 'usePreview:', usePreview);
+      // Make sure we're using the getHero function which fetches by ID
       heroData = await getHero(heroId, usePreview);
       console.log('Hero data received:', heroData);
     }

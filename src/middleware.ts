@@ -35,6 +35,9 @@ export async function middleware(request: NextRequest) {
     path.startsWith('/api') ||
     path.startsWith('/page-preview') ||
     path.startsWith('/page-list-preview') ||
+    path.startsWith('/hero-preview') ||
+    path.startsWith('/header-preview') ||
+    path.startsWith('/footer-preview') ||
     path === '/favicon.ico' ||
     path.endsWith('.jpg') ||
     path.endsWith('.png') ||

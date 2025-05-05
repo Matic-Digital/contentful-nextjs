@@ -44,7 +44,6 @@ const ASSET_FIELDS = `
 const HERO_GRAPHQL_FIELDS = `
   ${SYS_FIELDS}
   name
-  heroHeader
   description
 `;
 
