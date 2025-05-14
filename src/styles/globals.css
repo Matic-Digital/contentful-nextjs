@@ -1,7 +1,8 @@
 /* Tailwind CSS base styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 /* Use globals.css for:
  * Base element styles
@@ -15,65 +16,256 @@
  * Theme extensions
  * Reusable utility patterns */
 
-/* CSS Variables for theme customization */
+:root {
+  /* Light theme colors */
+  --background: 210 40% 98%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 222.2 84% 4.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 210 40% 96.1%;
+  --input: 210 40% 96.1%;
+  --ring: 222.2 84% 4.9%;
+  /* Chart color palette */
+  --chart-1: 12 76% 61%;
+  --chart-2: 173 58% 39%;
+  --chart-3: 197 37% 24%;
+  --chart-4: 43 74% 66%;
+  --chart-5: 27 87% 67%;
+  /* Border radius */
+  --radius: 0.5rem;
+}
+
+[data-theme='dark'] {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 219.1 10.6% 64.9%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 218.1 12.2% 83.9%;
+  /* Dark theme chart colors */
+  --chart-1: 220 70% 50%;
+  --chart-2: 160 60% 45%;
+  --chart-3: 30 80% 55%;
+  --chart-4: 280 65% 60%;
+  --chart-5: 340 75% 55%;
+}
+
+@theme {
+}
+
+/* Keyframes from tailwind.config.ts */
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes scale-up {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes scale-down {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.95);
+  }
+}
+
+@keyframes subtle-scale {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.02);
+  }
+}
+
+/* Animation classes */
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out forwards;
+}
+
+.animate-slide-right {
+  animation: slide-right 0.2s ease-out forwards;
+}
+
+.animate-scale-up {
+  animation: scale-up 0.2s ease-out forwards;
+}
+
+.animate-scale-down {
+  animation: scale-down 0.2s ease-out forwards;
+}
+
+.animate-subtle-scale {
+  animation: subtle-scale 0.2s ease-out forwards;
+}
+
+/* Typography styles */
 @layer base {
-  :root {
-    /* Light theme colors */
-    --background: 210 40% 98%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 222.2 84% 4.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 210 40% 96.1%;
-    --input: 210 40% 96.1%;
-    --ring: 222.2 84% 4.9%;
-    /* Chart color palette */
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    /* Border radius */
-    --radius: 0.5rem;
+  /*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+  /* Common typography styles */
+  .prose {
+    font-family: Inter, sans-serif;
+    color: hsl(var(--foreground));
   }
 
-  /* Dark theme color overrides */
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 219.1 10.6% 64.9%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 218.1 12.2% 83.9%;
-    /* Dark theme chart colors */
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+  .prose a {
+    color: hsl(var(--primary));
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .prose a:hover {
+    color: hsl(var(--primary));
+    border-bottom-color: hsl(var(--primary));
+  }
+
+  .prose a:active {
+    color: hsl(var(--primary-foreground));
+    background-color: hsl(var(--primary));
+    border-bottom-color: transparent;
+    border-radius: 0.25rem;
+  }
+
+  .prose blockquote {
+    border-left-color: hsl(var(--primary));
+    color: hsl(var(--muted-foreground));
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose strong,
+  .prose th {
+    color: hsl(var(--foreground));
+  }
+
+  .prose kbd {
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--muted));
+  }
+
+  .prose code::before,
+  .prose code::after {
+    content: '';
+  }
+
+  .prose code {
+    color: hsl(var(--primary));
+    background-color: hsl(var(--muted));
+    border-radius: 0.25rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .prose ol > li::marker {
+    color: hsl(var(--primary));
+    font-weight: 600;
+  }
+}
+
+/* Text gradient utilities */
+.text-gradient-pink {
+  @apply bg-linear-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent;
+}
+
+.text-gradient-cyan {
+  @apply bg-linear-to-r from-teal-400 via-cyan-400 to-sky-400 bg-clip-text text-transparent;
+}
+
+.text-gradient-emerald {
+  @apply bg-linear-to-r from-emerald-400 via-cyan-500 to-blue-500 bg-clip-text text-transparent;
+}
+
+.text-gradient-orange {
+  @apply bg-linear-to-r from-orange-400 via-amber-500 to-yellow-500 bg-clip-text text-transparent;
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+  width: 100%;
+
+  @variant sm {
+    padding-inline: 2rem;
+  }
+
+  @variant md {
+    padding-inline: 3rem;
+  }
+
+  @variant lg {
+    padding-inline: 4rem;
+  }
+
+  @variant xl {
+    padding-inline: 5rem;
+  }
+
+  @variant 2xl {
+    padding-inline: 6rem;
   }
 }

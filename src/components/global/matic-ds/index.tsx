@@ -311,7 +311,7 @@ export const Prose = ({ children, className, id, html }: ArticleProps) => {
           'prose-a:text-[1rem]',
           'lg:prose-a:text-[1.25rem]',
           'prose-a:font-light',
-          'hover:prose-a:opacity-80',
+          'prose-a:hover:opacity-80',
           'prose-blockquote:text-[1rem]',
           'lg:prose-blockquote:text-[1.25rem]',
           'prose-figcaption:text-[1rem]',

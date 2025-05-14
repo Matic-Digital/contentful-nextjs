@@ -87,7 +87,7 @@ export function Header(props: HeaderProps) {
     <ErrorBoundary>
       <Container className="sticky top-0 z-50">
         <header
-          className="mt-6 w-[95%] rounded-xl border border-b border-slate-400 bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60 max-md:py-1.5 lg:w-full"
+          className="mt-6 w-[95%] rounded-xl border border-b border-slate-400 bg-background/95 px-6 backdrop-blur-sm supports-backdrop-filter:bg-background/60 max-md:py-1.5 lg:w-full"
           {...inspectorProps({ fieldId: 'name' })}
         >
           <Box className="items-center justify-between">
@@ -158,7 +158,7 @@ export function Header(props: HeaderProps) {
                                       <li key={page.sys.id} className="m-0 w-full p-0">
                                         <Link
                                           href={`/${pageList.slug}/${page.slug}`}
-                                          className={`block w-full select-none px-4 py-2 text-sm font-medium no-underline outline-none transition-colors ${isActive(`/${pageList.slug}/${page.slug}`) ? 'bg-accent text-accent-foreground' : 'text-foreground hover:bg-accent hover:text-accent-foreground'} focus:bg-accent focus:text-accent-foreground`}
+                                          className={`block w-full select-none px-4 py-2 text-sm font-medium no-underline outline-hidden transition-colors ${isActive(`/${pageList.slug}/${page.slug}`) ? 'bg-accent text-accent-foreground' : 'text-foreground hover:bg-accent hover:text-accent-foreground'} focus:bg-accent focus:text-accent-foreground`}
                                         >
                                           {page.name}
                                         </Link>
@@ -235,7 +235,7 @@ export function Header(props: HeaderProps) {
                                 >
                                   <span
                                     onClick={() => (window.location.href = `/${pageList.slug}`)}
-                                    className="flex-grow"
+                                    className="grow"
                                   >
                                     {pageList.name}
                                   </span>
