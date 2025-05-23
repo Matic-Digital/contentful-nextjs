@@ -25,7 +25,7 @@ export function PagePreviewContent({
   return (
     <Box direction="col" gap={8} className="min-h-screen">
       {/* Small indicator that this is a preview - positioned to not interfere with the page content */}
-      <div className="fixed bottom-4 right-4 z-50 rounded bg-blue-100 p-2 text-xs text-blue-800 shadow-md">
+      <div className="fixed right-4 bottom-4 z-50 rounded bg-blue-100 p-2 text-xs text-blue-800 shadow-md">
         <p>Page Preview: {pageSlug}</p>
         <p>{isDraftMode ? 'Draft mode enabled' : 'Draft mode disabled'}</p>
       </div>

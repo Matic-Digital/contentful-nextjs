@@ -1,8 +1,5 @@
 /* matic.css - Comprehensive typography styling with shadcn colors */
 
-* {
-  @apply border-border;
-}
 
 body {
   @apply bg-background text-foreground font-sans antialiased;

@@ -1,6 +1,9 @@
 // Mark as client component
 'use client';
 
+// React import
+import * as React from 'react';
+
 // Next.js imports
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,7 +12,8 @@ import Image from 'next/image';
 import { useContentfulLiveUpdates } from '@contentful/live-preview/react';
 import { useContentfulInspectorMode } from '@contentful/live-preview/react';
 
-import { Container, Box } from '@/components/global/matic-ds';
+import { Box, Container } from '@/components/global/matic-ds';
+import { useThemeSync } from '@/hooks/useThemeSync';
 import { Logo } from '@/components/global/Logo';
 import type { Footer as FooterType } from '@/types/contentful';
 
@@ -23,7 +27,9 @@ import type { Footer as FooterType } from '@/types/contentful';
  * - Copyright notice
  */
 export function Footer({ footerData }: { footerData: FooterType | null }) {
-  // Always call hooks at the top level, regardless of conditions
+  // Use our custom hook to ensure theme changes are properly applied
+  useThemeSync();
+  
   // Use Contentful Live Updates to get real-time updates
   const liveFooterData = useContentfulLiveUpdates<FooterType>(footerData ?? ({} as FooterType));
 
@@ -33,7 +39,7 @@ export function Footer({ footerData }: { footerData: FooterType | null }) {
   // If no footer data is provided, render a minimal footer
   if (!footerData) {
     return (
-      <footer className="mt-24 border-t bg-background py-12">
+      <footer className="mt-24 border-t border-gray-200 dark:border-gray-800 bg-background py-12">
         <Container width="full">
           <p className="text-center text-muted-foreground">Footer data not available</p>
         </Container>
@@ -42,7 +48,7 @@ export function Footer({ footerData }: { footerData: FooterType | null }) {
   }
 
   return (
-    <footer className="mt-24 border-t bg-background py-12">
+    <footer className="mt-24 border-t border-gray-200 dark:border-gray-800 bg-background py-12">
       <Container width="full">
         {/* Main footer content grid */}
         <Box cols={{ sm: 2 }} gap={12}>

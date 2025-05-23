@@ -59,6 +59,52 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
   return (
     <html lang="en" suppressHydrationWarning className={`${layoutClasses} ${inter.variable}`}>
+      <head>
+        {/* This script prevents flash of wrong theme */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+          (function() {
+            try {
+              const storedTheme = localStorage.getItem('theme')
+              const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+              const defaultDark = storedTheme === 'dark' || (storedTheme === 'system' && prefersDark)
+              
+              if (defaultDark) {
+                document.documentElement.classList.add('dark')
+              } else {
+                document.documentElement.classList.remove('dark')
+              }
+
+              // Apply dark mode to the body as well for extra compatibility
+              if (defaultDark) {
+                document.body.classList.add('dark')
+              } else {
+                document.body.classList.remove('dark')
+              }
+
+              // Listen for theme changes
+              window.addEventListener('storage', (e) => {
+                if (e.key === 'theme') {
+                  const newTheme = e.newValue;
+                  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  const isDark = newTheme === 'dark' || (newTheme === 'system' && systemPrefersDark);
+                  
+                  if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    document.body.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                    document.body.classList.remove('dark');
+                  }
+                }
+              });
+            } catch (e) {}
+          })()
+        `
+          }}
+        />
+      </head>
       <body className="flex min-h-screen flex-col">
         <Providers>
           {/* 

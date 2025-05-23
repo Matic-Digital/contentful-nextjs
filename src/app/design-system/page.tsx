@@ -1,15 +1,23 @@
 import { Text } from '@/components/global/matic-ds';
 import { cn } from '@/lib/utils';
 
-const Section = ({ title, children, className = '' }: { title: string; children: React.ReactNode; className?: string }) => (
+const Section = ({
+  title,
+  children,
+  className = ''
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) => (
   <section className={cn('mb-12', className)}>
-    <h2 className="text-2xl font-bold mb-4 border-b pb-2">{title}</h2>
+    <h2 className="mb-4 border-b pb-2 text-2xl font-bold">{title}</h2>
     <div className="space-y-6">{children}</div>
   </section>
 );
 
 const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <div className={cn('p-6 border rounded-lg bg-card text-card-foreground shadow-sm', className)}>
+  <div className={cn('bg-card text-card-foreground rounded-lg border p-6 shadow-sm', className)}>
     {children}
   </div>
 );
@@ -21,57 +29,58 @@ export default function DesignSystemPage() {
   const letterSpacings = ['tighter', 'tight', 'normal', 'wide', 'wider', 'widest'] as const;
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto px-4 py-8">
       <header className="mb-12">
-        <h1 className="text-4xl font-bold mb-2">Matic Design System</h1>
-        <p className="text-lg text-muted-foreground">A collection of reusable components for building UIs</p>
+        <h1 className="mb-2 text-4xl font-bold">Matic Design System</h1>
+        <p className="text-muted-foreground text-lg">
+          A collection of reusable components for building UIs
+        </p>
       </header>
 
       {/* Text Component */}
       <Section title="Text Component">
         <Card>
-          <h3 className="text-lg font-semibold mb-4">Variants</h3>
+          <h3 className="mb-4 text-lg font-semibold">Variants</h3>
           <div className="space-y-4">
             {textVariants.map((variant) => (
               <div key={variant} className="border-b pb-4 last:border-b-0 last:pb-0">
-                <p className="text-sm text-muted-foreground mb-2">Variant: {variant}</p>
-                <Text variant={variant}>
-                  The quick brown fox jumps over the lazy dog
-                </Text>
+                <p className="text-muted-foreground mb-2 text-sm">Variant: {variant}</p>
+                <Text variant={variant}>The quick brown fox jumps over the lazy dog</Text>
               </div>
             ))}
           </div>
 
-          <h3 className="text-lg font-semibold mt-8 mb-4">Sizes</h3>
+          <h3 className="mt-8 mb-4 text-lg font-semibold">Sizes</h3>
           <div className="space-y-4">
             {sizes.map((size) => (
               <div key={size} className="border-b pb-4 last:border-b-0 last:pb-0">
-                <p className="text-sm text-muted-foreground mb-2">Size: {size}</p>
-                <Text size={size}>
-                  The quick brown fox jumps over the lazy dog
-                </Text>
+                <p className="text-muted-foreground mb-2 text-sm">Size: {size}</p>
+                <Text size={size}>The quick brown fox jumps over the lazy dog</Text>
               </div>
             ))}
           </div>
 
-          <h3 className="text-lg font-semibold mt-8 mb-4">Line Heights</h3>
+          <h3 className="mt-8 mb-4 text-lg font-semibold">Line Heights</h3>
           <div className="space-y-4">
             {lineHeights.map((lineHeight) => (
               <div key={lineHeight} className="border-b pb-4 last:border-b-0 last:pb-0">
-                <p className="text-sm text-muted-foreground mb-2">Line Height: {lineHeight}</p>
-                <Text lineHeight={lineHeight} className="bg-gray-100 p-2 rounded">
-                  The quick brown fox jumps over the lazy dog<br />
+                <p className="text-muted-foreground mb-2 text-sm">Line Height: {lineHeight}</p>
+                <Text lineHeight={lineHeight} className="bg-background rounded p-2">
+                  The quick brown fox jumps over the lazy dog
+                  <br />
                   The quick brown fox jumps over the lazy dog
                 </Text>
               </div>
             ))}
           </div>
 
-          <h3 className="text-lg font-semibold mt-8 mb-4">Letter Spacing</h3>
+          <h3 className="mt-8 mb-4 text-lg font-semibold">Letter Spacing</h3>
           <div className="space-y-4">
             {letterSpacings.map((letterSpacing) => (
               <div key={letterSpacing} className="border-b pb-4 last:border-b-0 last:pb-0">
-                <p className="text-sm text-muted-foreground mb-2">Letter Spacing: {letterSpacing}</p>
+                <p className="text-muted-foreground mb-2 text-sm">
+                  Letter Spacing: {letterSpacing}
+                </p>
                 <Text letterSpacing={letterSpacing}>
                   The quick brown fox jumps over the lazy dog
                 </Text>
@@ -84,37 +93,37 @@ export default function DesignSystemPage() {
       {/* Layout Components */}
       <Section title="Layout Components">
         <Card>
-          <h3 className="text-lg font-semibold mb-4">Container</h3>
-          <div className="bg-gray-100 p-4 rounded">
+          <h3 className="mb-4 text-lg font-semibold">Container</h3>
+          <div className="bg-background rounded p-4">
             <div className="border-2 border-dashed border-gray-400 p-4">
-              <p className="text-sm text-muted-foreground mb-2">Default Container</p>
-              <div className="bg-white p-4 border">
+              <p className="text-muted-foreground mb-2 text-sm">Default Container</p>
+              <div className="bg-background border p-4">
                 <p>This is inside a container</p>
               </div>
             </div>
           </div>
 
-          <h3 className="text-lg font-semibold mt-8 mb-4">Section</h3>
-          <div className="border rounded-lg overflow-hidden">
-            <div className="bg-gray-100 p-4 border-b">
-              <p className="text-sm text-muted-foreground">Section Component</p>
+          <h3 className="mt-8 mb-4 text-lg font-semibold">Section</h3>
+          <div className="overflow-hidden rounded-lg border">
+            <div className="bg-background border-b p-4">
+              <p className="text-muted-foreground text-sm">Section Component</p>
             </div>
             <div className="p-4">
               <p>Section content goes here</p>
             </div>
           </div>
 
-          <h3 className="text-lg font-semibold mt-8 mb-4">Box</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="border p-4 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-2">Box with padding</p>
-              <div className="bg-gray-100 p-4 rounded">
+          <h3 className="mt-8 mb-4 text-lg font-semibold">Box</h3>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="rounded-lg border p-4">
+              <p className="text-muted-foreground mb-2 text-sm">Box with padding</p>
+              <div className="bg-background rounded p-4">
                 <p>Box content</p>
               </div>
             </div>
-            <div className="border p-4 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-2">Box with custom class</p>
-              <div className="bg-blue-50 p-4 rounded border border-blue-200">
+            <div className="rounded-lg border p-4">
+              <p className="text-muted-foreground mb-2 text-sm">Box with custom class</p>
+              <div className="border-background rounded border bg-blue-400 p-4">
                 <p>Custom styled box</p>
               </div>
             </div>
@@ -127,7 +136,10 @@ export default function DesignSystemPage() {
         <Card>
           <div className="prose max-w-none">
             <h3>Prose Example</h3>
-            <p>This is an example of prose content that will have nice typography applied automatically.</p>
+            <p>
+              This is an example of prose content that will have nice typography applied
+              automatically.
+            </p>
             <ul>
               <li>List item one</li>
               <li>List item two</li>
@@ -144,12 +156,18 @@ export default function DesignSystemPage() {
       <Section title="Responsive Example">
         <Card>
           <div className="space-y-4">
-            <Text variant="title" size="lg" className="block md:hidden">Mobile Only Title</Text>
-            <Text variant="title" size="lg" className="hidden md:block">Desktop Title</Text>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Text variant="title" size="lg" className="block md:hidden">
+              Mobile Only Title
+            </Text>
+            <Text variant="title" size="lg" className="hidden md:block">
+              Desktop Title
+            </Text>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="border p-4 rounded-lg">
-                  <Text variant="label" className="block mb-2">Card {i}</Text>
+                <div key={i} className="rounded-lg border p-4">
+                  <Text variant="label" className="mb-2 block">
+                    Card {i}
+                  </Text>
                   <Text>This card will stack on mobile and show in a grid on larger screens.</Text>
                 </div>
               ))}

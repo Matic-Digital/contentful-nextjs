@@ -43,6 +43,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTrigger, SheetClose } from '@/co
 
 // Theme toggle component
 import { ThemeToggle } from '@/components/global/ThemeToggle';
+import { useThemeSync } from '@/hooks/useThemeSync';
 
 // No need for an empty interface, just use the HeaderType directly
 type HeaderProps = HeaderType;
@@ -58,6 +59,13 @@ type HeaderProps = HeaderType;
  */
 export function Header(props: HeaderProps) {
   const pathname = usePathname();
+  
+  // Use our custom hook to ensure theme changes are properly applied
+  useThemeSync();
+  
+  // Important: We'll use CSS-only dark mode with the 'dark:' variant
+  // This prevents hydration mismatches by ensuring server and client render the same HTML
+  
   // Use Contentful Live Preview to get real-time updates
   const header = useContentfulLiveUpdates(props);
   // Add inspector mode for Contentful editing
@@ -75,6 +83,17 @@ export function Header(props: HeaderProps) {
   // Handle mouse enter for PageList button or dropdown
   const handleMouseEnter = (id: string) => {
     setOpenDropdown(id);
+  };
+
+  // Add a small delay before closing the dropdown
+  const handleMouseLeave = (id: string) => {
+    // Use a timeout to delay closing the dropdown
+    // This gives the user time to move from the trigger to the dropdown content
+    setTimeout(() => {
+      if (openDropdown === id) {
+        setOpenDropdown(null);
+      }
+    }, 100);
   };
 
   // Handle mouse leave for the entire header navigation area
@@ -135,8 +154,9 @@ export function Header(props: HeaderProps) {
                       return (
                         <div
                           key={pageList.sys.id}
-                          className="relative"
+                          className="relative group"
                           onMouseEnter={() => handleMouseEnter(pageList.sys.id)}
+                          onMouseLeave={() => handleMouseLeave(pageList.sys.id)}
                         >
                           <Link
                             href={`/${pageList.slug}`}
@@ -146,11 +166,10 @@ export function Header(props: HeaderProps) {
                           </Link>
                           {/* Custom dropdown that appears when state is set */}
                           <div
-                            className={`absolute left-0 top-full z-50 mt-1 rounded-md border bg-background shadow-md ${openDropdown === pageList.sys.id ? 'block' : 'hidden'}`}
-                            onMouseEnter={() => handleMouseEnter(pageList.sys.id)}
+                            className={`absolute left-0 top-full z-50 mt-0 pt-1 rounded-md border border-gray-200 dark:border-gray-800 shadow-md transition-opacity duration-200 overflow-hidden ${openDropdown === pageList.sys.id ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
                           >
                             <div className="m-0 max-h-[60vh] w-[220px] overflow-auto p-0">
-                              <div className="m-0 bg-background p-0 text-foreground">
+                              <div className="m-0 bg-background text-foreground p-0 rounded-md">
                                 {pageList.pagesCollection?.items &&
                                 pageList.pagesCollection.items.length > 0 ? (
                                   <ul className="m-0 w-full list-none p-0">
@@ -158,7 +177,7 @@ export function Header(props: HeaderProps) {
                                       <li key={page.sys.id} className="m-0 w-full p-0">
                                         <Link
                                           href={`/${pageList.slug}/${page.slug}`}
-                                          className={`block w-full select-none px-4 py-2 text-sm font-medium no-underline outline-hidden transition-colors ${isActive(`/${pageList.slug}/${page.slug}`) ? 'bg-accent text-accent-foreground' : 'text-foreground hover:bg-accent hover:text-accent-foreground'} focus:bg-accent focus:text-accent-foreground`}
+                                          className={`block w-full select-none px-4 py-2 text-sm font-medium no-underline outline-hidden transition-colors ${isActive(`/${pageList.slug}/${page.slug}`) ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'} focus:bg-accent focus:text-accent-foreground rounded-sm`}
                                         >
                                           {page.name}
                                         </Link>
