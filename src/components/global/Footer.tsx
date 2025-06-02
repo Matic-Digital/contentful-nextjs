@@ -1,9 +1,6 @@
 // Mark as client component
 'use client';
 
-// React import
-import * as React from 'react';
-
 // Next.js imports
 import Link from 'next/link';
 import Image from 'next/image';
