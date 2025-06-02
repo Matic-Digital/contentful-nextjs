@@ -59,13 +59,13 @@ type HeaderProps = HeaderType;
  */
 export function Header(props: HeaderProps) {
   const pathname = usePathname();
-  
+
   // Use our custom hook to ensure theme changes are properly applied
   useThemeSync();
-  
+
   // Important: We'll use CSS-only dark mode with the 'dark:' variant
   // This prevents hydration mismatches by ensuring server and client render the same HTML
-  
+
   // Use Contentful Live Preview to get real-time updates
   const header = useContentfulLiveUpdates(props);
   // Add inspector mode for Contentful editing
@@ -106,7 +106,7 @@ export function Header(props: HeaderProps) {
     <ErrorBoundary>
       <Container className="sticky top-0 z-50">
         <header
-          className="mt-6 w-[95%] rounded-xl border border-b border-slate-400 bg-background/95 px-6 backdrop-blur-sm supports-backdrop-filter:bg-background/60 max-md:py-1.5 lg:w-full"
+          className="bg-background/95 supports-backdrop-filter:bg-background/60 mt-6 w-[95%] rounded-xl border border-b border-slate-400 px-6 backdrop-blur-sm max-md:py-1.5 lg:w-full"
           {...inspectorProps({ fieldId: 'name' })}
         >
           <Box className="items-center justify-between">
@@ -154,7 +154,7 @@ export function Header(props: HeaderProps) {
                       return (
                         <div
                           key={pageList.sys.id}
-                          className="relative group"
+                          className="group relative"
                           onMouseEnter={() => handleMouseEnter(pageList.sys.id)}
                           onMouseLeave={() => handleMouseLeave(pageList.sys.id)}
                         >
@@ -166,10 +166,10 @@ export function Header(props: HeaderProps) {
                           </Link>
                           {/* Custom dropdown that appears when state is set */}
                           <div
-                            className={`absolute left-0 top-full z-50 mt-0 pt-1 rounded-md border border-gray-200 dark:border-gray-800 shadow-md transition-opacity duration-200 overflow-hidden ${openDropdown === pageList.sys.id ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
+                            className={`absolute top-full left-0 z-50 mt-0 overflow-hidden rounded-md border border-gray-200 pt-1 shadow-md transition-opacity duration-200 dark:border-gray-800 ${openDropdown === pageList.sys.id ? 'visible opacity-100' : 'pointer-events-none invisible opacity-0'}`}
                           >
                             <div className="m-0 max-h-[60vh] w-[220px] overflow-auto p-0">
-                              <div className="m-0 bg-background text-foreground p-0 rounded-md">
+                              <div className="bg-background text-foreground m-0 rounded-md p-0">
                                 {pageList.pagesCollection?.items &&
                                 pageList.pagesCollection.items.length > 0 ? (
                                   <ul className="m-0 w-full list-none p-0">
@@ -177,7 +177,7 @@ export function Header(props: HeaderProps) {
                                       <li key={page.sys.id} className="m-0 w-full p-0">
                                         <Link
                                           href={`/${pageList.slug}/${page.slug}`}
-                                          className={`block w-full select-none px-4 py-2 text-sm font-medium no-underline outline-hidden transition-colors ${isActive(`/${pageList.slug}/${page.slug}`) ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'} focus:bg-accent focus:text-accent-foreground rounded-sm`}
+                                          className={`block w-full px-4 py-2 text-sm font-medium no-underline outline-hidden transition-colors select-none ${isActive(`/${pageList.slug}/${page.slug}`) ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'} focus:bg-accent focus:text-accent-foreground rounded-sm`}
                                         >
                                           {page.name}
                                         </Link>
@@ -185,7 +185,7 @@ export function Header(props: HeaderProps) {
                                     ))}
                                   </ul>
                                 ) : (
-                                  <p className="p-3 text-sm text-muted-foreground">
+                                  <p className="text-muted-foreground p-3 text-sm">
                                     No pages available
                                   </p>
                                 )}
@@ -231,7 +231,7 @@ export function Header(props: HeaderProps) {
                                   href={`/${page.slug}`}
                                   className={`block py-2 text-base ${
                                     isActive(`/${page.slug}`)
-                                      ? 'font-semibold text-primary'
+                                      ? 'text-primary font-semibold'
                                       : 'text-foreground'
                                   }`}
                                 >
@@ -248,7 +248,7 @@ export function Header(props: HeaderProps) {
                                 <summary
                                   className={`flex cursor-pointer items-center justify-between text-base ${
                                     isActive(`/${pageList.slug}`)
-                                      ? 'font-semibold text-primary'
+                                      ? 'text-primary font-semibold'
                                       : 'text-foreground'
                                   }`}
                                 >
@@ -268,7 +268,7 @@ export function Header(props: HeaderProps) {
                                           href={`/${pageList.slug}/${page.slug}`}
                                           className={`block py-1 text-sm ${
                                             isActive(`/${pageList.slug}/${page.slug}`)
-                                              ? 'font-medium text-primary'
+                                              ? 'text-primary font-medium'
                                               : 'text-muted-foreground'
                                           }`}
                                         >

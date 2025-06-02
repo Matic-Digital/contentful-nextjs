@@ -29,7 +29,7 @@ import type { Footer as FooterType } from '@/types/contentful';
 export function Footer({ footerData }: { footerData: FooterType | null }) {
   // Use our custom hook to ensure theme changes are properly applied
   useThemeSync();
-  
+
   // Use Contentful Live Updates to get real-time updates
   const liveFooterData = useContentfulLiveUpdates<FooterType>(footerData ?? ({} as FooterType));
 
@@ -39,16 +39,16 @@ export function Footer({ footerData }: { footerData: FooterType | null }) {
   // If no footer data is provided, render a minimal footer
   if (!footerData) {
     return (
-      <footer className="mt-24 border-t border-gray-200 dark:border-gray-800 bg-background py-12">
+      <footer className="bg-background mt-24 border-t border-gray-200 py-12 dark:border-gray-800">
         <Container width="full">
-          <p className="text-center text-muted-foreground">Footer data not available</p>
+          <p className="text-muted-foreground text-center">Footer data not available</p>
         </Container>
       </footer>
     );
   }
 
   return (
-    <footer className="mt-24 border-t border-gray-200 dark:border-gray-800 bg-background py-12">
+    <footer className="bg-background mt-24 border-t border-gray-200 py-12 dark:border-gray-800">
       <Container width="full">
         {/* Main footer content grid */}
         <Box cols={{ sm: 2 }} gap={12}>
@@ -71,7 +71,7 @@ export function Footer({ footerData }: { footerData: FooterType | null }) {
               <Logo />
             )}
             <p
-              className="max-w-xs text-sm text-muted-foreground"
+              className="text-muted-foreground max-w-xs text-sm"
               {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'description' })}
             >
               {liveFooterData.description ??
@@ -97,7 +97,7 @@ export function Footer({ footerData }: { footerData: FooterType | null }) {
                 </h3>
                 <nav>
                   <ul
-                    className="ml-1 mt-4 space-y-2"
+                    className="mt-4 ml-1 space-y-2"
                     {...inspectorProps({ entryId: pageList.sys.id, fieldId: 'pagesCollection' })}
                   >
                     {pageList.pagesCollection?.items.map((page) => (
@@ -107,7 +107,7 @@ export function Footer({ footerData }: { footerData: FooterType | null }) {
                       >
                         <Link
                           href={`/${page.slug}`}
-                          className="text-sm text-muted-foreground hover:text-primary"
+                          className="text-muted-foreground hover:text-primary text-sm"
                         >
                           {page.name}
                         </Link>
@@ -124,7 +124,7 @@ export function Footer({ footerData }: { footerData: FooterType | null }) {
       <div className="mt-8 border-t pt-8">
         <Container width="full">
           <p
-            className="text-right text-sm text-muted-foreground"
+            className="text-muted-foreground text-right text-sm"
             {...inspectorProps({ entryId: liveFooterData.sys.id, fieldId: 'copyright' })}
           >
             © {new Date().getFullYear()} {liveFooterData.copyright ?? 'Matic'}. All rights
