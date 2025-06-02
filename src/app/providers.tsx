@@ -38,7 +38,7 @@ export const Providers = ({ children }: { children: ReactNode }) => {
           defaultTheme="system"
           enableSystem
           enableColorScheme
-          storageKey="theme"
+          storageKey="matic-ui-theme"
         >
           <ContentfulLivePreviewProvider
             locale="en-US"
