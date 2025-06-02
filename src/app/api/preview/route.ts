@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   const secret = searchParams.get('secret');
   const slug = searchParams.get('slug');
   const pageListSlug = searchParams.get('pageListSlug');
-  const navBarName = searchParams.get('navBarName');
+  const headerName = searchParams.get('headerName');
   const heroId = searchParams.get('heroId');
   const id = searchParams.get('id'); // Used for footer previews
 
@@ -22,15 +22,15 @@ export async function GET(request: NextRequest) {
   draft.enable();
 
   // Determine redirect target based on provided parameters
-  // Priority: slug > pageListSlug > navBarName > heroId > footerId
+  // Priority: slug > pageListSlug > headerName > heroId > footerId
   if (slug) {
     return NextResponse.redirect(new URL(`/page-preview?slug=${slug}`, request.url));
   } else if (pageListSlug) {
     return NextResponse.redirect(
       new URL(`/page-list-preview?pageListSlug=${pageListSlug}`, request.url)
     );
-  } else if (navBarName) {
-    return NextResponse.redirect(new URL(`/navbar-preview?navBarName=${navBarName}`, request.url));
+  } else if (headerName) {
+    return NextResponse.redirect(new URL(`/header-preview?headerName=${headerName}`, request.url));
   } else if (heroId) {
     return NextResponse.redirect(new URL(`/hero-preview?heroId=${heroId}`, request.url));
   } else if (id) {

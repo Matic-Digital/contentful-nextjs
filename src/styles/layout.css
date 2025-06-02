@@ -1,8 +1,13 @@
 /* Layout component styling */
 
-/* Hide default layout components when page-specific ones are present */
-.page-has-header #default-navbar {
-  display: none;
+/* Hide default header when page-specific header is present */
+.page-has-header #default-header {
+  display: none !important;
+}
+
+/* Position for the page-specific header */
+.page-has-header #page-specific-header {
+  display: block;
 }
 
 .page-has-footer #default-footer {

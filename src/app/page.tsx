@@ -6,7 +6,6 @@ import { getAllPages, getAllPageLists, getPageBySlug } from '@/lib/api';
 import type { PageResponse, PageListResponse, Page } from '@/types/contentful';
 import { getAllFooters } from '@/lib/api';
 import type { FooterResponse } from '@/types/contentful';
-import { NavBar } from '@/components/global/NavBar';
 import { Footer } from '@/components/global/Footer';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Hero } from '@/components/global/Hero';
@@ -55,9 +54,6 @@ async function renderContentfulHomePage(page: Page) {
 
   return (
     <PageLayout header={pageHeader} footer={pageFooter}>
-      {/* Render the page-specific header if available */}
-      {pageHeader && <NavBar {...pageHeader} />}
-
       <main>
         <h1 className="sr-only">{page.name}</h1>
 
@@ -130,7 +126,7 @@ async function renderDefaultHomePage() {
           <h2 className="mb-4 text-2xl font-semibold">Pages</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {pages.items.map((page) => (
-              <div key={page.sys.id} className="rounded-lg border p-4 shadow-sm">
+              <div key={page.sys.id} className="rounded-lg border p-4 shadow-xs">
                 <h3 className="mb-2 text-xl font-medium">{page.name}</h3>
                 {page.description && <p className="text-gray-600">{page.description}</p>}
               </div>
@@ -144,7 +140,7 @@ async function renderDefaultHomePage() {
           <h2 className="mb-4 text-2xl font-semibold">Page Lists</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {pageLists.items.map((pageList) => (
-              <div key={pageList.sys.id} className="rounded-lg border p-4 shadow-sm">
+              <div key={pageList.sys.id} className="rounded-lg border p-4 shadow-xs">
                 <h3 className="mb-2 text-xl font-medium">{pageList.name}</h3>
                 <p className="text-sm text-gray-500">Slug: {pageList.slug}</p>
               </div>
@@ -165,7 +161,7 @@ async function renderDefaultHomePage() {
           <h2 className="mb-4 text-2xl font-semibold">Footers</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {footers.items.map((footer) => (
-              <div key={footer.sys.id} className="rounded-lg border p-4 shadow-sm">
+              <div key={footer.sys.id} className="rounded-lg border p-4 shadow-xs">
                 <h3 className="mb-2 text-xl font-medium">{footer.name}</h3>
                 {footer.description && <p className="text-gray-600">{footer.description}</p>}
               </div>

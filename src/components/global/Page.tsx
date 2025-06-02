@@ -26,9 +26,9 @@ import {
 } from '@contentful/live-preview/react';
 import { Container, Box } from '@/components/global/matic-ds';
 import { Hero } from './Hero';
-import { NavBar } from './NavBar';
+import { Header } from './Header';
 import { Footer } from './Footer';
-import type { NavBar as NavBarType, Footer as FooterType } from '@/types/contentful';
+import type { Header as HeaderType, Footer as FooterType } from '@/types/contentful';
 
 interface PageProps {
   sys: {
@@ -37,7 +37,7 @@ interface PageProps {
   name?: string;
   slug?: string;
   description?: string;
-  header?: NavBarType | null;
+  header?: HeaderType | null;
   footer?: FooterType | null;
   pageContentCollection?: {
     items: Array<{
@@ -114,7 +114,7 @@ export function Page(props: PageProps) {
           className="page-specific-header"
           data-component-type="Page Header"
         >
-          <NavBar {...page.header} />
+          <Header {...page.header} />
         </div>
       )}
 
@@ -131,7 +131,7 @@ export function Page(props: PageProps) {
 
           {page.description && (
             <p
-              className="mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl"
+              className="text-muted-foreground mb-8 max-w-2xl text-lg md:text-xl"
               {...inspectorProps({ fieldId: 'description' })}
             >
               {page.description}
@@ -139,7 +139,7 @@ export function Page(props: PageProps) {
           )}
 
           {page.slug && (
-            <div className="mb-8 text-sm text-muted-foreground">
+            <div className="text-muted-foreground mb-8 text-sm">
               <span className="font-medium">Slug: </span>
               <span {...inspectorProps({ fieldId: 'slug' })}>
                 {page.parentPageList?.slug ? `${page.parentPageList.slug}/${page.slug}` : page.slug}
@@ -156,7 +156,7 @@ export function Page(props: PageProps) {
                     ? `/${page.parentPageList.slug}/${page.slug}`
                     : `/${page.slug}`
                 }
-                className="inline-flex items-center rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                className="inline-flex items-center rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
               >
                 View Page
               </a>

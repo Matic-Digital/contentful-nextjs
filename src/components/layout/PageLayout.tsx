@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import type { NavBar, Footer } from '@/types/contentful';
+import type { Header, Footer } from '@/types/contentful';
 
 // Import the layout CSS
 import '@/styles/layout.css';
 
 interface PageLayoutProps {
-  header?: NavBar | null;
+  header?: Header | null;
   footer?: Footer | null;
   children: React.ReactNode;
 }

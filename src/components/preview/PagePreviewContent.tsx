@@ -23,45 +23,19 @@ export function PagePreviewContent({
   isDraftMode
 }: PagePreviewContentProps) {
   return (
-    <Box direction="col" gap={8} className="min-h-screen py-12">
-      {/* Preview Status */}
-      <Box className="mx-auto max-w-7xl px-4">
-        <div className="mb-8 rounded-md bg-blue-50 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-blue-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.75.75 0 00.736-.686l.057-.75a.75.75 0 00-.75-.813H9A.75.75 0 009 9z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div className="ml-3 flex-1">
-              <h3 className="text-sm font-medium text-blue-800">Page Preview Mode</h3>
-              <div className="mt-2 text-sm text-blue-700">
-                <p>
-                  You are viewing the Page component in preview mode.{' '}
-                  {isDraftMode ? 'Draft mode is enabled.' : 'Draft mode is disabled.'}
-                </p>
-                {pageSlug && <p className="mt-1">Page Slug: {pageSlug}</p>}
-              </div>
-            </div>
-          </div>
-        </div>
-      </Box>
+    <Box direction="col" gap={8} className="min-h-screen">
+      {/* Small indicator that this is a preview - positioned to not interfere with the page content */}
+      <div className="fixed right-4 bottom-4 z-50 rounded bg-blue-100 p-2 text-xs text-blue-800 shadow-md">
+        <p>Page Preview: {pageSlug}</p>
+        <p>{isDraftMode ? 'Draft mode enabled' : 'Draft mode disabled'}</p>
+      </div>
 
       {/* Error Message */}
       {error && (
         <Box className="mx-auto max-w-7xl px-4">
           <div className="rounded-md bg-red-50 p-4">
             <div className="flex">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-5 w-5 text-red-400"
                   viewBox="0 0 20 20"
@@ -91,7 +65,7 @@ export function PagePreviewContent({
         <Box className="mx-auto max-w-7xl px-4">
           <div className="rounded-md bg-yellow-50 p-4">
             <div className="flex">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-5 w-5 text-yellow-400"
                   viewBox="0 0 20 20"
@@ -163,7 +137,7 @@ export function PagePreviewContent({
         <Box className="mx-auto max-w-7xl px-4">
           <div className="rounded-md bg-yellow-50 p-4">
             <div className="flex">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-5 w-5 text-yellow-400"
                   viewBox="0 0 20 20"
